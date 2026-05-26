@@ -6,6 +6,9 @@ import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 import { gymCourses, randoSorties, news, sejours, bureau } from '@/data'
 import { formatDateFR, labelType, catLabel } from '@/utils/format'
+import AdminGymSection from './sections/AdminGymSection'
+import AdminActuSection from './sections/AdminActuSection'
+import AdminRandoSection from './sections/AdminRandoSection'
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user }) {
@@ -524,10 +527,10 @@ export default function AdminApp({ user }) {
         <AdminSidebar section={section} setSection={setSection} user={user}/>
         <div className="admin-main">
           {section === "dash"     && <Dashboard setSection={setSection}/>}
-          {section === "gym"      && <AdminGym/>}
-          {section === "rando"    && <AdminRando/>}
+          {section === "gym"      && <AdminGymSection/>}
+          {section === "rando"    && <AdminRandoSection/>}
           {section === "sejours"  && <AdminSejours/>}
-          {section === "actu"     && <AdminActu/>}
+          {section === "actu"     && <AdminActuSection/>}
           {section === "galerie"  && <AdminGalerie/>}
           {section === "comite"   && <AdminComite/>}
           {section === "tarifs"   && <AdminTarifs/>}

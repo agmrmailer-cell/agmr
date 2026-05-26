@@ -87,3 +87,145 @@ export async function getBureau() {
     role: b.role,
   }))
 }
+
+// ── Gym courses CRUD ──────────────────────────────────────────
+export async function createGymCourse(data) {
+  const { data: result, error } = await supabase
+    .from('gym_courses')
+    .insert({
+      jour: data.jour,
+      heure_debut: data.heureDebut,
+      heure_fin: data.heureFin,
+      discipline: data.discipline,
+      animateur: data.animateur,
+      salle: data.salle,
+      niveau: data.niveau,
+      actif: data.actif,
+      disc: data.disc,
+    })
+    .select()
+    .single()
+  if (error) { console.error(error); return null }
+  return result
+}
+
+export async function updateGymCourse(id, data) {
+  const { error } = await supabase
+    .from('gym_courses')
+    .update({
+      jour: data.jour,
+      heure_debut: data.heureDebut,
+      heure_fin: data.heureFin,
+      discipline: data.discipline,
+      animateur: data.animateur,
+      salle: data.salle,
+      niveau: data.niveau,
+      actif: data.actif,
+      disc: data.disc,
+    })
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
+export async function deleteGymCourse(id) {
+  const { error } = await supabase
+    .from('gym_courses')
+    .delete()
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
+// ── Rando sorties CRUD ────────────────────────────────────────
+export async function createRandoSortie(data) {
+  const { data: result, error } = await supabase
+    .from('rando_sorties')
+    .insert({
+      date: data.date,
+      type: data.type,
+      titre: data.titre,
+      distance_km: data.distanceKm || null,
+      denivele: data.denivele || null,
+      groupes: data.groupes,
+      point_depart: data.pointDepart,
+      heure_depart: data.heureDepart,
+      animateur: data.animateur,
+      complet: data.complet,
+      annule: data.annule,
+    })
+    .select()
+    .single()
+  if (error) { console.error(error); return null }
+  return result
+}
+
+export async function updateRandoSortie(id, data) {
+  const { error } = await supabase
+    .from('rando_sorties')
+    .update({
+      date: data.date,
+      type: data.type,
+      titre: data.titre,
+      distance_km: data.distanceKm || null,
+      denivele: data.denivele || null,
+      groupes: data.groupes,
+      point_depart: data.pointDepart,
+      heure_depart: data.heureDepart,
+      animateur: data.animateur,
+      complet: data.complet,
+      annule: data.annule,
+    })
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
+export async function deleteRandoSortie(id) {
+  const { error } = await supabase
+    .from('rando_sorties')
+    .delete()
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
+// ── Actualités CRUD ───────────────────────────────────────────
+export async function createActualite(data) {
+  const { data: result, error } = await supabase
+    .from('actualites')
+    .insert({
+      cat: data.cat,
+      date: data.date,
+      title: data.title,
+      excerpt: data.excerpt,
+    })
+    .select()
+    .single()
+  if (error) { console.error(error); return null }
+  return result
+}
+
+export async function updateActualite(id, data) {
+  const { error } = await supabase
+    .from('actualites')
+    .update({
+      cat: data.cat,
+      date: data.date,
+      title: data.title,
+      excerpt: data.excerpt,
+    })
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
+export async function deleteActualite(id) {
+  const { error } = await supabase
+    .from('actualites')
+    .delete()
+    .eq('id', id)
+  if (error) { console.error(error); return false }
+  return true
+}
+
