@@ -9,6 +9,7 @@ import { formatDateFR, labelType, catLabel } from '@/utils/format'
 import AdminGymSection from './sections/AdminGymSection'
 import AdminActuSection from './sections/AdminActuSection'
 import AdminRandoSection from './sections/AdminRandoSection'
+import AdminGalerieSection from './sections/AdminGalerieSection'
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user }) {
@@ -531,7 +532,7 @@ export default function AdminApp({ user }) {
           {section === "rando"    && <AdminRandoSection/>}
           {section === "sejours"  && <AdminSejours/>}
           {section === "actu"     && <AdminActuSection/>}
-          {section === "galerie"  && <AdminGalerie/>}
+          {section === "galerie"  && <AdminGalerieSection/>}
           {section === "comite"   && <AdminComite/>}
           {section === "tarifs"   && <AdminTarifs/>}
           {section === "settings" && <AdminSettings user={user}/>}

@@ -229,3 +229,12 @@ export async function deleteActualite(id) {
   return true
 }
 
+
+export async function getGaleriePhotos() {
+  const { data, error } = await supabase
+    .from('galerie_photos')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) { console.error(error); return [] }
+  return data
+}
