@@ -84,7 +84,7 @@ export default async function HomePage() {
                   const tc = c(key)
                   return (
                     <Link key={key} className="trio-card" href={tc.lien ?? '#'}>
-                      <div className={`trio-photo ${cls}`} data-tag={tc.tag ?? ''}>
+                      <div className={`trio-photo ${cls}`} style={tc.photo_url ? { backgroundImage: `url(${tc.photo_url})` } : undefined} data-tag={tc.tag ?? ''}>
                         <div className="trio-photo-overlay"/>
                         <div className="trio-photo-num">{n}</div>
                       </div>
@@ -110,7 +110,7 @@ export default async function HomePage() {
             <div className="container">
               <div className="manifesto">
                 <div className="manifesto-vis">
-                  <div className="manifesto-vis-photo"/>
+                  <div className="manifesto-vis-photo" style={manifesto.photo_url ? { backgroundImage: `url(${manifesto.photo_url})` } : undefined}/>
                   <div className="manifesto-badge">
                     <strong>{manifesto.badge ?? "L'epanouissement avant la performance"}</strong>
                     {manifesto.badge_meta ?? 'Charte AGMR — 2018'}

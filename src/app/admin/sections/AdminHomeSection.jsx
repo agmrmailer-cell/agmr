@@ -1,22 +1,22 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 
 const BLOCK_META = {
-  hero:          { label: 'Hero',                  desc: 'Accroche, titre, sous-titre, boutons' },
-  trio_gym:      { label: 'Carte Gym',              desc: 'Titre, description, stat, lien' },
-  trio_rando:    { label: 'Carte Randonnée',         desc: 'Titre, description, stat, lien' },
-  trio_nordique: { label: 'Carte Marche nordique',   desc: 'Titre, description, stat, lien' },
-  manifesto:     { label: 'Section Philosophie',     desc: 'Texte éditorial, citation, boutons' },
-  actualites:    { label: 'Section Actualités',      desc: 'Reprend automatiquement les dernières actualités' },
-  cta_banner:    { label: 'Bandeau CTA',             desc: 'Appel à l\'action en bas de page' },
+  hero:          { label: 'Hero',                   desc: 'Accroche, titre, sous-titre, boutons' },
+  trio_gym:      { label: 'Carte Gym',               desc: 'Photo, titre, description, stat, lien' },
+  trio_rando:    { label: 'Carte Randonnée',          desc: 'Photo, titre, description, stat, lien' },
+  trio_nordique: { label: 'Carte Marche nordique',    desc: 'Photo, titre, description, stat, lien' },
+  manifesto:     { label: 'Section Philosophie',      desc: 'Photo, texte éditorial, citation, boutons' },
+  actualites:    { label: 'Section Actualités',       desc: 'Reprend automatiquement les dernières actualités' },
+  cta_banner:    { label: 'Bandeau CTA',              desc: "Appel à l'action en bas de page" },
 }
 
 function Modal({ title, onClose, children }) {
   return (
     <div className="modal-back" onClick={onClose}>
-      <div className="modal" style={{ maxWidth: 680 }} onClick={e => e.stopPropagation()}>
+      <div className="modal" style={{ maxWidth: 700 }} onClick={e => e.stopPropagation()}>
         <div className="modal-head">
           <h3>{title}</h3>
           <button className="icon-btn" onClick={onClose}><Icon name="x" size={14}/></button>
@@ -27,11 +27,55 @@ function Modal({ title, onClose, children }) {
   )
 }
 
+// ── Photo upload ───────────────────────────────────────────────
+function PhotoUpload({ value, onChange, supabase }) {
+  const [uploading, setUploading] = useState(false)
+  const inputRef = useRef()
+
+  const handleFile = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploading(true)
+    const ext = file.name.split('.').pop()
+    const fileName = `home/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error } = await supabase.storage.from('galerie').upload(fileName, file, { upsert: true })
+    if (error) { alert('Erreur upload : ' + error.message); setUploading(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('galerie').getPublicUrl(fileName)
+    onChange(publicUrl)
+    setUploading(false)
+    inputRef.current.value = ''
+  }
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      {value ? (
+        <img src={value} alt="" style={{ width: 100, height: 72, objectFit: "cover", borderRadius: "var(--r-sm)", border: "1px solid var(--line)", flexShrink: 0 }}/>
+      ) : (
+        <div style={{ width: 100, height: 72, background: "var(--bg-deep)", borderRadius: "var(--r-sm)", border: "2px dashed var(--line-strong)", display: "grid", placeItems: "center", color: "var(--ink-mute)", flexShrink: 0 }}>
+          <Icon name="image" size={22}/>
+        </div>
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }}/>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => inputRef.current.click()} disabled={uploading}>
+          <Icon name="download" size={12}/> {uploading ? 'Upload en cours…' : value ? 'Changer la photo' : 'Choisir une photo'}
+        </button>
+        {value && (
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onChange('')} style={{ color: "var(--accent)", fontSize: "0.8rem" }}>
+            Retirer la photo
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Main component ─────────────────────────────────────────────
 export default function AdminHomeSection() {
-  const [blocks, setBlocks] = useState([])
-  const [stats, setStats] = useState({ hero: [], band: [] })
-  const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState(null)
+  const [blocks, setBlocks]       = useState([])
+  const [stats, setStats]         = useState({ hero: [], band: [] })
+  const [loading, setLoading]     = useState(true)
+  const [editing, setEditing]     = useState(null)
   const [editingStat, setEditingStat] = useState(null)
   const supabase = createClient()
 
@@ -77,7 +121,7 @@ export default function AdminHomeSection() {
       <div className="admin-head">
         <div>
           <h1>Page principale</h1>
-          <p className="muted" style={{ margin: 0 }}>Contenu, visibilité et chiffres clés</p>
+          <p className="muted" style={{ margin: 0 }}>Contenu, photos, visibilité et chiffres clés</p>
         </div>
       </div>
 
@@ -88,9 +132,20 @@ export default function AdminHomeSection() {
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 36 }}>
         {blocks.map(block => {
           const meta = BLOCK_META[block.block_key] ?? { label: block.block_key, desc: '' }
+          const hasPhoto = ['trio_gym','trio_rando','trio_nordique','manifesto'].includes(block.block_key)
           const hasContent = block.block_key !== 'actualites'
+          const photoUrl = block.content?.photo_url
           return (
-            <div key={block.block_key} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, opacity: block.visible ? 1 : 0.5 }}>
+            <div key={block.block_key} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, opacity: block.visible ? 1 : 0.5 }}>
+              {hasPhoto && (
+                photoUrl ? (
+                  <img src={photoUrl} alt="" style={{ width: 56, height: 40, objectFit: "cover", borderRadius: "var(--r-sm)", border: "1px solid var(--line)", flexShrink: 0 }}/>
+                ) : (
+                  <div style={{ width: 56, height: 40, background: "var(--bg-deep)", borderRadius: "var(--r-sm)", border: "1px dashed var(--line-strong)", display: "grid", placeItems: "center", color: "var(--ink-mute)", flexShrink: 0 }}>
+                    <Icon name="image" size={14}/>
+                  </div>
+                )
+              )}
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{meta.label}</div>
                 <div className="muted" style={{ fontSize: "0.82rem", marginTop: 2 }}>{meta.desc}</div>
@@ -155,7 +210,7 @@ export default function AdminHomeSection() {
           title={`Modifier — ${BLOCK_META[editing.block_key]?.label ?? editing.block_key}`}
           onClose={() => setEditing(null)}
         >
-          <BlockForm block={editing} onSave={saveBlock} onCancel={() => setEditing(null)}/>
+          <BlockForm block={editing} onSave={saveBlock} onCancel={() => setEditing(null)} supabase={supabase}/>
         </Modal>
       )}
       {editingStat && (
@@ -167,7 +222,7 @@ export default function AdminHomeSection() {
   )
 }
 
-// ── Stat form ─────────────────────────────────────────────────
+// ── Stat form ──────────────────────────────────────────────────
 function StatForm({ stat, onSave, onCancel }) {
   const [valeur, setValeur] = useState(stat.valeur)
   const [label,  setLabel]  = useState(stat.label)
@@ -187,14 +242,15 @@ function StatForm({ stat, onSave, onCancel }) {
   )
 }
 
-// ── Block form ────────────────────────────────────────────────
-function BlockForm({ block, onSave, onCancel }) {
+// ── Block form ─────────────────────────────────────────────────
+function BlockForm({ block, onSave, onCancel, supabase }) {
   const [c, setC] = useState(block.content)
   const u = (k, v) => setC(prev => ({ ...prev, [k]: v }))
   const key = block.block_key.startsWith('trio_') ? 'trio' : block.block_key
 
   return (
     <div className="form">
+
       {key === 'hero' && <>
         <div className="field"><label>Accroche (eyebrow)</label>
           <input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)}/>
@@ -229,6 +285,9 @@ function BlockForm({ block, onSave, onCancel }) {
       </>}
 
       {key === 'trio' && <>
+        <div className="field"><label>Photo illustrative</label>
+          <PhotoUpload value={c.photo_url ?? ''} onChange={url => u('photo_url', url)} supabase={supabase}/>
+        </div>
         <div className="row-2">
           <div className="field"><label>Étiquette photo</label>
             <input value={c.tag ?? ''} onChange={e => u('tag', e.target.value)} placeholder="Salle, Forêt, Plein air…"/>
@@ -254,6 +313,9 @@ function BlockForm({ block, onSave, onCancel }) {
       </>}
 
       {key === 'manifesto' && <>
+        <div className="field"><label>Photo illustrative</label>
+          <PhotoUpload value={c.photo_url ?? ''} onChange={url => u('photo_url', url)} supabase={supabase}/>
+        </div>
         <div className="row-2">
           <div className="field"><label>Badge — texte</label>
             <input value={c.badge ?? ''} onChange={e => u('badge', e.target.value)}/>
