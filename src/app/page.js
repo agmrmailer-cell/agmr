@@ -34,7 +34,7 @@ export default async function HomePage() {
         {/* HERO */}
         {vis('hero') && (
           <section className="hero">
-            <div className="hero-photo hero-photo-forest">
+            <div className="hero-photo hero-photo-forest" style={hero.photo_url ? { backgroundImage: `url(${hero.photo_url})` } : undefined}>
               <div className="hero-photo-trees"/>
               <div className="hero-grain"/>
             </div>

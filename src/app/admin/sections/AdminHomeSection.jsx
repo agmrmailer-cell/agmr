@@ -252,6 +252,16 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
     <div className="form">
 
       {key === 'hero' && <>
+        <div className="field">
+          <label>Photo de fond</label>
+          <PhotoUpload value={c.photo_url ?? ''} onChange={url => u('photo_url', url)} supabase={supabase}/>
+          <div style={{ marginTop: 8, padding: "10px 14px", background: "var(--bg-deep)", borderRadius: "var(--r-sm)", fontSize: "0.8rem", color: "var(--ink-mute)", lineHeight: 1.6 }}>
+            <strong style={{ color: "var(--ink-soft)" }}>Specs recommandées</strong><br/>
+            Format : JPG ou WebP · Dimensions : 1920 × 1080 px minimum<br/>
+            Ratio : 16/9 ou plus large · Poids : moins de 1 Mo<br/>
+            Sujet au centre — les bords sont rognés sur mobile
+          </div>
+        </div>
         <div className="field"><label>Accroche (eyebrow)</label>
           <input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)}/>
         </div>
