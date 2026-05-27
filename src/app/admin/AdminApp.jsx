@@ -12,6 +12,7 @@ import AdminRandoSection from './sections/AdminRandoSection'
 import AdminGalerieSection from './sections/AdminGalerieSection'
 import AdminHomeSection from './sections/AdminHomeSection'
 import AdminGymPageSection from './sections/AdminGymPageSection'
+import AdminRandoPageSection from './sections/AdminRandoPageSection'
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user }) {
@@ -24,7 +25,8 @@ function AdminSidebar({ section, setSection, user }) {
     { id: "actu", label: "Actualités", icon: "file" },
     { id: "galerie", label: "Galerie", icon: "image" },
     { id: "home", label: "Page principale", icon: "home" },
-    { id: "gym-page", label: "Page Gym", icon: "leaf" },
+    { id: "gym-page",   label: "Page Gym",          icon: "leaf" },
+    { id: "rando-page", label: "Page Randonnée",    icon: "mountain" },
     { id: "comite", label: "Comité directeur", icon: "user" },
     { id: "tarifs", label: "Tarifs", icon: "file" },
     { id: "settings", label: "Paramètres", icon: "settings" },
@@ -552,8 +554,9 @@ export default function AdminApp({ user }) {
           {section === "actu"     && <AdminActuSection/>}
           {section === "galerie"  && <AdminGalerieSection/>}
           {section === "home"     && <AdminHomeSection/>}
-          {section === "gym-page" && <AdminGymPageSection/>}
-          {section === "comite"   && <AdminComite/>}
+          {section === "gym-page"   && <AdminGymPageSection/>}
+          {section === "rando-page" && <AdminRandoPageSection/>}
+          {section === "comite"     && <AdminComite/>}
           {section === "tarifs"   && <AdminTarifs/>}
           {section === "settings" && <AdminSettings user={user}/>}
         </div>

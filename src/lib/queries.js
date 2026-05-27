@@ -278,6 +278,26 @@ export async function updateSiteStat(id, valeur, label) {
   return true
 }
 
+// ── Rando page blocks ────────────────────────────────────────
+export async function getRandoPageBlocks() {
+  const { data, error } = await supabase
+    .from('rando_page_blocks')
+    .select('*')
+    .order('ordre')
+  if (error) { console.error(error); return [] }
+  return data
+}
+
+// ── Rando jeudi groupes ──────────────────────────────────────
+export async function getRandoJeudiGroupes() {
+  const { data, error } = await supabase
+    .from('rando_jeudi_groupes')
+    .select('*')
+    .order('ordre')
+  if (error) { console.error(error); return [] }
+  return data
+}
+
 // ── Gym page blocks ──────────────────────────────────────────
 export async function getGymPageBlocks() {
   const { data, error } = await supabase
