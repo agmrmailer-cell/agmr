@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
@@ -71,6 +71,31 @@ function AdminSidebar({ section, setSection, user }) {
 
 // ── Dashboard ─────────────────────────────────────────────────
 function Dashboard({ setSection }) {
+  const [kpi, setKpi] = useState(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function load() {
+      const [gym, rando, sejours] = await Promise.all([
+        supabase.from('gym_courses').select('id', { count: 'exact' }).eq('actif', true),
+        supabase.from('rando_sorties').select('date').gte('date', new Date().toISOString().slice(0,10)).eq('annule', false).order('date'),
+        supabase.from('sejours').select('statut'),
+      ])
+      const prochaine = rando.data?.[0]?.date
+      const prochaineLabel = prochaine
+        ? `Prochaine ${prochaine.slice(8,10)}/${prochaine.slice(5,7)}`
+        : '—'
+      const sejoursTotal = sejours.data?.filter(s => s.statut !== 'passe').length ?? 0
+      const sejoursOuverts = sejours.data?.filter(s => s.statut === 'ouvert').length ?? 0
+      setKpi([
+        [String(gym.count ?? 0), "Cours gym actifs", ""],
+        [String(rando.data?.length ?? 0), "Sorties à venir", prochaineLabel],
+        [String(sejoursTotal), "Séjours programmés", `${sejoursOuverts} ouvert${sejoursOuverts > 1 ? 's' : ''}`],
+      ])
+    }
+    load()
+  }, [])
+
   return (
     <>
       <div className="admin-head">
@@ -78,11 +103,11 @@ function Dashboard({ setSection }) {
         <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
       </div>
       <div className="kpi-grid">
-        {[["22","Cours gym actifs","+2 cette saison"],["7","Sorties à venir","Prochaine 28/05"],["3","Séjours programmés","2 ouverts"],["752","Adhérents","+12 sur 1 mois"]].map(([n,l,t]) => (
+        {(kpi ?? [["…","Cours gym actifs",""],["…","Sorties à venir",""],["…","Séjours programmés",""]]).map(([n,l,t]) => (
           <div key={l} className="kpi-tile">
             <div className="kpi-num">{n}</div>
             <div className="kpi-lbl">{l}</div>
-            <div className="kpi-trend">{t}</div>
+            {t && <div className="kpi-trend">{t}</div>}
           </div>
         ))}
       </div>
