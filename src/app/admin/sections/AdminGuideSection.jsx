@@ -55,7 +55,7 @@ export default function AdminGuideSection() {
         />
 
         <GuideBlock
-          icon="🥾"
+          icon={<Icon name="mountain" size={18}/>}
           title="Planning Randonnée"
           section="Activités → Planning Rando"
           items={[
