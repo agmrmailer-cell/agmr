@@ -166,9 +166,20 @@ function DocForm({ item, saisons, onSave, onCancel }) {
         <input value={f.titre} onChange={e => u('titre', e.target.value)} placeholder="Procès-verbal AG 2025"/>
       </div>
       <div className="field">
-        <label>URL de téléchargement</label>
-        <input value={f.url} onChange={e => u('url', e.target.value)} placeholder="/documents/pv-ag-2025.pdf"/>
+        <label>Fichier PDF</label>
+        <PdfUpload
+          value={f.url && f.url !== '#' ? f.url : null}
+          onChange={url => u('url', url ?? '')}
+          folder="ag"
+        />
       </div>
+      {/* URL manuelle en secours si pas de fichier uploadé */}
+      {(!f.url || f.url === '#') && (
+        <div className="field">
+          <label style={{ color: 'var(--ink-mute)', fontSize: '0.82rem' }}>Ou URL externe</label>
+          <input value={f.url === '#' ? '' : f.url} onChange={e => u('url', e.target.value)} placeholder="https://…/document.pdf"/>
+        </div>
+      )}
       <div className="field">
         <label>Ordre d'affichage</label>
         <input type="number" value={f.ordre} onChange={e => u('ordre', e.target.value)} min={1}/>
