@@ -39,7 +39,7 @@ export default function AGMRLogo({ size = 46, light = false, withText = true, wi
 
       {withText && (
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05 }}>
-          <span style={{ fontFamily: "var(--serif)", fontSize: "1.55rem", fontWeight: 600, color: ink }}>
+          <span style={{ fontFamily: "var(--display)", fontSize: "1.45rem", fontWeight: 800, color: ink, letterSpacing: "-0.02em" }}>
             AGMR
           </span>
           {withTagline && (
