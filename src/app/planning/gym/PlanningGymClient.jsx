@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import Icon from '@/components/ui/Icon'
 import { monthFR, monthFRFull } from '@/utils/format'
 
