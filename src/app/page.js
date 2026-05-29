@@ -36,7 +36,8 @@ export default async function HomePage() {
         {vis('hero') && (
           <section className="hero">
             <div className="hero-photo hero-photo-forest" style={hero.photo_url ? { backgroundImage: `url(${hero.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
-              <div className="hero-photo-trees"/>
+              {/* Silhouettes d'arbres CSS uniquement sur le fond généré, pas sur une vraie photo */}
+              {!hero.photo_url && <div className="hero-photo-trees"/>}
               <div className="hero-grain"/>
             </div>
             <div className="hero-content">
