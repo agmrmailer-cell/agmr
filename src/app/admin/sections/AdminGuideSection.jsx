@@ -125,7 +125,7 @@ export default function AdminGuideSection() {
         />
 
         <GuideBlock
-          icon="🔐"
+          icon={<Icon name="lock" size={18}/>}
           title="Gestion des accès"
           section="Paramètres → Gestion des accès"
           items={[
