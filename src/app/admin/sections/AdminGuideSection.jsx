@@ -129,9 +129,11 @@ export default function AdminGuideSection() {
           title="Gestion des accès"
           section="Paramètres → Gestion des accès"
           items={[
-            ["Rôles", "Super Admin : accès complet à tout le back-office. Admin : accès limité aux sections autorisées."],
-            ["Inviter un administrateur", "Renseignez l'adresse e-mail et cochez les sections auxquelles la personne doit avoir accès. Elle recevra un e-mail d'invitation."],
-            ["Révoquer un accès", "Utilisez le bouton de suppression sur la ligne de l'administrateur concerné."],
+            ["Rôles", "Super Admin : accès complet à tout le back-office. Admin : accès limité aux sections cochées."],
+            ["Créer un compte", "Cliquez sur « Ajouter un admin ». Renseignez l'email, le nom, le rôle et les permissions. Un mot de passe temporaire est généré automatiquement — cliquez « ↺ Générer » pour en créer un nouveau, « ⎘ Copier » pour le copier, puis communiquez-le à la personne."],
+            ["Connexion", "La personne se connecte directement sur /admin avec l'email et le mot de passe temporaire. Aucun email n'est envoyé automatiquement."],
+            ["Réinitialiser un mot de passe", "Cliquez sur le bouton « 🔒 Mot de passe » à droite de l'administrateur concerné (sauf les super admins). Saisissez et confirmez le nouveau mot de passe (8 caractères minimum)."],
+            ["Révoquer un accès", "Cliquez sur l'icône corbeille sur la ligne de l'administrateur concerné."],
           ]}
         />
 
