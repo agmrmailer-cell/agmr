@@ -542,7 +542,28 @@ export default function PlanningGymClient({ courses, vacances = [] }) {
               fontFamily: 'inherit',
             }}
           >
-            <span style={{ fontSize: '2.4rem' }}>📅</span>
+            {/* Icône calendrier — style site */}
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Fond carte */}
+              <rect x="4" y="10" width="44" height="36" rx="4" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5"/>
+              {/* Bande du haut */}
+              <rect x="4" y="10" width="44" height="13" rx="4" fill="rgba(255,255,255,0.18)"/>
+              {/* Accroche gauche */}
+              <rect x="15" y="5" width="3" height="10" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+              {/* Accroche droite */}
+              <rect x="34" y="5" width="3" height="10" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+              {/* Ligne séparatrice */}
+              <line x1="4" y1="23" x2="48" y2="23" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
+              {/* Points grille — semaine */}
+              {[14,22,30,38].map(x => (
+                <rect key={x} x={x-4} y="29" width="8" height="5" rx="1.5" fill="rgba(255,255,255,0.25)" />
+              ))}
+              {[14,22,30,38].map(x => (
+                <rect key={x+'b'} x={x-4} y="37" width="8" height="5" rx="1.5" fill="rgba(255,255,255,0.15)" />
+              ))}
+              {/* Accent terracotta sur une case (aujourd'hui) */}
+              <rect x="18" y="29" width="8" height="5" rx="1.5" fill="#c4714a"/>
+            </svg>
             <div>
               <div style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', fontWeight: 600, marginBottom: 4 }}>Voir le planning</div>
               <div style={{ fontSize: '0.88rem', opacity: 0.8 }}>Affichage plein écran · orientation paysage</div>
