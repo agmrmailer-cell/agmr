@@ -50,7 +50,8 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { id: "ag",            label: "Assemblée générale", icon: "file" },
     { id: "tarifs",        label: "Tarifs",             icon: "file" },
     { divider: "" },
-    { id: "settings",      label: "Paramètres",         icon: "settings", always: true },
+    { id: "guide",         label: "Guide d'utilisation", icon: "file",     always: true },
+    { id: "settings",      label: "Paramètres",          icon: "settings", always: true },
     ...(isSuperAdmin ? [{ id: "access", label: "Gestion des accès", icon: "user", always: true }] : []),
   ]
 
