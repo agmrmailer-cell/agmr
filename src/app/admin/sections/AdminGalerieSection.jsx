@@ -47,8 +47,26 @@ function AlbumView({ album, photos, onBack, onDeleted, onRenamed, supabase }) {
   const [renaming, setRenaming]   = useState(false)
   const [newName, setNewName]     = useState(album)
   const [deleting, setDeleting]   = useState(false)
+  const [selecting, setSelecting] = useState(false)
+  const [selected, setSelected]   = useState(new Set())
   const fileRef = useRef()
   const [progress, setProgress]   = useState(null)
+
+  const toggleSelect = (id) => setSelected(prev => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
+
+  const deleteSelected = async () => {
+    if (!selected.size) return
+    if (!confirm(`Supprimer ${selected.size} photo${selected.size > 1 ? 's' : ''} ?`)) return
+    const ids = [...selected]
+    await supabase.from('galerie_photos').delete().in('id', ids)
+    setSelected(new Set())
+    setSelecting(false)
+    onRenamed(album, album)
+  }
 
   const renameAlbum = async () => {
     if (!newName.trim() || newName === album) { setRenaming(false); return }
