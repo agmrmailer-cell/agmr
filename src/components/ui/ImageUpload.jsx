@@ -155,28 +155,53 @@ function CropModal({ src, onConfirm, onCancel, defaultAspect = 16 / 9 }) {
       </div>
 
       {/* Barre basse */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 20px', background: '#0d1510', borderTop: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
-        {/* Zoom slider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, maxWidth: 320 }}>
-          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>Zoom</span>
-          <input
-            type="range" min={1} max={3} step={0.01}
-            value={zoom}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '12px 20px', background: '#0d1510', borderTop: '1px solid rgba(255,255,255,0.1)', flexShrink: 0, flexWrap: 'wrap' }}>
+
+        {/* Zoom */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 200 }}>
+          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.76rem', whiteSpace: 'nowrap', width: 36 }}>Zoom</span>
+          <input type="range" min={1} max={3} step={0.01} value={zoom}
             onChange={e => setZoom(Number(e.target.value))}
-            style={{ flex: 1, accentColor: '#b8451f' }}
-          />
-          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', minWidth: 32 }}>{zoom.toFixed(1)}×</span>
+            style={{ flex: 1, accentColor: '#b8451f' }}/>
+          <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.76rem', minWidth: 28 }}>{zoom.toFixed(1)}×</span>
         </div>
 
-        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', flex: 1 }}>
-          Déplacez l'image pour cadrer · Molette ou slider pour zoomer
-        </span>
+        {/* Rotation */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 240 }}>
+          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.76rem', whiteSpace: 'nowrap', width: 56 }}>Inclinaison</span>
+          {/* Bouton -90° */}
+          <button onClick={() => setRotation(r => ((r - 90 + 360) % 360))}
+            title="Rotation -90°"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#f0ece2', borderRadius: 4, width: 28, height: 28, cursor: 'pointer', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <input type="range" min={-180} max={180} step={0.5} value={rotation}
+            onChange={e => setRotation(Number(e.target.value))}
+            style={{ flex: 1, accentColor: '#b8451f' }}/>
+          {/* Bouton +90° */}
+          <button onClick={() => setRotation(r => (r + 90) % 360)}
+            title="Rotation +90°"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#f0ece2', borderRadius: 4, width: 28, height: 28, cursor: 'pointer', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+              <path d="M21 3v5h-5"/>
+            </svg>
+          </button>
+          <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.76rem', minWidth: 34, textAlign: 'right' }}>{rotation > 0 ? '+' : ''}{rotation}°</span>
+          {rotation !== 0 && (
+            <button onClick={() => setRotation(0)}
+              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', fontSize: '0.7rem', padding: '0 2px' }}
+              title="Remettre à 0°">↺</button>
+          )}
+        </div>
 
-        <button
-          onClick={handleConfirm}
-          disabled={loading}
-          style={{ background: '#b8451f', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 24px', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', fontSize: '0.96rem', fontWeight: 600, opacity: loading ? 0.7 : 1 }}
-        >
+        <div style={{ flex: 1 }}/>
+
+        <button onClick={handleConfirm} disabled={loading}
+          style={{ background: '#b8451f', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 24px', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', fontSize: '0.96rem', fontWeight: 600, opacity: loading ? 0.7 : 1, flexShrink: 0 }}>
           {loading ? 'Traitement…' : '✓ Valider le recadrage'}
         </button>
       </div>
