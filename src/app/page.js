@@ -114,7 +114,7 @@ export default async function HomePage() {
                 <div className="manifesto-vis">
                   <div className="manifesto-vis-photo" style={manifesto.photo_url ? { backgroundImage: `url(${manifesto.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}/>
                   <div className="manifesto-badge">
-                    <strong>{manifesto.badge ?? "L'epanouissement avant la performance"}</strong>
+                    <strong>{manifesto.badge ?? "L'épanouissement avant la performance"}</strong>
                     {manifesto.badge_meta ?? 'Charte AGMR — 2018'}
                   </div>
                 </div>
