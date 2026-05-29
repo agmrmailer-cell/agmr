@@ -155,8 +155,8 @@ export default async function HomePage() {
             <div className="container">
               <div className="section-head" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", maxWidth:"none" }}>
                 <div>
-                  <div className="section-eyebrow">A la une</div>
-                  <h2 className="section-title">Dernieres actualites</h2>
+                  <div className="section-eyebrow">À la une</div>
+                  <h2 className="section-title">Dernières actualités</h2>
                 </div>
                 <Link className="btn btn-ghost" href="/actualites">
                   Toutes les actualites →
