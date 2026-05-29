@@ -210,7 +210,7 @@ export default async function HomePage() {
               <div className="cta-banner">
                 <div style={{ position: "relative" }}>
                   <h3>{cta.titre ?? "Première séance d'essai gratuite."}</h3>
-                  <p>{cta.sous_titre ?? "Sur simple inscription par telephone ou en ligne. Aucun engagement."}</p>
+                  <p>{cta.sous_titre ?? "Sur simple inscription par téléphone ou en ligne. Aucun engagement."}</p>
                 </div>
                 <div style={{ display: "flex", gap: 12, position: "relative" }}>
                   <Link className="btn btn-light btn-lg" href={cta.cta1_lien ?? '/inscriptions'}>
