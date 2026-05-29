@@ -279,6 +279,38 @@ function AdminForm({ item, onSave, onCancel }) {
         </select>
       </div>
 
+      {/* Mot de passe temporaire — seulement à la création */}
+      {isNew && (
+        <div className="field">
+          <label>Mot de passe temporaire</label>
+          <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <input
+                type={showPwd ? "text" : "password"}
+                value={f.password}
+                onChange={e => setF(p => ({ ...p, password: e.target.value }))}
+                style={{ width: "100%", fontFamily: "monospace", paddingRight: 40 }}
+              />
+              <button type="button" onClick={() => setShowPwd(s => !s)}
+                style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--ink-mute)", fontSize: "0.8rem" }}>
+                {showPwd ? '🙈' : '👁'}
+              </button>
+            </div>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setF(p => ({ ...p, password: genPassword() }))}
+              title="Générer un nouveau mot de passe">
+              ↺ Générer
+            </button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={copyPwd}
+              style={{ minWidth: 80, color: copied ? "var(--green)" : undefined }}>
+              {copied ? '✓ Copié !' : '⎘ Copier'}
+            </button>
+          </div>
+          <span style={{ fontSize: "0.78rem", color: "var(--ink-mute)", marginTop: 4 }}>
+            Communiquez ce mot de passe à la personne — elle pourra le modifier depuis ses paramètres.
+          </span>
+        </div>
+      )}
+
       {f.role === 'admin' && (
         <div style={{ marginTop: 4 }}>
           <div style={{ fontWeight: 600, fontSize: "0.88rem", marginBottom: 14, color: "var(--ink-soft)" }}>
