@@ -269,12 +269,11 @@ export default function PlanningGymClient({ courses, vacances = [] }) {
     return out
   }, [visible])
 
-  return (
-    <section className="section">
-      <div className="container">
-
-        {/* ── Toolbar ── */}
-        <div className="planning-toolbar">
+  // ── Shared grid content (toolbar + grid + info) ──────────────
+  const planningContent = (isFullscreen = false) => (
+    <>
+      {/* ── Toolbar ── */}
+      <div className="planning-toolbar" style={isFullscreen ? { marginBottom: 12 } : undefined}>
           <div className="week-nav">
             <button className="icon-btn" onClick={() => setWeekOffset(weekOffset - 1)}><Icon name="chevronLeft" size={16}/></button>
             <button className="icon-btn" onClick={() => setWeekOffset(weekOffset + 1)}><Icon name="chevronRight" size={16}/></button>
