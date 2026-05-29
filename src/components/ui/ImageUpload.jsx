@@ -15,17 +15,42 @@ function createImage(url) {
   })
 }
 
-async function getCroppedBlob(imageSrc, pixelCrop, quality = 0.88) {
-  const image  = await createImage(imageSrc)
-  const canvas = document.createElement('canvas')
-  const ctx    = canvas.getContext('2d')
-  canvas.width  = pixelCrop.width
-  canvas.height = pixelCrop.height
+function toRad(deg) { return (deg * Math.PI) / 180 }
+
+async function getCroppedBlob(imageSrc, pixelCrop, rotation = 0, quality = 0.88) {
+  const image    = await createImage(imageSrc)
+  const canvas   = document.createElement('canvas')
+  const ctx      = canvas.getContext('2d')
+
+  // Zone sécurisée pour la rotation (diagonale × 2)
+  const maxSize  = Math.max(image.width, image.height)
+  const safeArea = 2 * Math.ceil((maxSize / 2) * Math.sqrt(2))
+
+  canvas.width  = safeArea
+  canvas.height = safeArea
+
+  // Rotation autour du centre
+  ctx.translate(safeArea / 2, safeArea / 2)
+  ctx.rotate(toRad(rotation))
+  ctx.translate(-safeArea / 2, -safeArea / 2)
+
+  // Dessin de l'image centrée dans la zone sécurisée
   ctx.drawImage(
     image,
-    pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height,
-    0, 0, pixelCrop.width, pixelCrop.height
+    safeArea / 2 - image.width  / 2,
+    safeArea / 2 - image.height / 2
   )
+
+  // Extraction du crop depuis l'image tournée
+  const data = ctx.getImageData(0, 0, safeArea, safeArea)
+  canvas.width  = pixelCrop.width
+  canvas.height = pixelCrop.height
+  ctx.putImageData(
+    data,
+    Math.round(0 - safeArea / 2 + image.width  * 0.5 - pixelCrop.x),
+    Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+  )
+
   return new Promise((res, rej) =>
     canvas.toBlob(b => b ? res(b) : rej(new Error('Conversion échouée')), 'image/webp', quality)
   )
