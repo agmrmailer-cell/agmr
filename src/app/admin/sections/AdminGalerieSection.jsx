@@ -137,20 +137,37 @@ function AlbumView({ album, photos, onBack, onDeleted, onRenamed, supabase }) {
           </h2>
         )}
 
-        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
-          {!renaming && (
-            <button className="btn btn-ghost btn-sm" onClick={() => setRenaming(true)}>
-              <Icon name="edit" size={13}/> Renommer
-            </button>
+        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto', flexWrap: 'wrap' }}>
+          {selecting ? (
+            <>
+              <span style={{ fontSize: '0.84rem', color: 'var(--ink-mute)', display: 'flex', alignItems: 'center' }}>
+                {selected.size} sélectionnée{selected.size > 1 ? 's' : ''}
+              </span>
+              <button className="btn btn-ghost btn-sm" onClick={() => selected.size === photos.length ? setSelected(new Set()) : setSelected(new Set(photos.map(p => p.id)))}>
+                {selected.size === photos.length ? 'Désélectionner tout' : 'Tout sélectionner'}
+              </button>
+              {selected.size > 0 && (
+                <button className="btn btn-sm" style={{ background: 'var(--accent)', color: '#fff', border: 'none' }} onClick={deleteSelected}>
+                  <Icon name="trash" size={13}/> Supprimer ({selected.size})
+                </button>
+              )}
+              <button className="btn btn-ghost btn-sm" onClick={() => { setSelecting(false); setSelected(new Set()) }}>Annuler</button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-ghost btn-sm" onClick={() => setSelecting(true)}>
+                ☑ Sélectionner
+              </button>
+              {!renaming && (
+                <button className="btn btn-ghost btn-sm" onClick={() => setRenaming(true)}>
+                  <Icon name="edit" size={13}/> Renommer
+                </button>
+              )}
+              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--accent)' }} onClick={deleteAlbum} disabled={deleting}>
+                <Icon name="trash" size={13}/> Supprimer l'album
+              </button>
+            </>
           )}
-          <button
-            className="btn btn-ghost btn-sm"
-            style={{ color: 'var(--accent)' }}
-            onClick={deleteAlbum}
-            disabled={deleting}
-          >
-            <Icon name="trash" size={13}/> Supprimer l'album
-          </button>
         </div>
       </div>
 
