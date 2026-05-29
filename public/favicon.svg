@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Fond -->
+  <rect width="120" height="120" rx="24" fill="#fbf6ea"/>
+  <!-- Soleil -->
+  <circle cx="78" cy="36" r="7" fill="#b8451f"/>
+  <!-- Silhouette montagne -->
+  <path d="M 14 92 L 42 50 L 60 72 L 78 48 L 106 92 Z" stroke="#1a3a26" stroke-width="3.5" fill="none"/>
+  <!-- Accents sommets -->
+  <path d="M 78 48 L 86 60 L 90 56 Z" fill="#1a3a26"/>
+  <path d="M 42 50 L 50 60 L 54 56 Z" fill="#1a3a26"/>
+  <!-- Chemin pointillé -->
+  <path d="M 18 104 Q 60 96 102 104" stroke="#1a3a26" stroke-width="2.5" fill="none" stroke-dasharray="1.5,5"/>
+</svg>

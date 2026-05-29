@@ -17,6 +17,10 @@ const sourceSans = Source_Sans_3({
 export const metadata = {
   title: 'AGMR — Gym Marche Rambouillet',
   description: 'Association Gym Marche Rambouillet — Gymnastique, randonnée et marche nordique depuis 1970.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({ children }) {
