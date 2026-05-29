@@ -96,9 +96,10 @@ export default function ContactClient() {
   return (
     <section className="section">
       <div className="container">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 56 }}>
+        <div className="contact-grid">
 
-          <div>
+          {/* Formulaire en premier (sera affiché au-dessus sur mobile) */}
+          <div className="contact-form-col">
             <h3 style={{ marginBottom: 24 }}>Coordonnées</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
