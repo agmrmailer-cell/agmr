@@ -163,7 +163,11 @@ export default async function HomePage() {
               </div>
               <div className="news-split">
                 <article className="news-feature">
-                  <div className="news-feature-img"/>
+                  <div className="news-feature-img" style={actualites[0].image_url ? {
+                    backgroundImage: `url(${actualites[0].image_url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  } : undefined}/>
                   <div className="news-feature-body">
                     <div className="news-meta">
                       <span className={`news-cat news-cat-${actualites[0].cat}`}>
