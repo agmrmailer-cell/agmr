@@ -204,6 +204,7 @@ export default function ImageUpload({ value, onChange, folder = 'medias', height
           src={rawSrc}
           onConfirm={handleCropConfirm}
           onCancel={handleCropCancel}
+          defaultAspect={defaultAspect}
         />
       )}
 
