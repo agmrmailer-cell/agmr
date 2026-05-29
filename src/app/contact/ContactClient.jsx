@@ -133,7 +133,8 @@ export default function ContactClient() {
             </div>
           </div>
 
-          <div>
+          {/* Formulaire — reste en premier sur mobile (order: 1) */}
+          <div className="contact-form-col">
             <h3 style={{ marginBottom: 24 }}>Formulaire de contact</h3>
             <form className="form" onSubmit={submit}>
               <div style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }} aria-hidden="true">
