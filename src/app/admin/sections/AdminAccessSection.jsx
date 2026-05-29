@@ -163,9 +163,8 @@ export default function AdminAccessSection() {
 
       {/* Info box */}
       <div style={{ marginTop: 24, padding: "14px 18px", background: "var(--bg-deep)", borderRadius: "var(--r-sm)", fontSize: "0.84rem", color: "var(--ink-mute)", border: "1px solid var(--line)" }}>
-        <strong style={{ color: "var(--ink-soft)" }}>Invitation :</strong> cliquer sur « Ajouter un admin » envoie automatiquement un e-mail d'invitation
-        à la personne pour qu'elle définisse son mot de passe. Elle peut ensuite se connecter sur{' '}
-        <code>/admin</code>.{' '}
+        <strong style={{ color: "var(--ink-soft)" }}>Création de compte :</strong> renseignez l'email, choisissez un mot de passe temporaire (ou générez-en un), puis communiquez-le à la personne.
+        Elle se connecte sur <code>/admin</code> et peut modifier son mot de passe depuis les paramètres.
         Un <em>super admin</em> a accès à tout. Un <em>admin classique</em> n'accède qu'aux sections cochées.
       </div>
 
