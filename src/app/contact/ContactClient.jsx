@@ -98,8 +98,8 @@ export default function ContactClient() {
       <div className="container">
         <div className="contact-grid">
 
-          {/* Formulaire en premier (sera affiché au-dessus sur mobile) */}
-          <div className="contact-form-col">
+          {/* Coordonnées — passe sous le formulaire sur mobile (order: 2) */}
+          <div className="contact-info-col">
             <h3 style={{ marginBottom: 24 }}>Coordonnées</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
