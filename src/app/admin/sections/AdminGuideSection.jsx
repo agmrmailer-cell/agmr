@@ -166,11 +166,13 @@ function GuideBlock({ icon, title, section, items }) {
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}>
       {/* En-tête */}
-      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--line-soft)', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '1.3rem' }}>{icon}</span>
+      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--line-soft)', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'var(--green-tint)', border: '1px solid var(--green-soft)', display: 'grid', placeItems: 'center', color: 'var(--green)', flexShrink: 0 }}>
+          {icon}
+        </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--ink)' }}>{title}</div>
-          <div style={{ fontSize: '0.76rem', color: 'var(--ink-mute)', marginTop: 1, letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--ink-mute)', marginTop: 2, letterSpacing: '0.04em' }}>
             Menu : {section}
           </div>
         </div>
