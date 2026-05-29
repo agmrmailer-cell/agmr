@@ -322,7 +322,6 @@ function AdminForm({ item, onSave, onCancel }) {
 
 function ResetPasswordForm({ target, onSave, onCancel }) {
   const [pwd, setPwd]       = useState('')
-  // eslint-disable-next-line no-unused-vars
   const [pwd2, setPwd2]     = useState('')
   const [show, setShow]     = useState(false)
   const [saving, setSaving] = useState(false)
