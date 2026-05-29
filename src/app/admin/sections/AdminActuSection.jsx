@@ -138,11 +138,12 @@ export default function AdminActuSection() {
               <textarea rows={5} value={editing.excerpt} onChange={e => setEditing({ ...editing, excerpt: e.target.value })}/>
             </div>
             <ImageUpload
-              label="Image d'illustration"
+              label="Image d'illustration — format 16:9 (bloc principal de la home)"
               value={editing.image_url}
               onChange={url => setEditing({ ...editing, image_url: url })}
               folder="actualites"
               height={160}
+              defaultAspect={16 / 9}
             />
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 4 }}>
               <button className="btn btn-ghost" onClick={() => setEditing(null)}>Annuler</button>
