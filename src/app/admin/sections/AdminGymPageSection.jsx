@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 import PhotoUpload from '@/components/admin/PhotoUpload'
 import HelpTip from '@/components/ui/HelpTip'
+import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 
 const BLOCK_META = {
   header:    { label: 'En-tête de page',          desc: 'Accroche, titre principal, chapeau' },
@@ -81,7 +82,7 @@ export default function AdminGymPageSection() {
   }
   const addBlock = async (key) => {
     const maxOrdre = Math.max(0, ...blocks.map(b => b.ordre ?? 0))
-    await supabase.from('gym_page_blocks').insert({ block_key: key, label: BLOCK_META[key].label, visible: true, content: {}, ordre: maxOrdre + 10 })
+    await supabase.from('gym_page_blocks').insert({ block_key: key, label: (genericType(key) ? (GENERIC_BLOCKS.find(g => g.type === genericType(key))?.label ?? key) : (BLOCK_META[key]?.label ?? key)), visible: true, content: {}, ordre: maxOrdre + 10 })
     setShowCatalogue(false)
     load()
   }
@@ -178,8 +179,8 @@ export default function AdminGymPageSection() {
               return (
                 <div key={block.block_key} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, opacity: block.visible ? 1 : 0.5 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === 0} onClick={() => moveBlock(idx, -1)}><Icon name="chevron-up" size={12}/></button>
-                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === blocks.length - 1} onClick={() => moveBlock(idx, 1)}><Icon name="chevron-down" size={12}/></button>
+                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === 0} onClick={() => moveBlock(idx, -1)}><Icon name="chevronUp" size={12}/></button>
+                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === blocks.length - 1} onClick={() => moveBlock(idx, 1)}><Icon name="chevronDown" size={12}/></button>
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{meta.label}</div>
@@ -287,18 +288,25 @@ export default function AdminGymPageSection() {
       {/* ── Catalogue modal ── */}
       {showCatalogue && (
         <Modal title="Ajouter un bloc" onClose={() => setShowCatalogue(false)}>
-          {catalogueItems.length === 0 ? (
-            <p style={{ color: "var(--ink-mute)" }}>Tous les blocs sont déjà présents sur la page.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {catalogueItems.map(([key, meta]) => (
-                <button key={key} onClick={() => addBlock(key)} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 18px", textAlign: "left", cursor: "pointer", display: "flex", flexDirection: "column", gap: 2 }}>
-                  <span style={{ fontWeight: 600 }}>{meta.label}</span>
-                  <span style={{ fontSize: "0.82rem", color: "var(--ink-mute)" }}>{meta.desc}</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {catalogueItems.length > 0 && <>
+                <div style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--ink-mute)", marginBottom: 4 }}>Blocs de page</div>
+                {catalogueItems.map(([key, meta]) => (
+                  <button key={key} onClick={() => addBlock(key)} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 18px", textAlign: "left", cursor: "pointer", display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontWeight: 600 }}>{meta.label}</span>
+                    <span style={{ fontSize: "0.82rem", color: "var(--ink-mute)" }}>{meta.desc}</span>
+                  </button>
+                ))}
+                <div style={{ margin: "8px 0 4px", borderTop: "1px solid var(--line-soft)" }}/>
+              </>}
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--ink-mute)", marginBottom: 4 }}>Blocs réutilisables</div>
+              {GENERIC_BLOCKS.map(g => (
+                <button key={g.type} onClick={() => addBlock(`${g.type}_${Date.now()}`)} style={{ background: "var(--bg-deep)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 18px", textAlign: "left", cursor: "pointer", display: "flex", flexDirection: "column", gap: 2 }}>
+                  <span style={{ fontWeight: 600 }}>{g.label}</span>
+                  <span style={{ fontSize: "0.82rem", color: "var(--ink-mute)" }}>{g.desc}</span>
                 </button>
               ))}
             </div>
-          )}
         </Modal>
       )}
 
@@ -415,6 +423,49 @@ function BlockForm({ block, onSave, onCancel }) {
         </div>
       </>}
 
+
+      {/* Blocs génériques */}
+      {genericType(key) === 'texte' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'citation' && <>
+        <div className="field"><label>Citation</label>
+          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+        </div>
+        <div className="field"><label>Auteur</label>
+          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
+        </div>
+        <div className="field"><label>Rôle</label>
+          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'cta' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte du bouton</label>
+          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
+        </div>
+        <div className="field"><label>Lien du bouton</label>
+          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
+        </div>
+      </>}
+      {genericType(key) === 'alerte' && <>
+        <div className="field"><label>Titre (optionnel)</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(block.block_key, c)}>Enregistrer</button>
@@ -443,6 +494,49 @@ function DiscForm({ disc, onSave, onCancel }) {
         <label>Description courte</label>
         <textarea rows={3} value={f.description} onChange={e => u('description', e.target.value)} placeholder="Renforcement musculaire profond, posture, respiration."/>
       </div>
+
+      {/* Blocs génériques */}
+      {genericType(key) === 'texte' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'citation' && <>
+        <div className="field"><label>Citation</label>
+          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+        </div>
+        <div className="field"><label>Auteur</label>
+          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
+        </div>
+        <div className="field"><label>Rôle</label>
+          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'cta' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte du bouton</label>
+          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
+        </div>
+        <div className="field"><label>Lien du bouton</label>
+          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
+        </div>
+      </>}
+      {genericType(key) === 'alerte' && <>
+        <div className="field"><label>Titre (optionnel)</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(f)}>Enregistrer</button>
@@ -473,6 +567,49 @@ function AnimForm({ anim, onSave, onCancel, supabase }) {
         <label>Disciplines enseignées</label>
         <input value={f.disciplines} onChange={e => u('disciplines', e.target.value)} placeholder="Pilates, Yoga, Stretching"/>
       </div>
+
+      {/* Blocs génériques */}
+      {genericType(key) === 'texte' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'citation' && <>
+        <div className="field"><label>Citation</label>
+          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+        </div>
+        <div className="field"><label>Auteur</label>
+          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
+        </div>
+        <div className="field"><label>Rôle</label>
+          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
+        </div>
+      </>}
+      {genericType(key) === 'cta' && <>
+        <div className="field"><label>Titre</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte du bouton</label>
+          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
+        </div>
+        <div className="field"><label>Lien du bouton</label>
+          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
+        </div>
+      </>}
+      {genericType(key) === 'alerte' && <>
+        <div className="field"><label>Titre (optionnel)</label>
+          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
+        </div>
+        <div className="field"><label>Texte</label>
+          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+        </div>
+      </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(f)}>Enregistrer</button>

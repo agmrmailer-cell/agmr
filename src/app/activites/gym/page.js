@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import Link from 'next/link'
+import GenericBlockRenderer from '@/components/blocks/GenericBlockRenderer'
 import Header from '@/components/shell/Header'
 import Footer from '@/components/shell/Footer'
 import { getGymPageBlocks, getGymDisciplines, getGymAnimateurs } from '@/lib/queries'
@@ -160,7 +161,7 @@ export default async function GymPage() {
                       )
 
                     default:
-                      return null
+                      return <GenericBlockRenderer key={block.block_key} block={block} />
                   }
                 })}
 

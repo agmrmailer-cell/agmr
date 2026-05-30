@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import Link from 'next/link'
+import GenericBlockRenderer from '@/components/blocks/GenericBlockRenderer'
 import Header from '@/components/shell/Header'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
@@ -196,7 +197,7 @@ export default async function AssoPage() {
                     }
 
                     default:
-                      return null
+                      return <GenericBlockRenderer key={block.block_key} block={block} />
                   }
                 })}
               </div>
