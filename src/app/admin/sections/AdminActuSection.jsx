@@ -131,11 +131,11 @@ export default function AdminActuSection() {
               </div>
             </div>
             <div className="field">
-              <label>Titre</label>
+              <label>Titre <HelpTip text="Le titre apparaît en gras sur la liste des actualités et sur la page de l'article. Soyez clair et accrocheur." position="right" /></label>
               <input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })}/>
             </div>
             <div className="field">
-              <label>Contenu</label>
+              <label>Contenu <HelpTip text="Le texte de l'article. Rédigez ici l'intégralité du contenu que les visiteurs liront. Pas de mise en forme spéciale, juste du texte." position="right" /></label>
               <textarea rows={5} value={editing.excerpt} onChange={e => setEditing({ ...editing, excerpt: e.target.value })}/>
             </div>
             <ImageUpload
