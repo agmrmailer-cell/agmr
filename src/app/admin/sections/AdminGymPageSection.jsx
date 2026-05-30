@@ -39,6 +39,7 @@ export default function AdminGymPageSection() {
   const [editing, setEditing]         = useState(null)      // block
   const [editingDisc, setEditingDisc] = useState(null)
   const [editingAnim, setEditingAnim] = useState(null)
+  const [showCatalogue, setShowCatalogue] = useState(false)
   const supabase = createClient()
 
   const load = async () => {
@@ -65,6 +66,27 @@ export default function AdminGymPageSection() {
     setEditing(null)
     load()
   }
+  const moveBlock = async (idx, dir) => {
+    const target = blocks[idx + dir]
+    const current = blocks[idx]
+    if (!target) return
+    await supabase.from('gym_page_blocks').update({ ordre: target.ordre }).eq('id', current.id)
+    await supabase.from('gym_page_blocks').update({ ordre: current.ordre }).eq('id', target.id)
+    load()
+  }
+  const deleteBlock = async (block) => {
+    if (!confirm(`Supprimer le bloc "${BLOCK_META[block.block_key]?.label ?? block.block_key}" ?`)) return
+    await supabase.from('gym_page_blocks').delete().eq('id', block.id)
+    load()
+  }
+  const addBlock = async (key) => {
+    const maxOrdre = Math.max(0, ...blocks.map(b => b.ordre ?? 0))
+    await supabase.from('gym_page_blocks').insert({ block_key: key, label: BLOCK_META[key].label, visible: true, content: {}, ordre: maxOrdre + 10 })
+    setShowCatalogue(false)
+    load()
+  }
+  const existingKeys = new Set(blocks.map(b => b.block_key))
+  const catalogueItems = Object.entries(BLOCK_META).filter(([key]) => !existingKeys.has(key))
 
   // ── Discipline ops ───────────────────────────────────────────
   const saveDisc = async (data) => {
