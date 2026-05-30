@@ -2019,3 +2019,18 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
 }
 .nav-item { position: relative; }
 .nav-item svg { display: none; }
+
+/* ===== Banner ticker ===== */
+@keyframes banner-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.banner-ticker {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: banner-scroll 28s linear infinite;
+  padding: 0 24px;
+  will-change: transform;
+}
+.banner-ticker:hover { animation-play-state: paused; }
