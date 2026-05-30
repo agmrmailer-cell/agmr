@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import GalerieClient from './GalerieClient'
 import { getGaleriePhotos } from '@/lib/queries'
@@ -19,6 +20,7 @@ export default async function GaleriePage() {
 
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
         <div className="page-header">

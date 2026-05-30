@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 
 export const metadata = { title: "S'inscrire — AGMR" }
@@ -7,6 +8,7 @@ export const metadata = { title: "S'inscrire — AGMR" }
 export default function InscriptionsPage() {
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
         <div className="page-header">

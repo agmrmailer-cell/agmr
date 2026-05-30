@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import GenericBlockRenderer from '@/components/blocks/GenericBlockRenderer'
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getNordiquePageBlocks } from '@/lib/queries'
@@ -23,6 +24,7 @@ export default async function NordiquePage() {
 
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
 

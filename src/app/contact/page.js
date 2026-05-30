@@ -1,4 +1,5 @@
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import ContactClient from './ContactClient'
 
@@ -7,6 +8,7 @@ export const metadata = { title: 'Contact — AGMR' }
 export default function ContactPage() {
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
         <div className="page-header">

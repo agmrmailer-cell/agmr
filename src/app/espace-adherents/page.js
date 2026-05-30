@@ -1,4 +1,5 @@
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
@@ -8,6 +9,7 @@ export const metadata = { title: "Espace Adhérents — AGMR" }
 export default function EspacePage() {
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
         <div className="login-shell">

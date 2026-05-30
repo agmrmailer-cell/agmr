@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import Header from '@/components/shell/Header'
+import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import PlanningRandoClient from './PlanningRandoClient'
 import { getRandoSorties } from '@/lib/queries'
@@ -10,6 +11,7 @@ export default async function PlanningRandoPage() {
   const sorties = await getRandoSorties()
   return (
     <div className="page-shell">
+      <Banner/>
       <Header/>
       <main className="page-main">
         <div className="page-header">
