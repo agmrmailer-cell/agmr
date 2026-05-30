@@ -30,6 +30,7 @@ import AdminBackupSection from './sections/AdminBackupSection'
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   const router = useRouter()
+  const { helpMode, setHelpMode } = useHelp()
 
   const allItems = [
     { id: "dash",          label: "Tableau de bord",    icon: "home",          always: true },
