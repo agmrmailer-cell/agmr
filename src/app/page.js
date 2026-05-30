@@ -233,22 +233,25 @@ export default async function HomePage() {
                 </section>
               )
 
+            case 'stats_band':
+              return (
+                <section key="stats_band" className="stats-band">
+                  <div className="stats-grid">
+                    {stats.band.map(([n, l]) => (
+                      <div key={n} className="stat-item">
+                        <div className="stat-num">{n}</div>
+                        <div className="stat-label">{l}</div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )
+
             default:
               return <GenericBlockRenderer key={block.block_key} block={block} />
           }
         })}
 
-        {/* STATS — always shown, not a block */}
-        <section className="stats-band">
-          <div className="stats-grid">
-            {stats.band.map(([n, l]) => (
-              <div key={n} className="stat-item">
-                <div className="stat-num">{n}</div>
-                <div className="stat-label">{l}</div>
-              </div>
-            ))}
-          </div>
-        </section>
 
       </main>
       <Footer/>

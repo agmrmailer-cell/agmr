@@ -13,6 +13,7 @@ const BLOCK_META = {
   trio_nordique: { label: 'Carte Marche nordique',    desc: 'Photo, titre, description, stat, lien' },
   manifesto:     { label: 'Section Philosophie',      desc: 'Photo, texte éditorial, citation, boutons' },
   actualites:    { label: 'Section Actualités',       desc: 'Reprend automatiquement les dernières actualités' },
+  stats_band:    { label: 'Bandeau de statistiques',  desc: 'Chiffres clés (adhérents, cours, animateurs…) — géré dans Statistiques' },
   cta_banner:    { label: 'Bandeau CTA',              desc: "Appel à l'action en bas de page" },
 }
 
