@@ -170,7 +170,7 @@ export default function AdminTarifsSection() {
     <>
       <div className="admin-head">
         <div>
-          <h1>Tarifs</h1>
+          <h1>Tarifs <HelpTip text="Gérez les tarifs d'adhésion affichés sur le site. Cliquez directement dans un champ pour modifier la valeur, puis appuyez sur Entrée ou cliquez ailleurs pour enregistrer. Un ✓ vert confirme la sauvegarde." position="right" /></h1>
           <p className="muted" style={{ margin: 0 }}>
             Saison 2025-2026 — enregistrement automatique ·{' '}
             <strong style={{ color: 'var(--green)' }}>données Supabase</strong>
