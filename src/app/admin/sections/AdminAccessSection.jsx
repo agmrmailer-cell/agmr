@@ -279,7 +279,7 @@ function AdminForm({ item, onSave, onCancel }) {
       </div>
 
       <div className="field">
-        <label>Rôle</label>
+        <label>Rôle <HelpTip text="Le rôle détermine le niveau d'accès. Super admin : accès à tout le back-office. Admin classique : accès uniquement aux sections que vous cochez dans la liste des permissions." position="right" /></label>
         <select value={f.role} onChange={e => setF(p => ({ ...p, role: e.target.value }))}>
           <option value="admin">Admin classique (permissions limitées)</option>
           <option value="super_admin">Super admin (accès complet)</option>
