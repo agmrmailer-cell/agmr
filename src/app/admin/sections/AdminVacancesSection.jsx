@@ -86,7 +86,7 @@ export default function AdminVacancesSection() {
           <p className="muted" style={{ margin: 0 }}>Périodes sans cours · Zone C (Île-de-France)</p>
         </div>
         <button className="btn btn-primary" onClick={() => setEditing(blank)}>
-          <Icon name="plus" size={14}/> Ajouter une période
+          <Icon name="plus" size={14}/> Ajouter une période <HelpTip text="Crée une nouvelle période de vacances. Donnez-lui un nom (ex : 'Vacances de Noël 2025-2026'), choisissez les dates de début et de fin, et la zone scolaire. Les cours seront automatiquement masqués pendant ces dates." position="bottom" />
         </button>
       </div>
 
