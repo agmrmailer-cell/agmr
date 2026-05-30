@@ -7,10 +7,12 @@ async function getActiveBanner() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     { auth: { persistSession: false } }
   )
+  const now = new Date().toISOString()
   const { data } = await supabase
     .from('site_banners')
     .select('*')
     .eq('active', true)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
