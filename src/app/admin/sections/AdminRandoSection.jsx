@@ -175,10 +175,10 @@ function RandoForm({ item, onSave, onCancel }) {
   return (
     <div className="form">
       <div className="row-2">
-        <div className="field"><label>Date</label>
+        <div className="field"><label>Date <HelpTip text="La date de la sortie. Les sorties sont affichées dans l'ordre chronologique sur le planning public." position="right" /></label>
           <input type="date" value={f.date} onChange={e => u("date", e.target.value)}/>
         </div>
-        <div className="field"><label>Type</label>
+        <div className="field"><label>Type <HelpTip text="Le type de sortie détermine dans quel planning elle apparaît (Rando jeudi, Randonnée dimanche, Marche nordique mardi ou samedi, etc.)." position="right" /></label>
           <select value={f.type} onChange={e => u("type", e.target.value)}>
             {[["rando-jeudi","Rando jeudi"],["rando-dimanche","Rando dimanche"],["nordique-mardi","Nordique mardi"],["nordique-samedi","Nordique samedi"],["sortie-journee","Sortie journée"],["sejour","Séjour"],["nocturne","Nocturne"]].map(([v,l]) => <option key={v} value={v}>{l}</option>)}
           </select>
