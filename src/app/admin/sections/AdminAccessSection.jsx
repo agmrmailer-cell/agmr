@@ -115,7 +115,7 @@ export default function AdminAccessSection() {
           <p className="muted" style={{ margin: 0 }}>Administrateurs et leurs permissions</p>
         </div>
         <button className="btn btn-primary" onClick={() => setAdding(true)}>
-          <Icon name="plus" size={14}/> Ajouter un admin
+          <Icon name="plus" size={14}/> Ajouter un admin <HelpTip text="Crée un nouveau compte administrateur. Vous devrez renseigner l'adresse email de la personne, choisir son rôle (accès complet ou limité) et lui communiquer le mot de passe temporaire généré." position="bottom" />
         </button>
       </div>
 
