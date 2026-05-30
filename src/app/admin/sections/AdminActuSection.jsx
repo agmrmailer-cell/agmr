@@ -77,7 +77,7 @@ export default function AdminActuSection() {
           <p className="muted" style={{ margin: 0 }}>{items.length} articles — <strong style={{ color: "var(--green)" }}>données Supabase</strong></p>
         </div>
         <button className="btn btn-primary" onClick={() => setEditing(blank)}>
-          <Icon name="plus" size={16}/> Nouvel article
+          <Icon name="plus" size={16}/> Nouvel article <HelpTip text="Ouvre le formulaire pour rédiger un nouvel article. Renseignez la catégorie, la date, le titre et le contenu. Vous pouvez aussi ajouter une photo d'illustration." position="bottom" />
         </button>
       </div>
 
