@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
+import HelpTip from '@/components/ui/HelpTip'
 
 // Toutes les sections disponibles — id = clé utilisée dans le sidebar
 export const ALL_SECTIONS = [
