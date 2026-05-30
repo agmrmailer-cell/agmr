@@ -263,7 +263,7 @@ function AdminForm({ item, onSave, onCancel }) {
     <div className="form">
       <div className="row-2">
         <div className="field">
-          <label>Email (compte Supabase Auth)</label>
+          <label>Email (compte Supabase Auth) <HelpTip text="L'adresse email de la personne. Elle servira d'identifiant de connexion. Elle ne peut pas être modifiée après la création du compte." position="right" /></label>
           <input
             value={f.email}
             onChange={e => setF(p => ({ ...p, email: e.target.value }))}
