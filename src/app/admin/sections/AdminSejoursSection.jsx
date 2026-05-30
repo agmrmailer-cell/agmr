@@ -91,7 +91,7 @@ export default function AdminSejoursSection() {
     <>
       <div className="admin-head">
         <div>
-          <h1>Séjours</h1>
+          <h1>Séjours <HelpTip text="Gérez les voyages et séjours organisés par l'association. Chaque séjour peut être ouvert aux inscriptions, marqué complet ou archivé une fois terminé." position="right" /></h1>
           <p className="muted" style={{ margin: 0 }}>
             {items.length} séjour{items.length > 1 ? 's' : ''} · {items.filter(s => s.statut === 'ouvert').length} ouvert{items.filter(s => s.statut === 'ouvert').length !== 1 ? 's' : ''}
             {' — '}<strong style={{ color: 'var(--green)' }}>données Supabase</strong>
