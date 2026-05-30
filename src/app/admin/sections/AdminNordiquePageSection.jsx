@@ -60,7 +60,7 @@ export default function AdminNordiquePageSection() {
     <>
       <div className="admin-head">
         <div>
-          <h1>Page Marche Nordique</h1>
+          <h1>Page Marche Nordique <HelpTip text="Gérez le contenu de la page publique dédiée à la Marche Nordique. Chaque bloc correspond à une section de la page : en-tête, introduction, déroulé d'une séance et horaires. Modifiez les textes ou masquez des sections si besoin." position="right" /></h1>
           <p className="muted" style={{ margin: 0 }}>Contenu et blocs de la page</p>
         </div>
         <a className="btn btn-ghost btn-sm" href="/activites/nordique" target="_blank" rel="noopener noreferrer">Voir la page →</a>
