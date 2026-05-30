@@ -141,7 +141,7 @@ export default function AdminComiteSection() {
         <>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
             <button className="btn btn-primary" onClick={() => setEditingA({ nom: '', role: '', disciplines: '', photo_url: '' })}>
-              <Icon name="plus" size={14}/> Ajouter un animateur
+              <Icon name="plus" size={14}/> Ajouter un animateur <HelpTip text="Ajoute un animateur à la liste de l'équipe gym. Renseignez son nom, son titre et les disciplines qu'il enseigne (ex : Pilates, Yoga). L'interrupteur Visible/Masqué permet de le cacher temporairement." position="bottom" />
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
