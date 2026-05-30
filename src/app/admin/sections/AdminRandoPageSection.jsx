@@ -37,6 +37,7 @@ export default function AdminRandoPageSection() {
   const [loading, setLoading]       = useState(true)
   const [editing, setEditing]       = useState(null)   // block
   const [editingGroupe, setEditingGroupe] = useState(null)
+  const [showCatalogue, setShowCatalogue] = useState(false)
   const supabase = createClient()
 
   const load = async () => {
