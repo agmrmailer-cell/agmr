@@ -136,28 +136,42 @@ export default function AdminRandoPageSection() {
 
       {/* ── Blocs tab ── */}
       {activeTab === 'blocs' && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {blocks.map(block => {
-            const meta = BLOCK_META[block.block_key] ?? { label: block.block_key, desc: '' }
-            return (
-              <div key={block.block_key} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, opacity: block.visible ? 1 : 0.5 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{meta.label}</div>
-                  <div className="muted" style={{ fontSize: "0.82rem", marginTop: 2 }}>{meta.desc}</div>
+        <>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+            <button className="btn btn-ghost btn-sm" onClick={() => setShowCatalogue(true)}>
+              <Icon name="plus" size={13}/> Ajouter un bloc
+            </button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {blocks.map((block, idx) => {
+              const meta = BLOCK_META[block.block_key] ?? { label: block.block_key, desc: '' }
+              return (
+                <div key={block.block_key} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, opacity: block.visible ? 1 : 0.5 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === 0} onClick={() => moveBlock(idx, -1)}><Icon name="chevron-up" size={12}/></button>
+                    <button className="icon-btn" style={{ padding: 2 }} disabled={idx === blocks.length - 1} onClick={() => moveBlock(idx, 1)}><Icon name="chevron-down" size={12}/></button>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{meta.label}</div>
+                    <div className="muted" style={{ fontSize: "0.82rem", marginTop: 2 }}>{meta.desc}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: "0.78rem", color: "var(--ink-mute)" }}>
+                      {block.visible ? 'Visible' : 'Masqué'}
+                    </span>
+                    <button className={`switch ${block.visible ? 'on' : ''}`} onClick={() => toggleBlockVisible(block.block_key, block.visible)}/>
+                    <button className="icon-btn" onClick={() => setEditing(block)}>
+                      <Icon name="edit" size={14}/>
+                    </button>
+                    <button className="icon-btn" onClick={() => deleteBlock(block)} style={{ color: 'var(--red)' }}>
+                      <Icon name="trash" size={14}/>
+                    </button>
+                  </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span style={{ fontSize: "0.78rem", color: "var(--ink-mute)" }}>
-                    {block.visible ? 'Visible' : 'Masqué'}
-                  </span>
-                  <button className={`switch ${block.visible ? 'on' : ''}`} onClick={() => toggleBlockVisible(block.block_key, block.visible)}/>
-                  <button className="icon-btn" onClick={() => setEditing(block)}>
-                    <Icon name="edit" size={14}/>
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        </>
       )}
 
       {/* ── Groupes du jeudi tab ── */}
