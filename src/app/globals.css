@@ -2029,7 +2029,7 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
-  animation: banner-scroll 28s linear infinite;
+  animation: banner-scroll 45s linear infinite;
   padding: 0 24px;
   will-change: transform;
 }
