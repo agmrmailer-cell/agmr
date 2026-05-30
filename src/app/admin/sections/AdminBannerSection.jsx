@@ -10,7 +10,31 @@ const TYPE_LABELS = {
   urgent:  { label: 'Urgent',       color: '#dc2626',       bg: '#fff5f5',            border: '#fecaca' },
 }
 
-const BLANK = { message: '', type: 'info', lien: '', lien_texte: '' }
+const BLANK = { message: '', type: 'info', lien: '', lien_texte: '', expires_at: '' }
+
+function formatExpiry(iso) {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (d < new Date()) return { label: 'Expiré', expired: true }
+  return {
+    label: d.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    expired: false,
+  }
+}
+
+// Convertit un datetime-local (YYYY-MM-DDTHH:MM) en ISO pour Supabase
+function localToISO(local) {
+  if (!local) return null
+  return new Date(local).toISOString()
+}
+
+// Convertit un ISO en datetime-local pour l'input
+function isoToLocal(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const pad = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 export default function AdminBannerSection() {
   const [banners, setBanners]   = useState([])
