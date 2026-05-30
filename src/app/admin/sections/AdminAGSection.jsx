@@ -100,7 +100,7 @@ export default function AdminAGSection() {
               Saison {saison}
             </h3>
             <button className="btn btn-ghost btn-sm" onClick={() => setEditing({ saison, titre: '', url: '', ordre: (bySaison[saison].length + 1) })}>
-              <Icon name="plus" size={13}/> Ajouter un document
+              <Icon name="plus" size={13}/> Ajouter un document <HelpTip text="Ajoute un document PDF à cette saison. Donnez-lui un titre (ex : 'Procès-verbal AG') puis chargez le fichier PDF depuis votre ordinateur." position="bottom" />
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
