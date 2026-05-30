@@ -76,7 +76,7 @@ function ExportCard({ lastBackup, setLastBackup }) {
           <Icon name="download" size={18}/>
         </div>
         <div>
-          <div style={{ fontWeight: 700 }}>Export JSON manuel</div>
+          <div style={{ fontWeight: 700 }}>Export JSON manuel <HelpTip text="Un fichier JSON contient toutes les données du site (planning, actualités, tarifs…). Vous pouvez le conserver sur votre ordinateur ou une clé USB comme copie de sécurité." /></div>
           <div style={{ fontSize: '0.82rem', color: 'var(--ink-mute)' }}>{ALL_TABLES.length} tables · téléchargement direct</div>
         </div>
       </div>
