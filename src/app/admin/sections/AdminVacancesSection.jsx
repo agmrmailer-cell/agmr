@@ -171,7 +171,7 @@ function VacancesForm({ item, onSave, onCancel }) {
         </div>
       )}
       <div className="field">
-        <label>Zone scolaire</label>
+        <label>Zone scolaire <HelpTip text="Rambouillet est en Zone C. Laissez ce paramètre sur Zone C sauf si vous gérez des cours dans une autre région." position="right" /></label>
         <select value={f.zone} onChange={e => u('zone', e.target.value)}>
           <option value="A">Zone A</option>
           <option value="B">Zone B</option>
