@@ -36,7 +36,7 @@ export default async function Banner() {
   const content = banner.lien
     ? `${banner.message}${banner.lien_texte ? ` — ${banner.lien_texte}` : ''}`
     : banner.message
-  const repeated = Array(3).fill(content).join('                                        ·                                        ')
+  const repeated = Array(3).fill('— ' + content + ' —').join('            ')
 
   return (
     <div style={{
