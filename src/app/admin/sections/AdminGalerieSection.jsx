@@ -342,7 +342,7 @@ export default function AdminGalerieSection() {
             </select>
           </div>
           <div className="field">
-            <label>Ou créer un album</label>
+            <label>Ou créer un album <HelpTip text="Tapez un nom pour créer un tout nouvel album. Les photos choisies ci-dessous seront automatiquement placées dans cet album." position="right" /></label>
             <input value={newAlbumName} onChange={e => setNewAlbumName(e.target.value)} placeholder="Nom du nouvel album…"/>
           </div>
         </div>
