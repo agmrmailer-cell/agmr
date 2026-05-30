@@ -271,7 +271,7 @@ export default function AdminGymSection() {
     <>
       <div className="admin-head">
         <div>
-          <h1>Planning Gym</h1>
+          <h1>Planning Gym <HelpTip text="Gérez ici tous les créneaux de cours de la section gym. Chaque ligne correspond à un cours récurrent (ex : Pilates lundi 9h-10h). Vous pouvez ajouter, modifier, activer/désactiver ou supprimer des créneaux." position="right" /></h1>
           <p className="muted" style={{ margin: 0 }}>{items.length} créneaux · {items.filter(i => i.actif).length} actifs — <strong style={{ color: "var(--green)" }}>données Supabase</strong></p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
