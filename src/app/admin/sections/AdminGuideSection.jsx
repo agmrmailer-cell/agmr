@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/Icon'
+import HelpTip from '@/components/ui/HelpTip'
 
 export default function AdminGuideSection() {
   return (
