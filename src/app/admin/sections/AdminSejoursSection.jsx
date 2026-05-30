@@ -210,7 +210,7 @@ function SejourForm({ item, onSave, onCancel }) {
       )}
 
       <div className="field">
-        <label>Titre du séjour</label>
+        <label>Titre du séjour <HelpTip text="Le nom du séjour tel qu'il apparaîtra sur le site. Exemple : 'Bretagne — Côte de granit rose'." position="right" /></label>
         <input value={f.titre} onChange={e => u('titre', e.target.value)} placeholder="Bretagne — Côte de granit rose"/>
       </div>
       <div className="row-2">
