@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon'
 import ImageUpload from '@/components/ui/ImageUpload'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
+import HelpTip from '@/components/ui/HelpTip'
 
 const IMG_OPTIONS = {
   a: 'linear-gradient(135deg, #c4956a 0%, #8b5e3c 100%)',
