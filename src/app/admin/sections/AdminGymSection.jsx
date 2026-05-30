@@ -455,7 +455,7 @@ function GymForm({ item, onSave, onCancel }) {
         <div className="field"><label>Salle</label><input value={f.salle} onChange={e => u("salle", e.target.value)}/></div>
       </div>
       <div className="row-2">
-        <div className="field"><label>Couleur (disc)</label>
+        <div className="field"><label>Couleur (disc) <HelpTip text="Définit la couleur d'affichage de ce cours dans le planning. Choisissez une couleur cohérente avec la discipline (ex : toujours la même couleur pour le Pilates)." position="top" /></label>
           <select value={f.disc} onChange={e => u("disc", e.target.value)}>
             {DISCS.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
