@@ -449,7 +449,7 @@ function GymForm({ item, onSave, onCancel }) {
         <div className="field"><label>Heure début</label><input type="time" value={f.heureDebut} onChange={e => u("heureDebut", e.target.value)}/></div>
         <div className="field"><label>Heure fin</label><input type="time" value={f.heureFin} onChange={e => u("heureFin", e.target.value)}/></div>
       </div>
-      <div className="field"><label>Discipline</label><input value={f.discipline} onChange={e => u("discipline", e.target.value)}/></div>
+      <div className="field"><label>Discipline <HelpTip text="Le nom du cours tel qu'il apparaîtra dans le planning (ex : Pilates, Yoga, Gym douce). Respectez la même orthographe pour grouper les cours de même type." position="right" /></label><input value={f.discipline} onChange={e => u("discipline", e.target.value)}/></div>
       <div className="row-2">
         <div className="field"><label>Animateur</label><input value={f.animateur} onChange={e => u("animateur", e.target.value)}/></div>
         <div className="field"><label>Salle</label><input value={f.salle} onChange={e => u("salle", e.target.value)}/></div>
