@@ -46,7 +46,7 @@ export default function FontSizeWidget() {
 
   return (
     <div
-      style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}
+      style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}
       onMouseLeave={() => setOpen(false)}
     >
       {/* Panneau étendu */}
