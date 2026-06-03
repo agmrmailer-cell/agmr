@@ -70,7 +70,7 @@ export default function AdminAccessSection() {
     } else {
       // Nouvel admin : invitation via API route (Auth + profil en une fois)
       setInviting(true)
-      const res = await fetch('/api/admin/invite', {
+      const res = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -83,8 +83,8 @@ export default function AdminAccessSection() {
   }
 
   const resetPassword = async (targetEmail, newPassword) => {
-    const res = await fetch('/api/admin/reset-password', {
-      method: 'POST',
+    const res = await fetch('/api/admin/users', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ targetEmail, newPassword }),
     })
@@ -95,8 +95,8 @@ export default function AdminAccessSection() {
 
   const deleteAdmin = async (id, email, role) => {
     if (!confirm(`Supprimer le compte de ${email} ?\n\nCette action supprime l'accès admin ET le compte de connexion.`)) return
-    const res = await fetch('/api/admin/delete-user', {
-      method: 'POST',
+    const res = await fetch('/api/admin/users', {
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ targetEmail: email }),
     })

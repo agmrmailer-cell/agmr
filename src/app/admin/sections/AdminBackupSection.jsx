@@ -243,7 +243,7 @@ function RestoreCard({ storagePath, onClear }) {
       ? { storagePath, tables: selected }
       : { data: backupData, tables: selected }
 
-    const res = await fetch('/api/admin/backups/restore', {
+    const res = await fetch('/api/admin/backups', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
