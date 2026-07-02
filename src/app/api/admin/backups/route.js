@@ -12,12 +12,33 @@ async function checkAuth() {
   return profile
 }
 
+async function ensureBackupBucket(admin) {
+  const { data: buckets, error: listError } = await admin.storage.listBuckets()
+
+  if (listError) return listError
+  if (buckets?.some(bucket => bucket.name === 'backups')) return null
+
+  const { error: createError } = await admin.storage.createBucket('backups', {
+    public: false,
+  })
+
+  if (createError && !createError.message.toLowerCase().includes('already exists')) {
+    return createError
+  }
+
+  return null
+}
+
 // GET — liste les sauvegardes stockées
 export async function GET() {
   const profile = await checkAuth()
   if (!profile) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
   const admin = createAdminClient()
+  const bucketError = await ensureBackupBucket(admin)
+
+  if (bucketError) return NextResponse.json({ error: bucketError.message }, { status: 500 })
+
   const { data: files, error } = await admin.storage
     .from('backups')
     .list('', { sortBy: { column: 'created_at', order: 'desc' } })

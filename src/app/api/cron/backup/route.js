@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 const BACKUP_TABLES = [
   'home_blocks', 'gym_page_blocks', 'rando_page_blocks', 'nordique_page_blocks',
@@ -18,14 +19,42 @@ function unauthorized() {
   return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 }
 
+function missingEnv(name) {
+  return Response.json({ ok: false, error: `${name} not configured` }, { status: 500 })
+}
+
+async function ensureBackupBucket(admin) {
+  const { data: buckets, error: listError } = await admin.storage.listBuckets()
+
+  if (listError) return listError
+  if (buckets?.some(bucket => bucket.name === 'backups')) return null
+
+  const { error: createError } = await admin.storage.createBucket('backups', {
+    public: false,
+  })
+
+  if (createError && !createError.message.toLowerCase().includes('already exists')) {
+    return createError
+  }
+
+  return null
+}
+
 export async function GET(request) {
   const cronSecret = process.env.CRON_SECRET
   const authHeader = request.headers.get('authorization')
 
   if (!cronSecret) return Response.json({ ok: false, error: 'CRON_SECRET not configured' }, { status: 500 })
   if (authHeader !== `Bearer ${cronSecret}`) return unauthorized()
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return missingEnv('NEXT_PUBLIC_SUPABASE_URL')
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return missingEnv('SUPABASE_SERVICE_ROLE_KEY')
 
   const admin = createAdminClient()
+  const bucketError = await ensureBackupBucket(admin)
+
+  if (bucketError) {
+    return Response.json({ ok: false, error: bucketError.message }, { status: 500 })
+  }
 
   // Export all tables
   const backup = {
@@ -38,10 +67,16 @@ export async function GET(request) {
     },
     data: {},
   }
+  const tableErrors = []
 
   for (const table of BACKUP_TABLES) {
     const { data, error } = await admin.from(table).select('*')
-    backup.data[table] = error ? [] : (data ?? [])
+    if (error) {
+      backup.data[table] = []
+      tableErrors.push({ table, error: error.message })
+    } else {
+      backup.data[table] = data ?? []
+    }
   }
 
   const json = JSON.stringify(backup)
@@ -69,6 +104,7 @@ export async function GET(request) {
     file: filename,
     size: Buffer.byteLength(json),
     tables: BACKUP_TABLES.length,
+    tableErrors,
     backedUpAt: new Date().toISOString(),
   })
 }
