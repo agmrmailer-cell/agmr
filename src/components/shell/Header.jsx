@@ -54,8 +54,7 @@ export default function Header() {
     { id: "home", label: "Accueil", href: "/" },
     { id: "activites", label: "Activités", group: ["/activites"], drop: [
       { href: "/activites/gym",       label: "Gymnastique",        meta: navMeta.gym   },
-      { href: "/activites/randonnee", label: "Randonnée",          meta: navMeta.rando },
-      { href: "/activites/nordique",  label: "Marche nordique",    meta: "Mardi et samedi · bâtons fournis" },
+      { href: "/activites/randonnee", label: "Randonnée & Marche nordique", meta: navMeta.rando },
       { href: "/activites/sante",     label: "Santé par le sport", meta: "Prescri'Forme · Rando-Santé" },
     ]},
     { id: "planning", label: "Planning", group: ["/planning"], drop: [

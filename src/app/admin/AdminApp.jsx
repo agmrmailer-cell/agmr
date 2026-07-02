@@ -15,7 +15,6 @@ import AdminGalerieSection from './sections/AdminGalerieSection'
 import AdminHomeSection from './sections/AdminHomeSection'
 import AdminGymPageSection from './sections/AdminGymPageSection'
 import AdminRandoPageSection from './sections/AdminRandoPageSection'
-import AdminNordiquePageSection from './sections/AdminNordiquePageSection'
 import AdminSantePageSection from './sections/AdminSantePageSection'
 import AdminAssoPageSection from './sections/AdminAssoPageSection'
 import AdminComiteSection from './sections/AdminComiteSection'
@@ -47,9 +46,8 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { id: "gym-page",      label: "Page Gym",           icon: "leaf" },
     { id: "gym",           label: "Planning Gym",       icon: "calendar" },
     { id: "vacances",      label: "Vacances scolaires", icon: "calendar" },
-    { id: "rando-page",    label: "Page Randonnée",     icon: "mountain" },
+    { id: "rando-page",    label: "Page Randonnée & Nordique", icon: "mountain" },
     { id: "rando",         label: "Planning Rando",     icon: "mountain" },
-    { id: "nordique-page", label: "Marche nordique",    icon: "leaf" },
     { id: "sante-page",    label: "Santé par le sport", icon: "accessibility" },
     { divider: "Contenus" },
     { id: "sejours",       label: "Séjours",            icon: "pin" },
@@ -664,7 +662,6 @@ export default function AdminApp({ user, profile }) {
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}
           {section === "gym-page"      && canAccess("gym-page")      && <AdminGymPageSection/>}
           {section === "rando-page"    && canAccess("rando-page")    && <AdminRandoPageSection/>}
-          {section === "nordique-page" && canAccess("nordique-page") && <AdminNordiquePageSection/>}
           {section === "sante-page"    && canAccess("sante-page")    && <AdminSantePageSection/>}
           {section === "asso-page"     && canAccess("asso-page")     && <AdminAssoPageSection/>}
           {section === "comite"        && canAccess("comite")        && <AdminComiteSection/>}

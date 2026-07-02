@@ -4,9 +4,19 @@ import GenericBlockRenderer from '@/components/blocks/GenericBlockRenderer'
 import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
-import { getRandoPageBlocks, getRandoJeudiGroupes } from '@/lib/queries'
+import Icon from '@/components/ui/Icon'
+import { getRandoPageBlocks, getRandoJeudiGroupes, getNordiquePageBlocks } from '@/lib/queries'
 
-export const metadata = { title: 'La Randonnée — AGMR' }
+export const metadata = { title: 'Randonnée & Marche nordique — AGMR' }
+
+const DEFAULT_NORDIQUE_STEPS = ['Échauffement', 'Marche nordique', 'Renforcement musculaire', 'Retour à la marche', 'Étirements']
+
+const DEFAULT_NORDIQUE_CARDS = [
+  { eyebrow: 'Mardi après-midi', titre: 'Séance hebdomadaire',   texte: 'Calendrier variable — consulter la page planning pour les horaires exacts.' },
+  { eyebrow: 'Samedi matin',     titre: 'Séance hebdomadaire',   texte: 'Calendrier disponible en ligne.' },
+  { eyebrow: 'Ponctuel',         titre: 'Sorties nocturnes',     texte: 'À certaines dates, annoncées dans le planning. Lampe frontale recommandée.' },
+  { eyebrow: 'Encadrement',      titre: 'Animateurs formés FFR', texte: 'Pierre et Danièle assurent les séances, formés par la Fédération Française de Randonnée.' },
+]
 
 const DEFAULT_GROUPES = [
   { id: 'g1', groupe: 'Groupe 1',  distance: '12 à 14 km', retour: '17h30', rdv: 'Parking Leclerc' },
@@ -17,13 +27,18 @@ const DEFAULT_GROUPES = [
 ]
 
 export default async function RandoPage() {
-  const [blocks, groupes] = await Promise.all([
+  const [blocks, groupes, nordiqueBlocks] = await Promise.all([
     getRandoPageBlocks(),
     getRandoJeudiGroupes(),
+    getNordiquePageBlocks(),
   ])
 
   const bm  = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const vis = (key) => bm[key]?.visible !== false
+
+  const nbm     = Object.fromEntries(nordiqueBlocks.map(b => [b.block_key, b]))
+  const nVis    = (key) => nbm[key]?.visible !== false
+  const nHeader = nbm.header?.content ?? {}
 
   const sortedBlocks = blocks
   const groupeList = groupes.length > 0 ? groupes : DEFAULT_GROUPES
@@ -75,6 +90,7 @@ export default async function RandoPage() {
                   {vis('dimanche') && <li><a href="#dimanche">Le dimanche</a></li>}
                   {vis('sejours')  && <li><a href="#sejours">Sorties & séjours</a></li>}
                   {vis('sante')    && <li><a href="#sante">Rando-Santé</a></li>}
+                  <li><a href="#marche-nordique">Marche nordique</a></li>
                 </ul>
               </aside>
 
@@ -221,6 +237,76 @@ export default async function RandoPage() {
                       return <GenericBlockRenderer key={block.block_key} block={block} />
                   }
                 })}
+
+                {/* MARCHE NORDIQUE — contenu fusionné depuis /activites/nordique */}
+                <div id="marche-nordique" style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid var(--line)" }}>
+                  <div className="page-header-eyebrow">{nHeader.eyebrow ?? 'Activités · Marche dynamique'}</div>
+                  <h2 style={{ fontSize: "2.2rem", marginBottom: 18 }}>
+                    {nHeader.titre ?? 'La Marche Nordique'}
+                  </h2>
+                  <p style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}>
+                    {nHeader.lede ?? "Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."}
+                  </p>
+
+                  {nordiqueBlocks.map(block => {
+                    if (!block.visible || block.block_key === 'header') return null
+                    const content = block.content ?? {}
+
+                    switch (block.block_key) {
+                      case 'intro':
+                        return (
+                          <div key="n-intro">
+                            <p style={{ fontSize: "1.15rem", color: "var(--ink-soft)", fontFamily: "var(--serif)", fontStyle: "italic", margin: "24px 0 20px" }}>
+                              {content.quote ?? "En appuyant sur les bâtons, on va plus vite et on fait travailler le haut du corps. La dépense d'énergie est accrue — et le plaisir arrive dès les premières foulées, car la technique est simple."}
+                            </p>
+                            <div style={{ background: "var(--accent-tint)", borderRadius: "var(--r-md)", padding: "20px 24px", margin: "20px 0", display: "flex", gap: 14, alignItems: "center" }}>
+                              <Icon name="leaf" size={20}/>
+                              <strong>{content.alerte ?? 'On peut vous prêter des bâtons pour un essai.'}</strong>
+                            </div>
+                          </div>
+                        )
+
+                      case 'seance': {
+                        const steps = Array.isArray(content.steps) ? content.steps : DEFAULT_NORDIQUE_STEPS
+                        return (
+                          <div key="n-seance">
+                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>{content.titre ?? 'Comment se déroule une séance'}</h3>
+                            <p>{content.texte ?? 'Chaque séance dure entre 1h30 et 2h.'}</p>
+                            <ol style={{ fontSize: "1.05rem", lineHeight: 1.9, margin: "20px 0 0 20px" }}>
+                              {steps.map((s, i) => <li key={i}>{s}</li>)}
+                            </ol>
+                          </div>
+                        )
+                      }
+
+                      case 'quand': {
+                        const cards = Array.isArray(content.cards) ? content.cards : DEFAULT_NORDIQUE_CARDS
+                        return (
+                          <div key="n-quand">
+                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>{content.titre ?? 'Quand pratiquer'}</h3>
+                            <div className="affil-grid">
+                              {cards.map((card, i) => (
+                                <div key={i} className="affil">
+                                  <div className="affil-eyebrow">{card.eyebrow}</div>
+                                  <h4>{card.titre}</h4>
+                                  <p>{card.texte}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      default:
+                        return <GenericBlockRenderer key={block.block_key} block={block} />
+                    }
+                  })}
+
+                  <div style={{ marginTop: 32, display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <Link className="btn btn-primary" href="/planning/randonnee">Voir le planning</Link>
+                    <Link className="btn btn-ghost" href="/inscriptions">S'inscrire</Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -26,8 +26,7 @@ export default function Footer() {
           <h4>Activites</h4>
           <ul className="footer-list">
             <li><Link href="/activites/gym">Gymnastique</Link></li>
-            <li><Link href="/activites/randonnee">Randonnee</Link></li>
-            <li><Link href="/activites/nordique">Marche nordique</Link></li>
+            <li><Link href="/activites/randonnee">Randonnee & Marche nordique</Link></li>
             <li><Link href="/activites/sante">Sante par le sport</Link></li>
             <li><Link href="/planning/gym">Planning gym</Link></li>
             <li><Link href="/planning/randonnee">Planning rando</Link></li>
