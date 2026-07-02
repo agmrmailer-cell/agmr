@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Icon from '@/components/ui/Icon'
 import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
@@ -82,7 +82,7 @@ function ExportCard({ lastBackup, setLastBackup }) {
       </div>
 
       <p style={{ fontSize: '0.9rem', color: 'var(--ink-soft)', marginBottom: 20, lineHeight: 1.6 }}>
-        Exporte l'intégralité des données du site dans un fichier JSON téléchargeable localement.
+        Exporte l&apos;intégralité des données du site dans un fichier JSON téléchargeable localement.
       </p>
 
       {lastBackup && (
@@ -116,25 +116,65 @@ function ExportCard({ lastBackup, setLastBackup }) {
 function AutoBackupsCard({ onRestoreFromStorage }) {
   const [backups, setBackups]     = useState(null)
   const [loading, setLoading]     = useState(true)
+  const [creating, setCreating]   = useState(false)
   const [deleting, setDeleting]   = useState(null)
   const [error, setError]         = useState(null)
+  const [success, setSuccess]     = useState(null)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true); setError(null)
     const res = await fetch('/api/admin/backups')
     if (!res.ok) { setError('Impossible de charger les sauvegardes'); setLoading(false); return }
     const { backups } = await res.json()
     setBackups(backups ?? [])
     setLoading(false)
-  }
+  }, [])
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    let ignore = false
+
+    fetch('/api/admin/backups')
+      .then(async res => {
+        if (!res.ok) throw new Error('Impossible de charger les sauvegardes')
+        return res.json()
+      })
+      .then(({ backups }) => {
+        if (!ignore) setBackups(backups ?? [])
+      })
+      .catch(() => {
+        if (!ignore) setError('Impossible de charger les sauvegardes')
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false)
+      })
+
+    return () => { ignore = true }
+  }, [])
 
   const handleDelete = async (name) => {
     if (!confirm(`Supprimer ${name} ?`)) return
     setDeleting(name)
     await fetch(`/api/admin/backups?name=${encodeURIComponent(name)}`, { method: 'DELETE' })
     setDeleting(null)
+    load()
+  }
+
+  const handleCreate = async () => {
+    setCreating(true)
+    setError(null)
+    setSuccess(null)
+
+    const res = await fetch('/api/admin/backups', { method: 'PUT' })
+    const json = await res.json().catch(() => ({}))
+
+    if (!res.ok || json.ok === false) {
+      setError(json.error ?? 'Impossible de créer la sauvegarde')
+      setCreating(false)
+      return
+    }
+
+    setSuccess(`${json.file} créé dans le bucket backups`)
+    setCreating(false)
     load()
   }
 
@@ -153,12 +193,17 @@ function AutoBackupsCard({ onRestoreFromStorage }) {
         </button>
       </div>
 
+      <button className="btn btn-primary" onClick={handleCreate} disabled={creating} style={{ width: '100%', justifyContent: 'center', marginBottom: 14 }}>
+        {creating ? 'Création en cours…' : 'Créer une sauvegarde maintenant'}
+      </button>
+
       {loading && <div style={{ fontSize: '0.85rem', color: 'var(--ink-mute)', textAlign: 'center', padding: '20px 0' }}>Chargement…</div>}
       {error   && <div style={{ fontSize: '0.85rem', color: 'var(--red)' }}>{error}</div>}
+      {success && <div style={{ fontSize: '0.85rem', color: 'var(--green)', marginBottom: 12 }}>{success}</div>}
 
       {!loading && backups?.length === 0 && (
         <div style={{ fontSize: '0.85rem', color: 'var(--ink-mute)', textAlign: 'center', padding: '20px 0' }}>
-          Aucune sauvegarde automatique pour l'instant.<br/>
+          Aucune sauvegarde automatique pour l&apos;instant.<br/>
           <span style={{ fontSize: '0.8rem' }}>La première sera créée cette nuit à 2h.</span>
         </div>
       )}
@@ -205,8 +250,18 @@ function RestoreCard({ storagePath, onClear }) {
   // Pré-remplir depuis Storage
   useEffect(() => {
     if (!storagePath) return
-    setBackupData(null); setBackupMeta({ name: storagePath, source: 'storage' })
-    setSelected(ALL_TABLES); setResults(null); setError(null)
+    let ignore = false
+
+    queueMicrotask(() => {
+      if (ignore) return
+      setBackupData(null)
+      setBackupMeta({ name: storagePath, source: 'storage' })
+      setSelected(ALL_TABLES)
+      setResults(null)
+      setError(null)
+    })
+
+    return () => { ignore = true }
   }, [storagePath])
 
   const parseFile = (file) => {
@@ -410,7 +465,7 @@ export default function AdminBackupSection() {
       <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--accent-tint)', border: '1px solid var(--accent-soft)', borderRadius: 'var(--r-sm)', fontSize: '0.84rem', color: 'var(--ink-soft)', display: 'flex', gap: 10 }}>
         <Icon name="info" size={15}/>
         <span>
-          <strong>Images :</strong> hébergées sur Cloudinary (galerie) et Supabase Storage (actualités, séjours). Les URLs sont incluses dans l'export. Les fichiers images sont sauvegardés automatiquement par ces services.
+          <strong>Images :</strong> hébergées sur Cloudinary (galerie) et Supabase Storage (actualités, séjours). Les URLs sont incluses dans l&apos;export. Les fichiers images sont sauvegardés automatiquement par ces services.
         </span>
       </div>
     </>

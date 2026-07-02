@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
 import { createClient } from '@/lib/supabase-server'
+import { ensureBackupBucket, createStorageBackup } from '@/lib/backup-storage'
 
 async function checkAuth() {
   const supabase = await createClient()
@@ -10,23 +11,6 @@ async function checkAuth() {
     .from('admin_profiles').select('role').eq('email', user.email).maybeSingle()
   if (!profile) return null
   return profile
-}
-
-async function ensureBackupBucket(admin) {
-  const { data: buckets, error: listError } = await admin.storage.listBuckets()
-
-  if (listError) return listError
-  if (buckets?.some(bucket => bucket.name === 'backups')) return null
-
-  const { error: createError } = await admin.storage.createBucket('backups', {
-    public: false,
-  })
-
-  if (createError && !createError.message.toLowerCase().includes('already exists')) {
-    return createError
-  }
-
-  return null
 }
 
 // GET — liste les sauvegardes stockées
@@ -47,7 +31,6 @@ export async function GET() {
 
   const backups = await Promise.all(
     (files ?? []).map(async (f) => {
-      const { data } = admin.storage.from('backups').getPublicUrl(f.name)
       // signed URL valable 1h pour téléchargement
       const { data: signed } = await admin.storage
         .from('backups')
@@ -62,6 +45,18 @@ export async function GET() {
   )
 
   return NextResponse.json({ backups })
+}
+
+// PUT — créer une sauvegarde manuelle dans le bucket Storage
+export async function PUT() {
+  const profile = await checkAuth()
+  if (!profile) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+  if (profile.role !== 'super_admin') return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+
+  const admin = createAdminClient()
+  const result = await createStorageBackup(admin, { source: 'manual-bucket' })
+
+  return NextResponse.json(result, { status: result.ok ? 200 : result.status ?? 500 })
 }
 
 // POST — restaurer depuis une sauvegarde (ancien /api/admin/backups/restore)
