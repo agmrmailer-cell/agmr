@@ -1,6 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 function unauthorized() {
   return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
@@ -21,22 +22,14 @@ export async function GET(request) {
     return unauthorized()
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return Response.json(
       { ok: false, error: 'Supabase environment variables are missing' },
       { status: 500 }
     )
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
+  const supabase = createAdminClient()
 
   const { count, error } = await supabase
     .from('site_stats')

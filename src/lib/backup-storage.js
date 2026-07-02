@@ -8,7 +8,7 @@ export const BACKUP_TABLES = [
   'admin_profiles', 'contact_messages', 'activity_log',
 ]
 
-export const KEEP_BACKUPS = 7
+export const BACKUP_RETENTION_DAYS = 90
 
 export async function ensureBackupBucket(admin) {
   const { data: buckets, error: listError } = await admin.storage.listBuckets()
@@ -27,7 +27,7 @@ export async function ensureBackupBucket(admin) {
   return null
 }
 
-export async function createStorageBackup(admin, { source = 'manual-bucket', keepBackups = KEEP_BACKUPS } = {}) {
+export async function createStorageBackup(admin, { source = 'manual-bucket', retentionDays = BACKUP_RETENTION_DAYS } = {}) {
   const bucketError = await ensureBackupBucket(admin)
 
   if (bucketError) {
@@ -72,8 +72,12 @@ export async function createStorageBackup(admin, { source = 'manual-bucket', kee
     .from('backups')
     .list('', { sortBy: { column: 'created_at', order: 'asc' } })
 
-  if (files && files.length > keepBackups) {
-    const toDelete = files.slice(0, files.length - keepBackups).map(f => f.name)
+  const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000
+  const toDelete = (files ?? [])
+    .filter(file => file.created_at && new Date(file.created_at).getTime() < cutoff)
+    .map(file => file.name)
+
+  if (toDelete.length > 0) {
     await admin.storage.from('backups').remove(toDelete)
   }
 
@@ -83,6 +87,8 @@ export async function createStorageBackup(admin, { source = 'manual-bucket', kee
     size: Buffer.byteLength(json),
     tables: BACKUP_TABLES.length,
     tableErrors,
+    retentionDays,
+    pruned: toDelete.length,
     backedUpAt: new Date().toISOString(),
   }
 }

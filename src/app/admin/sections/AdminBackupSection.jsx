@@ -185,8 +185,8 @@ function AutoBackupsCard({ onRestoreFromStorage }) {
           <Icon name="clock" size={18}/>
         </div>
         <div>
-          <div style={{ fontWeight: 700 }}>Sauvegardes automatiques <HelpTip text="Chaque nuit à 2h, le site enregistre automatiquement une copie de toutes ses données sur nos serveurs. Les 7 dernières sont conservées, les plus anciennes sont supprimées." position="bottom" /></div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--ink-mute)' }}>Quotidiennes · 2h du matin · 7 conservées</div>
+          <div style={{ fontWeight: 700 }}>Sauvegardes automatiques <HelpTip text="Chaque nuit à 2h, le site enregistre automatiquement une copie de toutes ses données sur nos serveurs. Les sauvegardes sont conservées pendant 90 jours." position="bottom" /></div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--ink-mute)' }}>Quotidiennes · 2h du matin · conservation 90 jours</div>
         </div>
         <button className="btn btn-ghost" style={{ marginLeft: 'auto', padding: '4px 10px', fontSize: '0.8rem' }} onClick={load}>
           <Icon name="refresh" size={13}/>
