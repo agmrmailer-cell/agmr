@@ -7,8 +7,27 @@ import { labelType } from '@/utils/format'
 const TYPES = ["all","rando-jeudi","rando-dimanche","nordique-mardi","nordique-samedi","sortie-journee","sejour"]
 const DOW = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"]
 const MSHORT = ["jan","fév","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"]
+const INTERNAL_RANDO_PLANNING_ENABLED = false
 
 export default function PlanningRandoClient({ sorties, links = [] }) {
+  if (!INTERNAL_RANDO_PLANNING_ENABLED) {
+    return (
+      <section className="section">
+        <div className="container">
+          <ExternalLinksPanel
+            links={links}
+            title="Plannings complets en ligne"
+            intro="Calendriers, documents et ressources externes pour la saison en cours."
+          />
+        </div>
+      </section>
+    )
+  }
+
+  return <InternalRandoPlanning sorties={sorties} links={links}/>
+}
+
+function InternalRandoPlanning({ sorties, links }) {
   const [filter, setFilter] = useState("all")
 
   const filtered = sorties

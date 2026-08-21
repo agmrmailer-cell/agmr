@@ -11,7 +11,6 @@ import { formatDateFR, labelType, catLabel } from '@/utils/format'
 import { relativeTime } from '@/lib/activity'
 import AdminGymSection from './sections/AdminGymSection'
 import AdminActuSection from './sections/AdminActuSection'
-import AdminRandoSection from './sections/AdminRandoSection'
 import AdminGalerieSection from './sections/AdminGalerieSection'
 import AdminHomeSection from './sections/AdminHomeSection'
 import AdminGymPageSection from './sections/AdminGymPageSection'
@@ -49,7 +48,6 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { id: "gym",           label: "Planning Gym",       icon: "calendar" },
     { id: "vacances",      label: "Vacances scolaires", icon: "calendar" },
     { id: "rando-page",    label: "Page Randonnée & Nordique", icon: "mountain" },
-    { id: "rando",         label: "Planning Rando",     icon: "mountain" },
     { id: "sante-page",    label: "Santé par le sport", icon: "accessibility" },
     { divider: "Contenus" },
     { id: "sejours",       label: "Séjours",            icon: "pin" },
@@ -164,21 +162,17 @@ function Dashboard({ setSection }) {
 
   useEffect(() => {
     async function load() {
-      const [gym, rando, sejours, log] = await Promise.all([
+      const [gym, sejours, links, log] = await Promise.all([
         supabase.from('gym_courses').select('id', { count: 'exact' }).eq('actif', true),
-        supabase.from('rando_sorties').select('date').gte('date', new Date().toISOString().slice(0,10)).eq('annule', false).order('date'),
         supabase.from('sejours').select('statut'),
+        supabase.from('external_links').select('id', { count: 'exact' }).contains('zones', ['planning-rando']).eq('active', true),
         supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(8),
       ])
-      const prochaine = rando.data?.[0]?.date
-      const prochaineLabel = prochaine
-        ? `Prochaine ${prochaine.slice(8,10)}/${prochaine.slice(5,7)}`
-        : '—'
       const sejoursTotal = sejours.data?.filter(s => s.statut !== 'passe').length ?? 0
       const sejoursOuverts = sejours.data?.filter(s => s.statut === 'ouvert').length ?? 0
       setKpi([
         [String(gym.count ?? 0), "Cours gym actifs", ""],
-        [String(rando.data?.length ?? 0), "Sorties à venir", prochaineLabel],
+        [String(links.count ?? 0), "Liens planning rando", "Spreadsheets"],
         [String(sejoursTotal), "Séjours programmés", `${sejoursOuverts} ouvert${sejoursOuverts > 1 ? 's' : ''}`],
       ])
       setActivity(log.data ?? [])
@@ -193,7 +187,7 @@ function Dashboard({ setSection }) {
         <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
       </div>
       <div className="kpi-grid">
-        {(kpi ?? [["…","Cours gym actifs",""],["…","Sorties à venir",""],["…","Séjours programmés",""]]).map(([n,l,t]) => (
+        {(kpi ?? [["…","Cours gym actifs",""],["…","Liens planning rando",""],["…","Séjours programmés",""]]).map(([n,l,t]) => (
           <div key={l} className="kpi-tile">
             <div className="kpi-num">{n}</div>
             <div className="kpi-lbl">{l}</div>
@@ -225,7 +219,7 @@ function Dashboard({ setSection }) {
         <div style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: 24 }}>
           <h3 style={{ fontFamily: "var(--sans)", fontSize: "1.1rem", fontWeight: 700, marginBottom: 16 }}>Actions rapides</h3>
           <div style={{ display: "grid", gap: 8 }}>
-            {[["gym","Ajouter un cours"],["rando","Programmer une sortie"],["actu","Publier une actu"],["galerie","Créer un album"]].map(([id,label]) => (
+            {[["gym","Ajouter un cours"],["links","Ajouter un lien"],["actu","Publier une actu"],["galerie","Créer un album"]].map(([id,label]) => (
               <button key={id} className="btn btn-ghost" style={{ justifyContent: "flex-start" }} onClick={() => setSection(id)}>
                 <Icon name="plus" size={14}/> {label}
               </button>
@@ -658,7 +652,6 @@ export default function AdminApp({ user, profile }) {
           {section === "dash"          && <Dashboard setSection={setSection}/>}
           {section === "gym"           && canAccess("gym")           && <AdminGymSection/>}
           {section === "vacances"      && canAccess("gym")           && <AdminVacancesSection/>}
-          {section === "rando"         && canAccess("rando")         && <AdminRandoSection/>}
           {section === "sejours"       && canAccess("sejours")       && <AdminSejoursSection/>}
           {section === "actu"          && canAccess("actu")          && <AdminActuSection/>}
           {section === "links"         && canAccess("links")         && <AdminLinksSection/>}

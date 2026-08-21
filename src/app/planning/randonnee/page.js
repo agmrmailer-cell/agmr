@@ -3,7 +3,7 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import PlanningRandoClient from './PlanningRandoClient'
-import { getExternalLinks, getRandoSorties } from '@/lib/queries'
+import { getExternalLinks } from '@/lib/queries'
 
 export const metadata = { title: 'Planning Rando & Nordique — AGMR' }
 
@@ -25,10 +25,7 @@ const FALLBACK_LINKS = [
 ]
 
 export default async function PlanningRandoPage() {
-  const [sorties, links] = await Promise.all([
-    getRandoSorties(),
-    getExternalLinks('planning-rando'),
-  ])
+  const links = await getExternalLinks('planning-rando')
   return (
     <div className="page-shell">
       <Banner/>
@@ -42,7 +39,7 @@ export default async function PlanningRandoPage() {
             <p className="page-header-lede">Calendrier des sorties randonnée et des séances de marche nordique.</p>
           </div>
         </div>
-        <PlanningRandoClient sorties={sorties} links={links.length > 0 ? links : FALLBACK_LINKS}/>
+        <PlanningRandoClient sorties={[]} links={links.length > 0 ? links : FALLBACK_LINKS}/>
       </main>
       <Footer/>
     </div>
