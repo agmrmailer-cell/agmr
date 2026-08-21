@@ -62,6 +62,25 @@ export async function getActualites() {
   }))
 }
 
+function linkIsInDisplayWindow(link) {
+  const now = Date.now()
+  if (link.starts_at && new Date(link.starts_at).getTime() > now) return false
+  if (link.ends_at && new Date(link.ends_at).getTime() < now) return false
+  return true
+}
+
+export async function getExternalLinks(zone) {
+  const { data, error } = await supabase
+    .from('external_links')
+    .select('*')
+    .eq('active', true)
+    .eq('members_only', false)
+    .contains('zones', [zone])
+    .order('ordre')
+  if (error) { console.error(error); return [] }
+  return (data ?? []).filter(linkIsInDisplayWindow)
+}
+
 export async function getSejours() {
   const { data, error } = await supabase
     .from('sejours')

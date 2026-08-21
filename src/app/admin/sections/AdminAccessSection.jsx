@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 import HelpTip from '@/components/ui/HelpTip'
@@ -14,6 +14,7 @@ export const ALL_SECTIONS = [
   { id: 'sante-page',    label: 'Santé par le sport', group: 'Activités' },
   { id: 'sejours',       label: 'Séjours',            group: 'Contenus' },
   { id: 'actu',          label: 'Actualités',         group: 'Contenus' },
+  { id: 'links',         label: 'Liens',              group: 'Contenus' },
   { id: 'galerie',       label: 'Galerie',            group: 'Contenus' },
   { id: 'asso-page',     label: 'Présentation asso',  group: 'Association' },
   { id: 'comite',        label: 'Comité directeur',   group: 'Association' },
@@ -42,17 +43,30 @@ export default function AdminAccessSection() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [adding, setAdding]   = useState(false)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data, error } = await supabase
       .from('admin_profiles')
       .select('*')
       .order('created_at')
     if (!error) setAdmins(data)
     setLoading(false)
-  }
-  useEffect(() => { load() }, [])
+  }, [supabase])
+
+  useEffect(() => {
+    let ignore = false
+    supabase
+      .from('admin_profiles')
+      .select('*')
+      .order('created_at')
+      .then(({ data, error }) => {
+        if (ignore) return
+        if (!error) setAdmins(data)
+        setLoading(false)
+      })
+    return () => { ignore = true }
+  }, [supabase])
 
   const [resetTarget, setResetTarget] = useState(null) // { email, id }
   const [inviting, setInviting]       = useState(false)
@@ -169,9 +183,9 @@ export default function AdminAccessSection() {
 
       {/* Info box */}
       <div style={{ marginTop: 24, padding: "16px 20px", background: "var(--bg-deep)", borderRadius: "var(--r-sm)", fontSize: "0.86rem", color: "var(--ink-soft)", border: "1px solid var(--line)", lineHeight: 1.7, display: "flex", flexDirection: "column", gap: 8 }}>
-        <div><strong style={{ color: "var(--ink)" }}>Créer un compte</strong> — renseignez l'email, le nom, le rôle et les permissions, puis générez ou saisissez un mot de passe temporaire. Copiez-le et communiquez-le à la personne. Elle se connecte directement sur <code style={{ background: "var(--bg-card)", padding: "1px 5px", borderRadius: 3 }}>/admin</code>.</div>
+        <div><strong style={{ color: "var(--ink)" }}>Créer un compte</strong> — renseignez l&apos;email, le nom, le rôle et les permissions, puis générez ou saisissez un mot de passe temporaire. Copiez-le et communiquez-le à la personne. Elle se connecte directement sur <code style={{ background: "var(--bg-card)", padding: "1px 5px", borderRadius: 3 }}>/admin</code>.</div>
         <div><strong style={{ color: "var(--ink)" }}>Réinitialiser un mot de passe</strong> — bouton « Mot de passe » sur chaque ligne (non disponible pour les super admins).</div>
-        <div><strong style={{ color: "var(--ink)" }}>Supprimer un compte</strong> — supprime à la fois l'accès admin et le compte de connexion. Les super admins ne peuvent pas se supprimer mutuellement.</div>
+        <div><strong style={{ color: "var(--ink)" }}>Supprimer un compte</strong> — supprime à la fois l&apos;accès admin et le compte de connexion. Les super admins ne peuvent pas se supprimer mutuellement.</div>
         <div><strong style={{ color: "var(--ink)" }}>Rôles</strong> — <em>Super admin</em> : accès complet à tout le back-office. <em>Admin classique</em> : accès limité aux sections cochées uniquement.</div>
       </div>
 
@@ -363,7 +377,7 @@ function AdminForm({ item, onSave, onCancel }) {
 
       {f.role === 'super_admin' && (
         <div style={{ padding: "12px 16px", background: "rgba(184,69,31,0.06)", border: "1px solid rgba(184,69,31,0.25)", borderRadius: "var(--r-sm)", fontSize: "0.86rem", color: "var(--ink-soft)" }}>
-          Le super admin a accès à l'intégralité de l'administration, y compris cette section de gestion des accès.
+          Le super admin a accès à l&apos;intégralité de l&apos;administration, y compris cette section de gestion des accès.
         </div>
       )}
 

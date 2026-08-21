@@ -1,13 +1,14 @@
 'use client'
 import { useState } from 'react'
 import Icon from '@/components/ui/Icon'
+import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { labelType } from '@/utils/format'
 
 const TYPES = ["all","rando-jeudi","rando-dimanche","nordique-mardi","nordique-samedi","sortie-journee","sejour"]
 const DOW = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"]
 const MSHORT = ["jan","fév","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"]
 
-export default function PlanningRandoClient({ sorties }) {
+export default function PlanningRandoClient({ sorties, links = [] }) {
   const [filter, setFilter] = useState("all")
 
   const filtered = sorties
@@ -58,16 +59,11 @@ export default function PlanningRandoClient({ sorties }) {
           })}
         </div>
 
-        <div style={{ marginTop: 32, padding: 24, background: "var(--bg-elev)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <strong>Plannings complets en ligne</strong>
-            <p style={{ margin: "4px 0 0", fontSize: "0.9rem", color: "var(--ink-mute)" }}>Calendriers complets sur Google Sheets — saison en cours.</p>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <a href="https://docs.google.com/spreadsheets/d/1HtnvxtFALYKxeitvtg9G2Jww_Zz0W0QwCJ1NUjZBL3w/" target="_blank" rel="noopener" className="btn btn-ghost btn-sm"><Icon name="download" size={14}/> Planning rando</a>
-            <a href="https://docs.google.com/spreadsheets/d/179on1ss96y0_AiGywGb-1uQFRFvPBOoYJ4tEA9UkPTE/" target="_blank" rel="noopener" className="btn btn-ghost btn-sm"><Icon name="download" size={14}/> Planning nordique</a>
-          </div>
-        </div>
+        <ExternalLinksPanel
+          links={links}
+          title="Plannings complets en ligne"
+          intro="Calendriers, documents et ressources externes pour la saison en cours."
+        />
       </div>
     </section>
   )

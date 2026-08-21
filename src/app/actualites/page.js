@@ -3,12 +3,15 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import ActualitesClient from './ActualitesClient'
-import { getActualites } from '@/lib/queries'
+import { getActualites, getExternalLinks } from '@/lib/queries'
 
 export const metadata = { title: 'Actualités — AGMR' }
 
 export default async function ActualitesPage() {
-  const articles = await getActualites()
+  const [articles, links] = await Promise.all([
+    getActualites(),
+    getExternalLinks('actualites'),
+  ])
   return (
     <div className="page-shell">
       <Banner/>
@@ -22,7 +25,7 @@ export default async function ActualitesPage() {
             <p className="page-header-lede">Toutes les annonces en cours, classées par section.</p>
           </div>
         </div>
-        <ActualitesClient articles={articles}/>
+        <ActualitesClient articles={articles} links={links}/>
       </main>
       <Footer/>
     </div>

@@ -4,8 +4,9 @@ import GenericBlockRenderer from '@/components/blocks/GenericBlockRenderer'
 import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
+import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
-import { getSiteStats, getHomeBlocks, getActualites } from '@/lib/queries'
+import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks } from '@/lib/queries'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -16,10 +17,11 @@ const TRIO_DEFS = [
 const TRIO_KEYS = new Set(['trio_gym', 'trio_rando', 'trio_nordique'])
 
 export default async function HomePage() {
-  const [stats, blocks, actualites] = await Promise.all([
+  const [stats, blocks, actualites, randoSanteLinks] = await Promise.all([
     getSiteStats(),
     getHomeBlocks(),
     getActualites(),
+    getExternalLinks('home-rando-sante'),
   ])
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
@@ -34,8 +36,7 @@ export default async function HomePage() {
     return b && b.visible !== false
   }).sort((a, b) => (bm[a.key]?.ordre ?? 0) - (bm[b.key]?.ordre ?? 0))
 
-  // Track whether we already rendered the trio section
-  let trioRendered = false
+  const firstTrioKey = sortedBlocks.find(block => block.visible && TRIO_KEYS.has(block.block_key))?.block_key
 
   return (
     <div className="page-shell">
@@ -49,8 +50,7 @@ export default async function HomePage() {
 
           // Trio blocks: render the whole trio section on the first trio encountered
           if (TRIO_KEYS.has(block.block_key)) {
-            if (trioRendered) return null
-            trioRendered = true
+            if (block.block_key !== firstTrioKey) return null
             if (visibleTrios.length === 0) return null
             return (
               <section key="trio" className="section section-cream">
@@ -158,55 +158,65 @@ export default async function HomePage() {
               )
 
             case 'actualites':
-              return actualites.length > 0 ? (
+              return actualites.length > 0 || randoSanteLinks.length > 0 ? (
                 <section key="actualites" className="section">
                   <div className="container">
-                    <div className="section-head" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", maxWidth:"none" }}>
-                      <div>
-                        <div className="section-eyebrow">À la une</div>
-                        <h2 className="section-title">Dernières actualités</h2>
-                      </div>
-                      <Link className="btn btn-ghost" href="/actualites">
-                        Toutes les actualités →
-                      </Link>
-                    </div>
-                    <div className="news-split">
-                      <article className="news-feature">
-                        <div className="news-feature-img" style={actualites[0].image_url ? {
-                          backgroundImage: `url(${actualites[0].image_url})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        } : undefined}/>
-                        <div className="news-feature-body">
-                          <div className="news-meta">
-                            <span className={`news-cat news-cat-${actualites[0].cat}`}>
-                              {catLabel(actualites[0].cat)}
-                            </span>
-                            <span>{formatDateFR(actualites[0].date)}</span>
+                    {actualites.length > 0 && (
+                      <>
+                        <div className="section-head" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", maxWidth:"none" }}>
+                          <div>
+                            <div className="section-eyebrow">À la une</div>
+                            <h2 className="section-title">Dernières actualités</h2>
                           </div>
-                          <h3>{actualites[0].title}</h3>
-                          <p>{actualites[0].excerpt}</p>
-                          <div style={{ marginTop: 18 }}>
-                            <a href="#" style={{ fontWeight: 600 }}>Lire la suite →</a>
+                          <Link className="btn btn-ghost" href="/actualites">
+                            Toutes les actualités →
+                          </Link>
+                        </div>
+                        <div className="news-split">
+                          <article className="news-feature">
+                            <div className="news-feature-img" style={actualites[0].image_url ? {
+                              backgroundImage: `url(${actualites[0].image_url})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                            } : undefined}/>
+                            <div className="news-feature-body">
+                              <div className="news-meta">
+                                <span className={`news-cat news-cat-${actualites[0].cat}`}>
+                                  {catLabel(actualites[0].cat)}
+                                </span>
+                                <span>{formatDateFR(actualites[0].date)}</span>
+                              </div>
+                              <h3>{actualites[0].title}</h3>
+                              <p>{actualites[0].excerpt}</p>
+                              <div style={{ marginTop: 18 }}>
+                                <a href="#" style={{ fontWeight: 600 }}>Lire la suite →</a>
+                              </div>
+                            </div>
+                          </article>
+                          <div className="news-side-list">
+                            {actualites.slice(1, 4).map(n => (
+                              <article className="news-side" key={n.id}>
+                                <div>
+                                  <div className="news-meta" style={{ marginBottom: 10 }}>
+                                    <span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span>
+                                    <span>{formatDateFR(n.date)}</span>
+                                  </div>
+                                  <h4>{n.title}</h4>
+                                  <p>{n.excerpt.slice(0, 90)}{n.excerpt.length > 90 ? '…' : ''}</p>
+                                </div>
+                                <a href="/actualites" className="news-side-link">Lire la suite →</a>
+                              </article>
+                            ))}
                           </div>
                         </div>
-                      </article>
-                      <div className="news-side-list">
-                        {actualites.slice(1, 4).map(n => (
-                          <article className="news-side" key={n.id}>
-                            <div>
-                              <div className="news-meta" style={{ marginBottom: 10 }}>
-                                <span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span>
-                                <span>{formatDateFR(n.date)}</span>
-                              </div>
-                              <h4>{n.title}</h4>
-                              <p>{n.excerpt.slice(0, 90)}{n.excerpt.length > 90 ? '…' : ''}</p>
-                            </div>
-                            <a href="/actualites" className="news-side-link">Lire la suite →</a>
-                          </article>
-                        ))}
-                      </div>
-                    </div>
+                      </>
+                    )}
+                    <ExternalLinksPanel
+                      links={randoSanteLinks}
+                      title="Rando-Sante"
+                      intro="Informations et planning utiles pour participer aux activites adaptees."
+                      compact
+                    />
                   </div>
                 </section>
               ) : null

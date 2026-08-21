@@ -232,6 +232,21 @@ create table if not exists public.tarifs (
   note text
 );
 
+create table if not exists public.external_links (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  url text not null,
+  description text,
+  kind text not null default 'external' check (kind = any (array['planning','payment','album','video','document','external'])),
+  zones text[] not null default '{}',
+  active boolean not null default true,
+  members_only boolean not null default false,
+  ordre integer not null default 0,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.site_banners (
   id uuid primary key default gen_random_uuid(),
   message text not null default '',
@@ -285,6 +300,7 @@ alter table public.contact_messages enable row level security;
 alter table public.vacances_scolaires enable row level security;
 alter table public.activity_log enable row level security;
 alter table public.tarifs enable row level security;
+alter table public.external_links enable row level security;
 alter table public.site_banners enable row level security;
 
 
@@ -362,6 +378,16 @@ create policy "tarifs_select_public" on public.tarifs for select using (true);
 create policy "tarifs_insert_auth" on public.tarifs for insert to authenticated with check (true);
 create policy "tarifs_update_auth" on public.tarifs for update to authenticated using (true);
 create policy "tarifs_delete_auth" on public.tarifs for delete to authenticated using (true);
+
+create policy "external_links_public_read" on public.external_links for select
+  using (
+    active = true
+    and members_only = false
+    and (starts_at is null or starts_at <= now())
+    and (ends_at is null or ends_at >= now())
+  );
+create policy "external_links_admin_all" on public.external_links for all to authenticated
+  using (true) with check (true);
 
 create policy "public_read_active_banners" on public.site_banners for select using (true);
 create policy "admin_all_banners" on public.site_banners for all

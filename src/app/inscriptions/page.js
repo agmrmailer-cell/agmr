@@ -2,10 +2,14 @@ import Link from 'next/link'
 import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
+import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
+import { getExternalLinks } from '@/lib/queries'
 
 export const metadata = { title: "S'inscrire — AGMR" }
 
-export default function InscriptionsPage() {
+export default async function InscriptionsPage() {
+  const paymentLinks = await getExternalLinks('inscriptions')
+
   return (
     <div className="page-shell">
       <Banner/>
@@ -14,8 +18,8 @@ export default function InscriptionsPage() {
         <div className="page-header">
           <div className="container">
             <div className="crumb">Accueil / Inscriptions</div>
-            <div className="page-header-eyebrow">Rejoindre l'AGMR</div>
-            <h1>Comment s'inscrire</h1>
+            <div className="page-header-eyebrow">Rejoindre l&apos;AGMR</div>
+            <h1>Comment s&apos;inscrire</h1>
             <p className="page-header-lede">Nous sommes heureux de bientôt vous compter parmi nos adhérents.</p>
           </div>
         </div>
@@ -41,22 +45,30 @@ export default function InscriptionsPage() {
               </div>
 
               <div style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: "32px 36px" }}>
-                <div className="page-header-eyebrow" style={{ color: "var(--accent)", marginBottom: 16 }}>Étape 2 — Méthodes d'inscription</div>
+                <div className="page-header-eyebrow" style={{ color: "var(--accent)", marginBottom: 16 }}>Étape 2 — Méthodes d&apos;inscription</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <div style={{ padding: "18px 20px", background: "var(--green-tint)", borderRadius: "var(--r-md)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
                       <strong>Par carte bancaire (recommandé)</strong>
                       <p style={{ margin: "4px 0 0", fontSize: "0.92rem", color: "var(--ink-soft)" }}>Via HelloAsso — sécurisé, immédiat, sans frais</p>
                     </div>
-                    <a href="https://www.helloasso.com/associations/association-gym-marche-rambouillet/adhesions/" target="_blank" rel="noopener" className="btn btn-green btn-sm">HelloAsso →</a>
+                    <a
+                      href={paymentLinks[0]?.url ?? 'https://www.helloasso.com/associations/association-gym-marche-rambouillet/adhesions/'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-green btn-sm"
+                    >
+                      {paymentLinks[0]?.title ?? 'HelloAsso'} →
+                    </a>
                   </div>
+                  <ExternalLinksPanel links={paymentLinks.slice(1)} title={"Autres liens d'inscription"} compact/>
                   <div style={{ padding: "18px 20px", background: "var(--bg-elev)", borderRadius: "var(--r-md)" }}>
                     <strong>Par virement ou chèque</strong>
                     <p style={{ margin: "4px 0 0", fontSize: "0.92rem", color: "var(--ink-soft)" }}>Via formulaire en ligne — IBAN et coordonnées dans le formulaire.</p>
                   </div>
                   <div style={{ padding: "18px 20px", background: "var(--bg-elev)", borderRadius: "var(--r-md)" }}>
                     <strong>Sans moyen informatique</strong>
-                    <p style={{ margin: "4px 0 0", fontSize: "0.92rem", color: "var(--ink-soft)" }}>Formulaire papier disponible auprès d'un membre de l'équipe AGMR.</p>
+                    <p style={{ margin: "4px 0 0", fontSize: "0.92rem", color: "var(--ink-soft)" }}>Formulaire papier disponible auprès d&apos;un membre de l&apos;équipe AGMR.</p>
                   </div>
                 </div>
               </div>

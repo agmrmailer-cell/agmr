@@ -5,6 +5,7 @@ export const BACKUP_TABLES = [
   'gym_disciplines', 'gym_animateurs',
   'actualites', 'sejours', 'galerie_photos', 'ag_documents',
   'bureau', 'tarifs', 'site_stats',
+  'external_links',
   'admin_profiles', 'contact_messages', 'activity_log',
 ]
 

@@ -1,7 +1,8 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useHelp } from '@/lib/help-context'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
@@ -26,18 +27,19 @@ import AdminTarifsSection from './sections/AdminTarifsSection'
 import AdminGuideSection from './sections/AdminGuideSection'
 import AdminBackupSection from './sections/AdminBackupSection'
 import AdminBannerSection from './sections/AdminBannerSection'
+import AdminLinksSection from './sections/AdminLinksSection'
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   const router = useRouter()
   const { helpMode, setHelpMode } = useHelp()
   const [bannerActive, setBannerActive] = useState(false)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     supabase.from('site_banners').select('id').eq('active', true).limit(1)
       .then(({ data }) => setBannerActive((data ?? []).length > 0))
-  }, [section]) // re-check quand on change de section
+  }, [section, supabase]) // re-check quand on change de section
 
   const allItems = [
     { id: "dash",          label: "Tableau de bord",    icon: "home",          always: true },
@@ -52,6 +54,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { divider: "Contenus" },
     { id: "sejours",       label: "Séjours",            icon: "pin" },
     { id: "actu",          label: "Actualités",         icon: "file" },
+    { id: "links",         label: "Liens",              icon: "file" },
     { id: "galerie",       label: "Galerie",            icon: "image" },
     { divider: "Association" },
     { id: "asso-page",     label: "Présentation",       icon: "file" },
@@ -139,11 +142,11 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
             }}
           >
             <span style={{ width: 16, height: 16, borderRadius: "50%", background: helpMode ? "#e88a5a" : "#8b9089", color: "#fff", fontSize: "0.65rem", fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>?</span>
-            Bulles d'aide {helpMode ? "ON" : "OFF"}
+            Bulles d&apos;aide {helpMode ? "ON" : "OFF"}
           </button>
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Icon name="home" size={14}/> Retour au site
-          </a>
+          </Link>
           <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#8b9089", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, padding: 0, fontFamily: "inherit", fontSize: "0.82rem" }}>
             <Icon name="logout" size={14}/> Se déconnecter
           </button>
@@ -157,7 +160,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
 function Dashboard({ setSection }) {
   const [kpi, setKpi]           = useState(null)
   const [activity, setActivity] = useState(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function load() {
@@ -181,12 +184,12 @@ function Dashboard({ setSection }) {
       setActivity(log.data ?? [])
     }
     load()
-  }, [])
+  }, [supabase])
 
   return (
     <>
       <div className="admin-head">
-        <div><h1>Tableau de bord</h1><p className="muted" style={{ margin: 0 }}>Vue d'ensemble · saison 2025-2026</p></div>
+        <div><h1>Tableau de bord</h1><p className="muted" style={{ margin: 0 }}>Vue d&apos;ensemble · saison 2025-2026</p></div>
         <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
       </div>
       <div className="kpi-grid">
@@ -206,7 +209,7 @@ function Dashboard({ setSection }) {
               <li style={{ color: "var(--ink-mute)", padding: "10px 0" }}>Chargement…</li>
             )}
             {activity !== null && activity.length === 0 && (
-              <li style={{ color: "var(--ink-mute)", padding: "10px 0" }}>Aucune activité pour l'instant.</li>
+              <li style={{ color: "var(--ink-mute)", padding: "10px 0" }}>Aucune activité pour l&apos;instant.</li>
             )}
             {(activity ?? []).map((a) => (
               <li key={a.id} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--line-soft)" }}>
@@ -658,6 +661,7 @@ export default function AdminApp({ user, profile }) {
           {section === "rando"         && canAccess("rando")         && <AdminRandoSection/>}
           {section === "sejours"       && canAccess("sejours")       && <AdminSejoursSection/>}
           {section === "actu"          && canAccess("actu")          && <AdminActuSection/>}
+          {section === "links"         && canAccess("links")         && <AdminLinksSection/>}
           {section === "galerie"       && canAccess("galerie")       && <AdminGalerieSection/>}
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}
           {section === "gym-page"      && canAccess("gym-page")      && <AdminGymPageSection/>}

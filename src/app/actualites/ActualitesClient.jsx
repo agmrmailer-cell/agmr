@@ -1,10 +1,11 @@
 'use client'
 import { useState } from 'react'
+import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
 
 const CATS = ["all","gym","rando","nordique","asso","event"]
 
-export default function ActualitesClient({ articles }) {
+export default function ActualitesClient({ articles, links = [] }) {
   const [filter, setFilter] = useState("all")
   const filtered = articles.filter(n => filter === "all" || n.cat === filter)
 
@@ -30,6 +31,11 @@ export default function ActualitesClient({ articles }) {
             </article>
           ))}
         </div>
+        <ExternalLinksPanel
+          links={links}
+          title="Evenements et ressources externes"
+          intro="Liens utiles associes aux annonces en cours."
+        />
       </div>
     </section>
   )
