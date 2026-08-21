@@ -285,8 +285,7 @@ img { max-width: 100%; display: block; }
   transition: all .15s;
   z-index: 100;
 }
-.nav-item-drop:hover .nav-drop,
-.nav-item-drop:focus-within .nav-drop {
+.nav-item-drop.open .nav-drop {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);

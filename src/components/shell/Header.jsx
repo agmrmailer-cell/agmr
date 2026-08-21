@@ -13,6 +13,7 @@ export default function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [expanded, setExpanded] = useState(null)
+  const [desktopOpen, setDesktopOpen] = useState(null)
   const [navMeta, setNavMeta] = useState({
     gym:     '…',
     rando:   '…',
@@ -87,6 +88,7 @@ export default function Header() {
       if (ignore) return
       setMenuOpen(false)
       setExpanded(null)
+      setDesktopOpen(null)
     })
 
     return () => { ignore = true }
@@ -106,13 +108,23 @@ export default function Header() {
         </Link>
         <nav className="nav" aria-label="Navigation principale">
           {items.map(it => it.drop ? (
-            <div key={it.id} className="nav-item-drop">
-              <button className={`nav-item ${isActive(it) ? "active" : ""}`}>
+            <div
+              key={it.id}
+              className={`nav-item-drop ${desktopOpen === it.id ? 'open' : ''}`}
+              onMouseEnter={() => setDesktopOpen(it.id)}
+              onMouseLeave={() => setDesktopOpen(null)}
+            >
+              <button
+                className={`nav-item ${isActive(it) ? "active" : ""}`}
+                onClick={() => setDesktopOpen(desktopOpen === it.id ? null : it.id)}
+                onFocus={() => setDesktopOpen(it.id)}
+                aria-expanded={desktopOpen === it.id}
+              >
                 {it.label} <Icon name="chevronDown" size={12}/>
               </button>
               <div className="nav-drop" role="menu">
                 {it.drop.map(d => (
-                  <Link key={d.href} href={d.href}>
+                  <Link key={d.href} href={d.href} onClick={() => setDesktopOpen(null)}>
                     <strong>{d.label}</strong>
                     <span className="nav-drop-meta">{d.meta}</span>
                   </Link>

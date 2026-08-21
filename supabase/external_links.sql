@@ -15,8 +15,13 @@ create table if not exists public.external_links (
 
 alter table public.external_links enable row level security;
 
+grant select on table public.external_links to anon;
+grant select, insert, update, delete on table public.external_links to authenticated;
+grant all privileges on table public.external_links to service_role;
+
 drop policy if exists "external_links_public_read" on public.external_links;
 create policy "external_links_public_read" on public.external_links for select
+  to anon, authenticated
   using (
     active = true
     and members_only = false

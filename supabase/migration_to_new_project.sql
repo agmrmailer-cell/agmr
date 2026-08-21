@@ -303,6 +303,10 @@ alter table public.tarifs enable row level security;
 alter table public.external_links enable row level security;
 alter table public.site_banners enable row level security;
 
+grant select on table public.external_links to anon;
+grant select, insert, update, delete on table public.external_links to authenticated;
+grant all privileges on table public.external_links to service_role;
+
 
 -- ----------------------------------------------------------------
 -- 4. POLICIES
@@ -380,6 +384,7 @@ create policy "tarifs_update_auth" on public.tarifs for update to authenticated 
 create policy "tarifs_delete_auth" on public.tarifs for delete to authenticated using (true);
 
 create policy "external_links_public_read" on public.external_links for select
+  to anon, authenticated
   using (
     active = true
     and members_only = false
