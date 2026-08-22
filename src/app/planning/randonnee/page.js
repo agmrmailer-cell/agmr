@@ -7,23 +7,6 @@ import { getExternalLinks } from '@/lib/queries'
 
 export const metadata = { title: 'Planning Rando & Nordique — AGMR' }
 
-const FALLBACK_LINKS = [
-  {
-    id: 'fallback-rando',
-    title: 'Planning rando',
-    url: 'https://docs.google.com/spreadsheets/d/1HtnvxtFALYKxeitvtg9G2Jww_Zz0W0QwCJ1NUjZBL3w/',
-    kind: 'planning',
-    description: 'Calendrier complet des randonnees',
-  },
-  {
-    id: 'fallback-nordique',
-    title: 'Planning nordique',
-    url: 'https://docs.google.com/spreadsheets/d/179on1ss96y0_AiGywGb-1uQFRFvPBOoYJ4tEA9UkPTE/',
-    kind: 'planning',
-    description: 'Calendrier complet de marche nordique',
-  },
-]
-
 export default async function PlanningRandoPage() {
   const links = await getExternalLinks('planning-rando')
   return (
@@ -39,7 +22,7 @@ export default async function PlanningRandoPage() {
             <p className="page-header-lede">Calendrier des sorties randonnée et des séances de marche nordique.</p>
           </div>
         </div>
-        <PlanningRandoClient sorties={[]} links={links.length > 0 ? links : FALLBACK_LINKS}/>
+        <PlanningRandoClient sorties={[]} links={links}/>
       </main>
       <Footer/>
     </div>
