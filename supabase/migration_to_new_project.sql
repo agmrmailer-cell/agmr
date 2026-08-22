@@ -247,6 +247,15 @@ create table if not exists public.external_links (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.planning_rando_page_blocks (
+  id uuid primary key default gen_random_uuid(),
+  block_key text not null unique,
+  label text not null,
+  content jsonb not null default '{}'::jsonb,
+  ordre integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.site_banners (
   id uuid primary key default gen_random_uuid(),
   message text not null default '',
@@ -301,11 +310,15 @@ alter table public.vacances_scolaires enable row level security;
 alter table public.activity_log enable row level security;
 alter table public.tarifs enable row level security;
 alter table public.external_links enable row level security;
+alter table public.planning_rando_page_blocks enable row level security;
 alter table public.site_banners enable row level security;
 
 grant select on table public.external_links to anon;
 grant select, insert, update, delete on table public.external_links to authenticated;
 grant all privileges on table public.external_links to service_role;
+grant select on table public.planning_rando_page_blocks to anon;
+grant select, insert, update, delete on table public.planning_rando_page_blocks to authenticated;
+grant all privileges on table public.planning_rando_page_blocks to service_role;
 
 
 -- ----------------------------------------------------------------
@@ -394,6 +407,13 @@ create policy "external_links_public_read" on public.external_links for select
 create policy "external_links_admin_all" on public.external_links for all to authenticated
   using (true) with check (true);
 
+create policy "planning_rando_page_blocks_public_read" on public.planning_rando_page_blocks
+  for select to anon, authenticated
+  using (true);
+create policy "planning_rando_page_blocks_admin_all" on public.planning_rando_page_blocks
+  for all to authenticated
+  using (true) with check (true);
+
 create policy "public_read_active_banners" on public.site_banners for select using (true);
 create policy "admin_all_banners" on public.site_banners for all
   using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
@@ -402,6 +422,22 @@ create policy "admin_all_banners" on public.site_banners for all
 -- ----------------------------------------------------------------
 -- 5. DONNÉES
 -- ----------------------------------------------------------------
+
+insert into public.planning_rando_page_blocks (block_key, label, content, ordre)
+values
+  (
+    'header',
+    'En-tête de page',
+    '{"crumb":"Accueil / Planning / Rando & Nordique","eyebrow":"Planning · Saison 2025-2026","title":"Planning Rando & Nordique","lede":"Calendrier des sorties randonnée et des séances de marche nordique."}'::jsonb,
+    10
+  ),
+  (
+    'links',
+    'Bloc des liens',
+    '{"title":"Plannings complets en ligne","intro":"Calendriers, documents et ressources externes pour la saison en cours."}'::jsonb,
+    20
+  )
+on conflict (block_key) do nothing;
 
 insert into public.gym_courses (id,jour,heure_debut,heure_fin,discipline,animateur,salle,niveau,actif,disc,created_at,complet,tag,recurrence) values
 ('c6d417a3-63bb-4c1d-8bfe-c6064a78dece','vendredi','10:00','11:00','Gym Sport Santé','Olivier','Marie France Faure','tous',true,'renfo','2026-05-27 22:16:38.737997+00',false,null,'{"type":"weekly"}'),

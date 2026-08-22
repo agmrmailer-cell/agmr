@@ -9,25 +9,25 @@ const DOW = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"]
 const MSHORT = ["jan","fév","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"]
 const INTERNAL_RANDO_PLANNING_ENABLED = false
 
-export default function PlanningRandoClient({ sorties, links = [] }) {
+export default function PlanningRandoClient({ sorties, links = [], linkContent = {} }) {
   if (!INTERNAL_RANDO_PLANNING_ENABLED) {
     return (
       <section className="section">
         <div className="container">
           <ExternalLinksPanel
             links={links}
-            title="Plannings complets en ligne"
-            intro="Calendriers, documents et ressources externes pour la saison en cours."
+            title={linkContent.title ?? 'Plannings complets en ligne'}
+            intro={linkContent.intro ?? 'Calendriers, documents et ressources externes pour la saison en cours.'}
           />
         </div>
       </section>
     )
   }
 
-  return <InternalRandoPlanning sorties={sorties} links={links}/>
+  return <InternalRandoPlanning sorties={sorties} links={links} linkContent={linkContent}/>
 }
 
-function InternalRandoPlanning({ sorties, links }) {
+function InternalRandoPlanning({ sorties, links, linkContent }) {
   const [filter, setFilter] = useState("all")
 
   const filtered = sorties
@@ -80,8 +80,8 @@ function InternalRandoPlanning({ sorties, links }) {
 
         <ExternalLinksPanel
           links={links}
-          title="Plannings complets en ligne"
-          intro="Calendriers, documents et ressources externes pour la saison en cours."
+          title={linkContent.title ?? 'Plannings complets en ligne'}
+          intro={linkContent.intro ?? 'Calendriers, documents et ressources externes pour la saison en cours.'}
         />
       </div>
     </section>

@@ -15,6 +15,7 @@ import AdminGalerieSection from './sections/AdminGalerieSection'
 import AdminHomeSection from './sections/AdminHomeSection'
 import AdminGymPageSection from './sections/AdminGymPageSection'
 import AdminRandoPageSection from './sections/AdminRandoPageSection'
+import AdminPlanningRandoPageSection from './sections/AdminPlanningRandoPageSection'
 import AdminSantePageSection from './sections/AdminSantePageSection'
 import AdminAssoPageSection from './sections/AdminAssoPageSection'
 import AdminComiteSection from './sections/AdminComiteSection'
@@ -48,6 +49,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { id: "gym",           label: "Planning Gym",       icon: "calendar" },
     { id: "vacances",      label: "Vacances scolaires", icon: "calendar" },
     { id: "rando-page",    label: "Page Randonnée & Nordique", icon: "mountain" },
+    { id: "planning-rando-page", label: "Planning Rando", icon: "mountain" },
     { id: "sante-page",    label: "Santé par le sport", icon: "accessibility" },
     { divider: "Contenus" },
     { id: "sejours",       label: "Séjours",            icon: "pin" },
@@ -659,6 +661,7 @@ export default function AdminApp({ user, profile }) {
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}
           {section === "gym-page"      && canAccess("gym-page")      && <AdminGymPageSection/>}
           {section === "rando-page"    && canAccess("rando-page")    && <AdminRandoPageSection/>}
+          {section === "planning-rando-page" && canAccess("planning-rando-page") && <AdminPlanningRandoPageSection onOpenLinks={() => setSection("links")}/>}
           {section === "sante-page"    && canAccess("sante-page")    && <AdminSantePageSection/>}
           {section === "asso-page"     && canAccess("asso-page")     && <AdminAssoPageSection/>}
           {section === "comite"        && canAccess("comite")        && <AdminComiteSection/>}

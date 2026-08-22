@@ -1,6 +1,6 @@
 export const BACKUP_TABLES = [
   'home_blocks', 'gym_page_blocks', 'rando_page_blocks', 'nordique_page_blocks',
-  'sante_page_blocks', 'asso_page_blocks',
+  'sante_page_blocks', 'asso_page_blocks', 'planning_rando_page_blocks',
   'gym_courses', 'vacances_scolaires', 'rando_sorties', 'rando_jeudi_groupes',
   'gym_disciplines', 'gym_animateurs',
   'actualites', 'sejours', 'galerie_photos', 'ag_documents',

@@ -10,6 +10,7 @@ export const ALL_SECTIONS = [
   { id: 'gym-page',      label: 'Page Gym',           group: 'Activités' },
   { id: 'gym',           label: 'Planning Gym',       group: 'Activités' },
   { id: 'rando-page',    label: 'Page Randonnée & Nordique', group: 'Activités' },
+  { id: 'planning-rando-page', label: 'Planning Rando', group: 'Activités' },
   { id: 'sante-page',    label: 'Santé par le sport', group: 'Activités' },
   { id: 'sejours',       label: 'Séjours',            group: 'Contenus' },
   { id: 'actu',          label: 'Actualités',         group: 'Contenus' },

@@ -81,6 +81,33 @@ export async function getExternalLinks(zone) {
   return (data ?? []).filter(linkIsInDisplayWindow)
 }
 
+const DEFAULT_PLANNING_RANDO_PAGE = {
+  header: {
+    crumb: 'Accueil / Planning / Rando & Nordique',
+    eyebrow: 'Planning · Saison 2025-2026',
+    title: 'Planning Rando & Nordique',
+    lede: 'Calendrier des sorties randonnée et des séances de marche nordique.',
+  },
+  links: {
+    title: 'Plannings complets en ligne',
+    intro: 'Calendriers, documents et ressources externes pour la saison en cours.',
+  },
+}
+
+export async function getPlanningRandoPageContent() {
+  const { data, error } = await supabase
+    .from('planning_rando_page_blocks')
+    .select('block_key, content')
+    .order('ordre')
+  if (error) { console.error(error); return DEFAULT_PLANNING_RANDO_PAGE }
+
+  const blocks = Object.fromEntries((data ?? []).map(block => [block.block_key, block.content ?? {}]))
+  return {
+    header: { ...DEFAULT_PLANNING_RANDO_PAGE.header, ...(blocks.header ?? {}) },
+    links: { ...DEFAULT_PLANNING_RANDO_PAGE.links, ...(blocks.links ?? {}) },
+  }
+}
+
 export async function getSejours() {
   const { data, error } = await supabase
     .from('sejours')
