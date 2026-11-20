@@ -6,7 +6,8 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getBureau, getAssoPageBlocks } from '@/lib/queries'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { blockSrc } from '@/lib/editable-src'
 
 export const metadata = { title: "L'Association — AGMR" }
 
@@ -43,9 +44,9 @@ export default async function AssoPage() {
             <div key="header" className="page-header">
               <div className="container">
                 <div className="crumb">Accueil / L'association</div>
-                <div className="page-header-eyebrow">{content.eyebrow ?? "L'association · Loi 1901 · Fondée en 1970"}</div>
-                <h1>{content.titre ?? 'Une association, un esprit'}</h1>
-                <RichText value={content.lede} fallback={"L'Association Gym Marche Rambouillet est le nouveau nom du Club Loisirs et Détente. Renommée en novembre 2018, elle compte aujourd'hui environ 750 adhérents."} className="page-header-lede"/>
+                <div className="page-header-eyebrow"><Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={"L'association · Loi 1901 · Fondée en 1970"}/></div>
+                <h1><Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Une association, un esprit'}/></h1>
+                <Editable src={blockSrc('asso_page_blocks', block.block_key, 'lede')} value={content.lede} fallback={"L'Association Gym Marche Rambouillet est le nouveau nom du Club Loisirs et Détente. Renommée en novembre 2018, elle compte aujourd'hui environ 750 adhérents."} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -78,16 +79,16 @@ export default async function AssoPage() {
                       return (
                         <div key="histoire">
                           <h2 id="histoire" style={{ fontSize: "1.8rem", marginBottom: 16 }}>
-                            {content.titre ?? 'Notre histoire'}
+                            <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Notre histoire'}/>
                           </h2>
-                          <RichText value={content.texte1} fallback={"L'Association Gym Marche Rambouillet (AGMR) est le nouveau nom du Club Loisirs et Détente (CLD). C'est une association selon la loi de 1901, créée en 1970. Le changement de nom a été voté lors de l'assemblée générale extraordinaire de novembre 2018."} style={{ color: "var(--ink-soft)" }}/>
+                          <Editable src={blockSrc('asso_page_blocks', block.block_key, 'texte1')} value={content.texte1} fallback={"L'Association Gym Marche Rambouillet (AGMR) est le nouveau nom du Club Loisirs et Détente (CLD). C'est une association selon la loi de 1901, créée en 1970. Le changement de nom a été voté lors de l'assemblée générale extraordinaire de novembre 2018."} style={{ color: "var(--ink-soft)" }}/>
                           <div style={{ margin: "20px 0", padding: "20px 24px", borderLeft: "3px solid var(--accent)", background: "var(--accent-tint)", borderRadius: "0 var(--r-sm) var(--r-sm) 0" }}>
                             <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "1.15rem", color: "var(--accent-deep)", margin: 0 }}>
-                              « <RichText inline value={content.citation} fallback={"Ces activités sont pratiquées dans un esprit de détente et de convivialité favorisant l'épanouissement de chacun, en dehors de toute notion de compétition."}/> »
+                              « <Editable inline src={blockSrc('asso_page_blocks', block.block_key, 'citation')} value={content.citation} fallback={"Ces activités sont pratiquées dans un esprit de détente et de convivialité favorisant l'épanouissement de chacun, en dehors de toute notion de compétition."}/> »
                             </p>
                           </div>
                           {(content.texte2 || !content.titre) && (
-                            <RichText value={content.texte2} fallback={"Ouverte à tous les courants de pensées, l'association s'interdit toutes discussions confessionnelles ou politiques."} style={{ color: "var(--ink-soft)" }}/>
+                            <Editable src={blockSrc('asso_page_blocks', block.block_key, 'texte2')} value={content.texte2} fallback={"Ouverte à tous les courants de pensées, l'association s'interdit toutes discussions confessionnelles ou politiques."} style={{ color: "var(--ink-soft)" }}/>
                           )}
                         </div>
                       )
@@ -96,26 +97,26 @@ export default async function AssoPage() {
                       return (
                         <div key="sections">
                           <h2 id="sections" style={{ fontSize: "1.8rem", marginTop: 48, marginBottom: 16 }}>
-                            {content.titre ?? 'Les sections'}
+                            <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Les sections'}/>
                           </h2>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 8 }}>
                             <div style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 8 }}>
-                                {content.gym_label ?? 'Section Gym'}
+                                <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'gym_label')} value={content.gym_label} fallback={'Section Gym'}/>
                               </div>
                               <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}>
-                                {content.gym_chiffre ?? '~460 pratiquants'}
+                                <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'gym_chiffre')} value={content.gym_chiffre} fallback={'~460 pratiquants'}/>
                               </div>
-                              <RichText value={content.gym_texte} fallback={'Affiliée à la FFEPGV. 41h de cours, 5 salles, 8 animatrices et animateurs diplômés.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
+                              <Editable src={blockSrc('asso_page_blocks', block.block_key, 'gym_texte')} value={content.gym_texte} fallback={'Affiliée à la FFEPGV. 41h de cours, 5 salles, 8 animatrices et animateurs diplômés.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
                             </div>
                             <div style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 8 }}>
-                                {content.marche_label ?? 'Section Marche'}
+                                <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'marche_label')} value={content.marche_label} fallback={'Section Marche'}/>
                               </div>
                               <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}>
-                                {content.marche_chiffre ?? '~290 pratiquants'}
+                                <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'marche_chiffre')} value={content.marche_chiffre} fallback={'~290 pratiquants'}/>
                               </div>
-                              <RichText value={content.marche_texte} fallback={'Affiliée à la FFR. Sorties jeudi, dimanche, marche nordique mardi/samedi, séjours. 25 animateurs bénévoles.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
+                              <Editable src={blockSrc('asso_page_blocks', block.block_key, 'marche_texte')} value={content.marche_texte} fallback={'Affiliée à la FFR. Sorties jeudi, dimanche, marche nordique mardi/samedi, séjours. 25 animateurs bénévoles.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
                             </div>
                           </div>
                         </div>
@@ -125,9 +126,9 @@ export default async function AssoPage() {
                       return (
                         <div key="gouvernance">
                           <h2 id="gouvernance" style={{ fontSize: "1.8rem", marginTop: 48, marginBottom: 8 }}>
-                            {content.titre ?? 'Gouvernance'}
+                            <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Gouvernance'}/>
                           </h2>
-                          <RichText value={content.texte} fallback={"L'association est dirigée par un comité directeur élu en assemblée générale. Il se réunit 2 fois par trimestre."} style={{ color: "var(--ink-soft)", marginBottom: 20 }}/>
+                          <Editable src={blockSrc('asso_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={"L'association est dirigée par un comité directeur élu en assemblée générale. Il se réunit 2 fois par trimestre."} style={{ color: "var(--ink-soft)", marginBottom: 20 }}/>
                           <h3 style={{ fontFamily: "var(--sans)", fontSize: "1rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 12 }}>
                             Comité directeur 2025-2026
                           </h3>
@@ -150,14 +151,14 @@ export default async function AssoPage() {
                       return (
                         <div key="affiliations">
                           <h2 id="affiliations" style={{ fontSize: "1.8rem", marginTop: 48, marginBottom: 16 }}>
-                            {content.titre ?? 'Affiliations & labels'}
+                            <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Affiliations & labels'}/>
                           </h2>
                           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                             {affiliations.map((a, i) => (
                               <div key={i} style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
-                                <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}>{a.eyebrow}</div>
-                                <div style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", fontWeight: 500, marginBottom: 8 }}>{a.titre}</div>
-                                <RichText value={a.desc} style={{ margin: 0, fontSize: "0.88rem", color: "var(--ink-soft)" }}/>
+                                <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}><Editable plain src={Array.isArray(content.cards) ? blockSrc('asso_page_blocks', block.block_key, `cards.${i}.eyebrow`) : null} value={a.eyebrow}/></div>
+                                <div style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", fontWeight: 500, marginBottom: 8 }}><Editable plain src={Array.isArray(content.cards) ? blockSrc('asso_page_blocks', block.block_key, `cards.${i}.titre`) : null} value={a.titre}/></div>
+                                <Editable simple src={Array.isArray(content.cards) ? blockSrc('asso_page_blocks', block.block_key, `cards.${i}.desc`) : null} value={a.desc} style={{ margin: 0, fontSize: "0.88rem", color: "var(--ink-soft)" }}/>
                               </div>
                             ))}
                           </div>
@@ -170,7 +171,7 @@ export default async function AssoPage() {
                       return (
                         <div key="documents_asso">
                           <h2 id="documents" style={{ fontSize: "1.8rem", marginTop: 48, marginBottom: 16 }}>
-                            {content.titre ?? 'Documents officiels'}
+                            <Editable plain src={blockSrc('asso_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Documents officiels'}/>
                           </h2>
                           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
                             {docsAsso.map((d, i) => (
@@ -190,7 +191,7 @@ export default async function AssoPage() {
                     }
 
                     default:
-                      return <GenericBlockRenderer key={block.block_key} block={block} />
+                      return <GenericBlockRenderer key={block.block_key} block={block} table="asso_page_blocks" />
                   }
                 })}
               </div>

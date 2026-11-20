@@ -28,7 +28,7 @@ function getRecaptchaToken(action = 'contact') {
   })
 }
 
-export default function ContactClient({ email = 'contact@gymmarche.fr', adresse, forumTitre, forumTexte, essaiTitre, essaiTexte }) {
+export default function ContactClient({ email = 'contact@gymmarche.fr', emailLabel, adresse, forumTitre, forumTexte, essaiTitre, essaiTexte }) {
   const [form, setForm] = useState({ prenom: "", nom: "", email: "", sujet: "Inscription", message: "", website: "" })
   const [status, setStatus] = useState("idle")
   const [feedback, setFeedback] = useState("")
@@ -106,7 +106,7 @@ export default function ContactClient({ email = 'contact@gymmarche.fr', adresse,
                 <Icon name="mail" size={18}/>
                 <div>
                   <strong style={{ display: "block", marginBottom: 4 }}>Email</strong>
-                  <a href={`mailto:${email}`}>{email}</a>
+                  <a href={`mailto:${email}`}>{emailLabel ?? email}</a>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>

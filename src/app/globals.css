@@ -2082,3 +2082,48 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
   will-change: transform;
 }
 .banner-ticker:hover { animation-play-state: paused; }
+
+/* ===== Édition visuelle (administrateurs) ===== */
+.edit-bar {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 20px; background: #1f2a22; color: #f4efe3;
+  font-size: 0.9rem; box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.edit-bar-dot { width: 9px; height: 9px; border-radius: 50%; background: #e0703f; box-shadow: 0 0 0 4px rgba(224,112,63,.25); }
+.edit-bar-hint { opacity: .75; }
+.edit-bar-btn {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,.25);
+  background: transparent; color: inherit; font: inherit; font-size: 0.84rem; cursor: pointer; text-decoration: none;
+}
+.edit-bar-btn:hover { background: rgba(255,255,255,.08); }
+.edit-bar-btn-primary { background: #e0703f; border-color: #e0703f; color: #fff; }
+.edit-bar-btn-primary:hover { background: #c95f30; }
+@media (max-width: 640px) { .edit-bar-hint { display: none; } }
+
+.agmr-edit-mode .editable {
+  outline: 1px dashed rgba(224,112,63,.55); outline-offset: 3px;
+  border-radius: 3px; cursor: text; transition: outline-color .15s, background-color .15s;
+}
+.agmr-edit-mode .editable:hover { outline: 2px solid #e0703f; background-color: rgba(224,112,63,.07); }
+.agmr-edit-mode .editable.is-editing { outline: 2px solid #e0703f; background-color: rgba(255,255,255,.85); color: #1a2317; }
+.agmr-edit-mode .editable.is-saving { opacity: .6; }
+.editable-placeholder { opacity: .55; font-style: italic; }
+
+.editable-panel {
+  position: relative; margin: 6px 0; padding: 8px;
+  outline: 2px solid #e0703f; outline-offset: 2px; border-radius: 6px;
+  background: var(--bg-card); color: var(--ink); text-align: left;
+}
+.editable-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.editable-actions-label { margin-right: auto; font-size: 0.78rem; color: var(--ink-mute); font-family: var(--sans, inherit); }
+.editable-loading { padding: 10px; font-size: .85rem; color: var(--ink-mute); }
+.rte-inline { border-color: var(--line); }
+.rte-content.rte-inherit { font-size: inherit; line-height: inherit; font-family: inherit; font-style: inherit; color: inherit; max-height: 60vh; }
+
+.edit-toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 1001;
+  padding: 10px 18px; border-radius: 999px; background: #1f2a22; color: #fff;
+  font-size: 0.9rem; box-shadow: 0 6px 24px rgba(0,0,0,.25);
+}
+.edit-toast.is-error { background: #a3341b; border-radius: 10px; max-width: min(90vw, 560px); }

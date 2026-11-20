@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { textSrc } from '@/lib/editable-src'
 import { getSiteTexts } from '@/lib/queries'
 
 export default async function Footer() {
@@ -11,13 +12,13 @@ export default async function Footer() {
       <div className="footer-grid">
         <div>
           <AGMRLogo size={44} light={true}/>
-          <RichText value={t.tag} className="footer-tag"/>
+          <Editable src={textSrc('footer', 'tag')} value={t.tag} className="footer-tag" label="Présentation"/>
           <div style={{ display: "flex", gap: 14, marginTop: 22 }}>
             
               <a href={`mailto:${t.email}`}
               style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
             >
-              <Icon name="mail" size={15}/> {t.email}
+              <Icon name="mail" size={15}/> <Editable plain src={textSrc('footer', 'email')} value={t.email} label="Email"/>
             </a>
           </div>
         </div>
@@ -64,7 +65,7 @@ export default async function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <span>{t.bottom}</span>
+        <span><Editable plain src={textSrc('footer', 'bottom')} value={t.bottom}/></span>
         <Link href="/mentions-legales">Mentions legales</Link>
       </div>
     </footer>

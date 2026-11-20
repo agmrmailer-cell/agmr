@@ -4,6 +4,8 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getBureau, getGymAnimateurs, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
+import Editable from '@/components/editable/Editable'
+import { textSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Comité Directeur — AGMR' }
 
@@ -15,7 +17,7 @@ export default async function ComitePage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <PageHeader t={t}/>
+        <PageHeader t={t} page="comite"/>
 
         <section className="section">
           <div className="container">
@@ -55,7 +57,7 @@ export default async function ComitePage() {
 
             {animateurs.length > 0 && (
               <>
-                <h2 style={{ fontSize: "2rem", marginBottom: 28 }}>{t.animateurs_titre}</h2>
+                <h2 style={{ fontSize: "2rem", marginBottom: 28 }}><Editable plain src={textSrc('comite', 'animateurs_titre')} value={t.animateurs_titre}/></h2>
                 <div className="team-grid">
                   {animateurs.map(a => (
                     <div key={a.id} className="team-card">

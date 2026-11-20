@@ -10,6 +10,19 @@ const header = ({ crumb, eyebrow, title, lede }) => [
 
 export const SITE_TEXT_PAGES = [
   {
+    id: 'home',
+    label: "Page d'accueil (titres de sections)",
+    href: '/',
+    fields: [
+      { key: 'trio_eyebrow', label: 'Activités — accroche', type: 'text', default: 'Trois activites, un meme esprit' },
+      { key: 'trio_titre',   label: 'Activités — titre',    type: 'text', default: 'Choisissez votre tempo.' },
+      { key: 'trio_lede',    label: 'Activités — introduction', type: 'rich', default: '<p>Une adhésion unique donne accès à la gym et/ou à la marche. A vous de construire votre semaine.</p>' },
+      { key: 'news_eyebrow', label: 'Actualités — accroche', type: 'text', default: 'À la une' },
+      { key: 'news_titre',   label: 'Actualités — titre',    type: 'text', default: 'Dernières actualités' },
+      { key: 'news_lien',    label: 'Actualités — bouton',   type: 'text', default: 'Toutes les actualités' },
+    ],
+  },
+  {
     id: 'footer',
     label: 'Pied de page (toutes les pages)',
     href: '/',

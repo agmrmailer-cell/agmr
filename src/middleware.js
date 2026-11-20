@@ -2,6 +2,11 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 export async function middleware(request) {
+  // Hors admin, on ne rafraîchit la session que pour les administrateurs en mode édition visuelle
+  if (!request.nextUrl.pathname.startsWith('/admin') && request.cookies.get('agmr_edit')?.value !== '1') {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -45,5 +50,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/((?!_next/static|_next/image|api/|favicon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
 }

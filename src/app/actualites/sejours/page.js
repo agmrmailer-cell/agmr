@@ -5,7 +5,8 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getSejours, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { textSrc, rowSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Séjours & Sorties — AGMR' }
 
@@ -27,11 +28,11 @@ export default async function SejoursPage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <PageHeader t={t}/>
+        <PageHeader t={t} page="sejours"/>
 
         <section className="section">
           <div className="container">
-            <h2 style={{ fontFamily: "var(--serif)", fontSize: "2rem", marginBottom: 28 }}>{t.saison_titre}</h2>
+            <h2 style={{ fontFamily: "var(--serif)", fontSize: "2rem", marginBottom: 28 }}><Editable plain src={textSrc('sejours', 'saison_titre')} value={t.saison_titre}/></h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 20, marginBottom: 64 }}>
               {sejours.map(s => (
                 <div key={s.id} className="sejour-page-card">
@@ -45,12 +46,12 @@ export default async function SejoursPage() {
                     <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 6 }}>
                       {s.transport}
                     </div>
-                    <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}>{s.titre}</div>
+                    <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}><Editable plain src={rowSrc('sejours', s.id, 'titre')} value={s.titre}/></div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.88rem", color: "var(--ink-mute)", marginBottom: 10 }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                      {s.dates}
+                      <Editable plain src={rowSrc('sejours', s.id, 'dates')} value={s.dates}/>
                     </div>
-                    <RichText value={s.description} style={{ color: "var(--ink-soft)", fontSize: "0.94rem", margin: 0 }}/>
+                    <Editable src={rowSrc('sejours', s.id, 'description')} value={s.description} style={{ color: "var(--ink-soft)", fontSize: "0.94rem", margin: 0 }}/>
                   </div>
                   <div className="sejour-page-status">
                     {s.statut === "ouvert" && <>

@@ -5,7 +5,8 @@ import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getAGDocuments, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { textSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Assemblée Générale — AGMR' }
 
@@ -25,12 +26,12 @@ export default async function AGPage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <PageHeader t={t}/>
+        <PageHeader t={t} page="ag"/>
 
         <section className="section">
           <div className="container-narrow">
             {saisons.length === 0 ? (
-              <RichText value={t.vide} style={{ color: "var(--ink-mute)" }}/>
+              <Editable src={textSrc('ag', 'vide')} value={t.vide} style={{ color: "var(--ink-mute)" }}/>
             ) : (
               saisons.map(saison => (
                 <div key={saison} style={{ marginBottom: 40 }}>

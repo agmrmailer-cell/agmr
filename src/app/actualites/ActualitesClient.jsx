@@ -27,8 +27,8 @@ export default function ActualitesClient({ articles, links = [] }) {
                 <span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span>
                 <span>{formatDateFR(n.date)}</span>
               </div>
-              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: 10 }}>{n.title}</h3>
-              <RichTextView html={n.excerpt} style={{ color: "var(--ink-soft)", fontSize: "0.95rem", margin: 0 }}/>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: 10 }}>{n.titleNode ?? n.title}</h3>
+              {n.excerptNode ?? <RichTextView html={n.excerpt} style={{ color: "var(--ink-soft)", fontSize: "0.95rem", margin: 0 }}/>}
             </article>
           ))}
         </div>

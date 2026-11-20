@@ -1,5 +1,7 @@
 import { Cormorant_Garamond, Source_Sans_3, Inter } from 'next/font/google'
 import './globals.css'
+import { getEditMode } from '@/lib/edit-mode'
+import EditModeBar from '@/components/editable/EditModeBar'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -29,10 +31,12 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const editMode = await getEditMode()
   return (
     <html lang="fr">
       <body className={`${cormorant.variable} ${sourceSans.variable} ${inter.variable}`}>
+        {editMode && <EditModeBar/>}
         {children}
       </body>
     </html>

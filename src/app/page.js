@@ -6,9 +6,10 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
-import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks } from '@/lib/queries'
-import RichText from '@/components/ui/RichText'
+import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks, getSiteTexts } from '@/lib/queries'
 import { richTextToPlain } from '@/lib/rich-text'
+import Editable from '@/components/editable/Editable'
+import { blockSrc, textSrc, rowSrc } from '@/lib/editable-src'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -25,6 +26,7 @@ export default async function HomePage() {
     getActualites(),
     getExternalLinks('home-rando-sante'),
   ])
+  const t = await getSiteTexts('home')
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const c  = (key) => bm[key]?.content ?? {}
@@ -58,12 +60,9 @@ export default async function HomePage() {
               <section key="trio" className="section section-cream">
                 <div className="container">
                   <div className="section-head">
-                    <div className="section-eyebrow">Trois activites, un meme esprit</div>
-                    <h2 className="section-title">Choisissez votre tempo.</h2>
-                    <p className="section-lede">
-                      Une adhésion unique donne accès à la gym et/ou à la marche.
-                      A vous de construire votre semaine.
-                    </p>
+                    <div className="section-eyebrow"><Editable plain src={textSrc('home', 'trio_eyebrow')} value={t.trio_eyebrow}/></div>
+                    <h2 className="section-title"><Editable plain src={textSrc('home', 'trio_titre')} value={t.trio_titre}/></h2>
+                    <Editable src={textSrc('home', 'trio_lede')} value={t.trio_lede} className="section-lede"/>
                   </div>
                   <div className="trio">
                     {visibleTrios.map(({ key, cls, n }) => {
@@ -75,11 +74,11 @@ export default async function HomePage() {
                             <div className="trio-photo-num">{n}</div>
                           </div>
                           <div className="trio-body">
-                            <h3>{tc.titre}</h3>
-                            <RichText value={tc.description}/>
+                            <h3><Editable plain src={blockSrc('home_blocks', key, 'titre')} value={tc.titre}/></h3>
+                            <Editable src={blockSrc('home_blocks', key, 'description')} value={tc.description}/>
                             <div className="trio-foot">
-                              <span className="trio-link">{tc.cta} →</span>
-                              <span className="trio-stat">{tc.stat}</span>
+                              <span className="trio-link"><Editable plain src={blockSrc('home_blocks', key, 'cta')} value={tc.cta}/> →</span>
+                              <span className="trio-stat"><Editable plain src={blockSrc('home_blocks', key, 'stat')} value={tc.stat}/></span>
                             </div>
                           </div>
                         </Link>
@@ -100,18 +99,18 @@ export default async function HomePage() {
                     <div className="hero-grain"/>
                   </div>
                   <div className="hero-content">
-                    <span className="hero-eyebrow">{content.eyebrow ?? 'Depuis 1970 · Rambouillet'}</span>
+                    <span className="hero-eyebrow"><Editable plain src={blockSrc('home_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Depuis 1970 · Rambouillet'}/></span>
                     <h1>
-                      {content.titre_ligne1 ?? 'Bougez, marchez,'}<br/>
-                      <em>{content.titre_ligne2 ?? 'respirez ensemble.'}</em>
+                      <Editable plain src={blockSrc('home_blocks', block.block_key, 'titre_ligne1')} value={content.titre_ligne1} fallback={'Bougez, marchez,'}/><br/>
+                      <em><Editable plain src={blockSrc('home_blocks', block.block_key, 'titre_ligne2')} value={content.titre_ligne2} fallback={'respirez ensemble.'}/></em>
                     </h1>
-                    <RichText value={content.sous_titre} fallback={'Gymnastique, randonnée, marche nordique.\nDans un esprit de détente et de convivialité.'} className="hero-sub" style={{ whiteSpace: 'pre-line' }}/>
+                    <Editable src={blockSrc('home_blocks', block.block_key, 'sous_titre')} value={content.sous_titre} fallback={'Gymnastique, randonnée, marche nordique.\nDans un esprit de détente et de convivialité.'} className="hero-sub" style={{ whiteSpace: 'pre-line' }}/>
                     <div className="hero-actions">
                       <Link className="btn btn-primary btn-lg" href={content.cta1_lien ?? '/inscriptions'}>
-                        {content.cta1_texte ?? "Je m'inscris"}
+                        <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta1_texte')} value={content.cta1_texte} fallback={"Je m'inscris"}/>
                       </Link>
                       <Link className="btn btn-light btn-lg" href={content.cta2_lien ?? '/activites/gym'}>
-                        {content.cta2_texte ?? 'Découvrir nos activités'}
+                        <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta2_texte')} value={content.cta2_texte} fallback={'Découvrir nos activités'}/>
                       </Link>
                     </div>
                   </div>
@@ -134,21 +133,21 @@ export default async function HomePage() {
                       <div className="manifesto-vis">
                         <div className="manifesto-vis-photo" style={content.photo_url ? { backgroundImage: `url(${content.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}/>
                         <div className="manifesto-badge">
-                          <strong>{content.badge ?? "L'épanouissement avant la performance"}</strong>
-                          {content.badge_meta ?? 'Charte AGMR — 2018'}
+                          <strong><Editable plain src={blockSrc('home_blocks', block.block_key, 'badge')} value={content.badge} fallback={"L'épanouissement avant la performance"}/></strong>
+                          <Editable plain src={blockSrc('home_blocks', block.block_key, 'badge_meta')} value={content.badge_meta} fallback={'Charte AGMR — 2018'}/>
                         </div>
                       </div>
                       <div className="manifesto-text">
-                        <div className="section-eyebrow">{content.eyebrow ?? 'Notre philosophie'}</div>
-                        <h2 style={{ whiteSpace: 'pre-line' }}>{content.titre ?? "Le plaisir d'abord,\nle reste suit."}</h2>
-                        <RichText value={content.texte}/>
-                        <div className="pull">{content.pull}</div>
+                        <div className="section-eyebrow"><Editable plain src={blockSrc('home_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Notre philosophie'}/></div>
+                        <h2 style={{ whiteSpace: 'pre-line' }}><Editable plain src={blockSrc('home_blocks', block.block_key, 'titre')} value={content.titre} fallback={"Le plaisir d'abord,\nle reste suit."}/></h2>
+                        <Editable src={blockSrc('home_blocks', block.block_key, 'texte')} value={content.texte}/>
+                        <div className="pull"><Editable plain src={blockSrc('home_blocks', block.block_key, 'pull')} value={content.pull}/></div>
                         <div style={{ marginTop: 28, display: "flex", gap: 14 }}>
                           <Link className="btn btn-ghost" href={content.cta1_lien ?? '/association'}>
-                            {content.cta1_texte ?? "L'association"}
+                            <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta1_texte')} value={content.cta1_texte} fallback={"L'association"}/>
                           </Link>
                           <Link className="btn btn-ghost" href={content.cta2_lien ?? '/inscriptions'}>
-                            {content.cta2_texte ?? "S'inscrire"}
+                            <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta2_texte')} value={content.cta2_texte} fallback={"S'inscrire"}/>
                           </Link>
                         </div>
                       </div>
@@ -165,11 +164,11 @@ export default async function HomePage() {
                       <>
                         <div className="section-head" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", maxWidth:"none" }}>
                           <div>
-                            <div className="section-eyebrow">À la une</div>
-                            <h2 className="section-title">Dernières actualités</h2>
+                            <div className="section-eyebrow"><Editable plain src={textSrc('home', 'news_eyebrow')} value={t.news_eyebrow}/></div>
+                            <h2 className="section-title"><Editable plain src={textSrc('home', 'news_titre')} value={t.news_titre}/></h2>
                           </div>
                           <Link className="btn btn-ghost" href="/actualites">
-                            Toutes les actualités →
+                            <Editable plain src={textSrc('home', 'news_lien')} value={t.news_lien}/> →
                           </Link>
                         </div>
                         <div className="news-split">
@@ -186,8 +185,8 @@ export default async function HomePage() {
                                 </span>
                                 <span>{formatDateFR(actualites[0].date)}</span>
                               </div>
-                              <h3>{actualites[0].title}</h3>
-                              <RichText value={actualites[0].excerpt}/>
+                              <h3><Editable plain src={rowSrc('actualites', actualites[0].id, 'title')} value={actualites[0].title}/></h3>
+                              <Editable src={rowSrc('actualites', actualites[0].id, 'excerpt')} value={actualites[0].excerpt}/>
                               <div style={{ marginTop: 18 }}>
                                 <a href="#" style={{ fontWeight: 600 }}>Lire la suite →</a>
                               </div>
@@ -201,7 +200,7 @@ export default async function HomePage() {
                                     <span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span>
                                     <span>{formatDateFR(n.date)}</span>
                                   </div>
-                                  <h4>{n.title}</h4>
+                                  <h4><Editable plain src={rowSrc('actualites', n.id, 'title')} value={n.title}/></h4>
                                   <p>{richTextToPlain(n.excerpt).slice(0, 90)}{richTextToPlain(n.excerpt).length > 90 ? '…' : ''}</p>
                                 </div>
                                 <a href="/actualites" className="news-side-link">Lire la suite →</a>
@@ -227,15 +226,15 @@ export default async function HomePage() {
                   <div className="container">
                     <div className="cta-banner">
                       <div style={{ position: "relative" }}>
-                        <h3>{content.titre ?? "Première séance d'essai gratuite."}</h3>
-                        <p>{content.sous_titre ?? "Sur simple inscription par téléphone ou en ligne. Aucun engagement."}</p>
+                        <h3><Editable plain src={blockSrc('home_blocks', block.block_key, 'titre')} value={content.titre} fallback={"Première séance d'essai gratuite."}/></h3>
+                        <p><Editable plain src={blockSrc('home_blocks', block.block_key, 'sous_titre')} value={content.sous_titre} fallback={"Sur simple inscription par téléphone ou en ligne. Aucun engagement."}/></p>
                       </div>
                       <div style={{ display: "flex", gap: 12, position: "relative" }}>
                         <Link className="btn btn-light btn-lg" href={content.cta1_lien ?? '/inscriptions'}>
-                          {content.cta1_texte ?? "S'inscrire"}
+                          <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta1_texte')} value={content.cta1_texte} fallback={"S'inscrire"}/>
                         </Link>
                         <Link className="btn btn-light btn-lg" href={content.cta2_lien ?? '/contact'}>
-                          {content.cta2_texte ?? "Nous contacter"}
+                          <Editable plain src={blockSrc('home_blocks', block.block_key, 'cta2_texte')} value={content.cta2_texte} fallback={"Nous contacter"}/>
                         </Link>
                       </div>
                     </div>
@@ -258,7 +257,7 @@ export default async function HomePage() {
               )
 
             default:
-              return <GenericBlockRenderer key={block.block_key} block={block} />
+              return <GenericBlockRenderer key={block.block_key} block={block} table="home_blocks" />
           }
         })}
 

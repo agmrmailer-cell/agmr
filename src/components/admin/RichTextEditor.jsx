@@ -27,7 +27,8 @@ const BUTTONS = [
 const SIMPLE_KEYS = new Set(['bold', 'italic', 'underline', 'link', 'clear', 'undo', 'redo'])
 
 // `simple` : barre d'outils réduite (gras, italique, souligné, lien) pour les textes courts
-export default function RichTextEditor({ value, onChange, onBlur, minHeight = 120, simple = false }) {
+// `inherit` : reprend la typographie du site (édition visuelle sur la page)
+export default function RichTextEditor({ value, onChange, onBlur, minHeight = 120, simple = false, inherit = false, autoFocus = false }) {
   // Les callbacks changent à chaque rendu : on garde toujours la dernière version
   const onChangeRef = useRef(onChange)
   const onBlurRef = useRef(onBlur)
@@ -50,8 +51,9 @@ export default function RichTextEditor({ value, onChange, onBlur, minHeight = 12
       }),
     ],
     content: plainTextToHtml(value ?? ''),
+    autofocus: autoFocus ? 'end' : false,
     editorProps: {
-      attributes: { class: 'rte-content' },
+      attributes: { class: inherit ? 'rte-content rte-inherit' : 'rte-content' },
     },
     onUpdate: ({ editor }) => {
       const html = editor.isEmpty ? '' : editor.getHTML()
@@ -94,7 +96,7 @@ export default function RichTextEditor({ value, onChange, onBlur, minHeight = 12
   }
 
   return (
-    <div className="rte">
+    <div className={inherit ? 'rte rte-inline' : 'rte'}>
       <div className="rte-toolbar" role="toolbar" aria-label="Mise en forme">
         {buttons.map((b, i) => b.sep
           ? <span key={`sep-${i}`} className="rte-sep"/>

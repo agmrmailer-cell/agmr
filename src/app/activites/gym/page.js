@@ -5,7 +5,8 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getGymPageBlocks, getGymDisciplines, getGymAnimateurs } from '@/lib/queries'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { blockSrc, rowSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'La Gym — AGMR' }
 
@@ -58,10 +59,10 @@ export default async function GymPage() {
                   <span>Gym</span>
                 </div>
                 <div className="page-header-eyebrow">
-                  {content.eyebrow ?? 'Activités · FFEPGV · Label Qualité Club Sport Santé'}
+                  <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Activités · FFEPGV · Label Qualité Club Sport Santé'}/>
                 </div>
-                <h1>{content.titre ?? 'La Gym'}</h1>
-                <RichText value={content.lede} fallback={'43 heures de cours par semaine, 8 animateurs brevetés professionnels, 5 salles municipales. Construisez votre propre programme.'} className="page-header-lede"/>
+                <h1><Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'La Gym'}/></h1>
+                <Editable src={blockSrc('gym_page_blocks', block.block_key, 'lede')} value={content.lede} fallback={'43 heures de cours par semaine, 8 animateurs brevetés professionnels, 5 salles municipales. Construisez votre propre programme.'} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -101,10 +102,10 @@ export default async function GymPage() {
                       return (
                         <div key="intro">
                           <h2 id="intro" style={{ fontSize: "2.2rem", marginBottom: 18 }}>
-                            {content.titre ?? 'La Gymnastique Volontaire à Rambouillet'}
+                            <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'La Gymnastique Volontaire à Rambouillet'}/>
                           </h2>
-                          <RichText value={content.texte1} fallback={"Notre section est affiliée à la Fédération Française d'Éducation Physique et de Gymnastique Volontaire (FFEPGV). Elle bénéficie du label Qualité Club Sport Santé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
-                          <RichText value={content.texte2} fallback={"Tous les cours sont donnés par des animateurs brevetés d'État. Ils proposent 43 heures de cours par semaine, d'une grande variété, répartis dans 5 salles mises à disposition par la municipalité."}/>
+                          <Editable src={blockSrc('gym_page_blocks', block.block_key, 'texte1')} value={content.texte1} fallback={"Notre section est affiliée à la Fédération Française d'Éducation Physique et de Gymnastique Volontaire (FFEPGV). Elle bénéficie du label Qualité Club Sport Santé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
+                          <Editable src={blockSrc('gym_page_blocks', block.block_key, 'texte2')} value={content.texte2} fallback={"Tous les cours sont donnés par des animateurs brevetés d'État. Ils proposent 43 heures de cours par semaine, d'une grande variété, répartis dans 5 salles mises à disposition par la municipalité."}/>
                         </div>
                       )
 
@@ -117,21 +118,21 @@ export default async function GymPage() {
                       return (
                         <div key="programme" style={{ marginTop: 40, padding: 28, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                           <h3 id="programme" style={{ fontFamily: "var(--serif)", fontSize: "1.5rem", marginBottom: 10 }}>
-                            {content.titre ?? 'Construisez votre propre programme'}
+                            <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Construisez votre propre programme'}/>
                           </h3>
-                          <RichText value={content.texte_intro} fallback={"Vous pouvez assister à 2 ou 3 heures de cours par semaine. L'adhésion vous permet de choisir, parmi les 43 cours proposés, au maximum :"} style={{ margin: 0, color: "var(--ink-soft)" }}/>
+                          <Editable src={blockSrc('gym_page_blocks', block.block_key, 'texte_intro')} value={content.texte_intro} fallback={"Vous pouvez assister à 2 ou 3 heures de cours par semaine. L'adhésion vous permet de choisir, parmi les 43 cours proposés, au maximum :"} style={{ margin: 0, color: "var(--ink-soft)" }}/>
                           <ul style={{ margin: "12px 0 0 20px", color: "var(--ink-soft)" }}>
                             {progItems.map((item, i) => <li key={i}>{item}</li>)}
                           </ul>
                           {(content.note || !content.titre) && (
-                            <RichText value={content.note} fallback={'Chaque cours couvre la saison complète, soit environ 34 séances.'} style={{ marginTop: 14, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
+                            <Editable src={blockSrc('gym_page_blocks', block.block_key, 'note')} value={content.note} fallback={'Chaque cours couvre la saison complète, soit environ 34 séances.'} style={{ marginTop: 14, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
                           )}
                           <div style={{ marginTop: 20, display: "flex", gap: 12 }}>
                             <Link className="btn btn-primary" href={content.cta1_lien ?? '/planning/gym'}>
-                              {content.cta1_texte ?? 'Voir le planning'}
+                              <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'cta1_texte')} value={content.cta1_texte} fallback={'Voir le planning'}/>
                             </Link>
                             <Link className="btn btn-ghost" href={content.cta2_lien ?? '/inscriptions'}>
-                              {content.cta2_texte ?? "S'inscrire"}
+                              <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'cta2_texte')} value={content.cta2_texte} fallback={"S'inscrire"}/>
                             </Link>
                           </div>
                         </div>
@@ -142,17 +143,17 @@ export default async function GymPage() {
                       return (
                         <div key="prescri" style={{ marginTop: 48, padding: 32, background: "var(--green-tint)", borderRadius: "var(--r-md)" }}>
                           <h3 id="prescri" style={{ marginBottom: 10 }}>
-                            {content.titre ?? "Prescri'Forme — sport sur ordonnance"}
+                            <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={"Prescri'Forme — sport sur ordonnance"}/>
                           </h3>
-                          <RichText value={content.texte} fallback={"L'Association est agréée pour dispenser des cours de gym volontaire sur prescription médicale (dispositif Prescri'Forme, Île-de-France, depuis septembre 2019)."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
+                          <Editable src={blockSrc('gym_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={"L'Association est agréée pour dispenser des cours de gym volontaire sur prescription médicale (dispositif Prescri'Forme, Île-de-France, depuis septembre 2019)."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
                           <Link className="btn btn-ghost btn-sm" href={content.cta_lien ?? '/activites/sante'}>
-                            {content.cta_texte ?? 'En savoir plus'}
+                            <Editable plain src={blockSrc('gym_page_blocks', block.block_key, 'cta_texte')} value={content.cta_texte} fallback={'En savoir plus'}/>
                           </Link>
                         </div>
                       )
 
                     default:
-                      return <GenericBlockRenderer key={block.block_key} block={block} />
+                      return <GenericBlockRenderer key={block.block_key} block={block} table="gym_page_blocks" />
                   }
                 })}
 
@@ -169,8 +170,8 @@ export default async function GymPage() {
                       <div key={d.id} className="disc-item">
                         <div className="disc-item-mark">{d.mark}</div>
                         <div className="disc-item-text">
-                          <div className="disc-item-name">{d.nom}</div>
-                          <RichText value={d.description} as="div" className="disc-item-desc"/>
+                          <div className="disc-item-name"><Editable plain src={rowSrc('gym_disciplines', d.id, 'nom')} value={d.nom}/></div>
+                          <Editable src={rowSrc('gym_disciplines', d.id, 'description')} value={d.description} as="div" className="disc-item-desc" simple/>
                         </div>
                       </div>
                     ))}

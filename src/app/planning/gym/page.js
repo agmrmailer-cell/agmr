@@ -5,6 +5,8 @@ import Footer from '@/components/shell/Footer'
 import PlanningGymClient from './PlanningGymClient'
 import { getGymCourses, getVacances, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
+import Editable from '@/components/editable/Editable'
+import { textSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Planning Gym — AGMR' }
 
@@ -15,7 +17,7 @@ export default async function PlanningGymPage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <PageHeader t={t}/>
+        <PageHeader t={t} page="planning-gym"/>
         <PlanningGymClient courses={courses} vacances={vacances}/>
       </main>
       <Footer/>

@@ -29,6 +29,13 @@ import AdminBackupSection from './sections/AdminBackupSection'
 import AdminBannerSection from './sections/AdminBannerSection'
 import AdminLinksSection from './sections/AdminLinksSection'
 import AdminSiteTextsSection from './sections/AdminSiteTextsSection'
+import { setEditModeCookie } from '@/components/editable/EditModeBar'
+
+// Ouvre le site public en mode édition visuelle (textes modifiables en cliquant dessus)
+function openVisualEditor(path = '/') {
+  setEditModeCookie(true)
+  window.location.href = path
+}
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
@@ -44,6 +51,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
 
   const allItems = [
     { id: "dash",          label: "Tableau de bord",    icon: "home",          always: true },
+    { id: "visual-edit",   label: "Éditer le site en direct", icon: "edit", always: true, action: () => openVisualEditor("/") },
     { divider: "Activités" },
     { id: "home",          label: "Page principale",    icon: "file" },
     { id: "gym-page",      label: "Page Gym",           icon: "leaf" },
@@ -112,7 +120,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
             )
           }
           return (
-            <a key={it.id} href="#" className={section === it.id ? "active" : ""} onClick={e => { e.preventDefault(); setSection(it.id) }}>
+            <a key={it.id} href="#" className={section === it.id ? "active" : ""} style={it.action ? { color: "#e88a5a", fontWeight: 600 } : undefined} onClick={e => { e.preventDefault(); if (it.action) it.action(); else setSection(it.id) }}>
               <Icon name={it.icon} size={16}/> {it.label}
               {it.id === "banner" && bannerActive && (
                 <span style={{ marginLeft: "auto", width: 18, height: 18, borderRadius: "50%", background: "#e88a5a", color: "#fff", fontSize: "0.65rem", fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, lineHeight: 1 }}>!</span>
@@ -188,7 +196,12 @@ function Dashboard({ setSection }) {
     <>
       <div className="admin-head">
         <div><h1>Tableau de bord</h1><p className="muted" style={{ margin: 0 }}>Vue d&apos;ensemble · saison 2025-2026</p></div>
-        <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+          <button className="btn btn-primary" onClick={() => openVisualEditor("/")}>
+            <Icon name="edit" size={15}/> Éditer le site en direct
+          </button>
+        </div>
       </div>
       <div className="kpi-grid">
         {(kpi ?? [["…","Cours gym actifs",""],["…","Liens planning rando",""],["…","Séjours programmés",""]]).map(([n,l,t]) => (

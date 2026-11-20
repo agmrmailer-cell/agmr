@@ -5,6 +5,8 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getTarifs } from '@/lib/queries'
 import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { rowSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Tarifs — AGMR' }
 
@@ -62,11 +64,11 @@ export default async function TarifsPage() {
                       {lignes.map(({ id, label, valeur, note }) => (
                         <tr key={id}>
                           <td>
-                            {label}
-                            {note && <div style={{ fontSize: "0.78rem", color: "var(--ink-mute)", marginTop: 2 }}>{note}</div>}
+                            <Editable plain src={rowSrc('tarifs', id, 'label')} value={label}/>
+                            {note && <div style={{ fontSize: "0.78rem", color: "var(--ink-mute)", marginTop: 2 }}><Editable plain src={rowSrc('tarifs', id, 'note')} value={note}/></div>}
                           </td>
                           <td style={{ textAlign: "right", fontWeight: valeur ? 600 : 400, color: valeur ? "var(--ink)" : "var(--ink-mute)", whiteSpace: "nowrap" }}>
-                            {valeur || "à confirmer"}
+                            {valeur ? <Editable plain src={rowSrc('tarifs', id, 'valeur')} value={valeur}/> : "à confirmer"}
                           </td>
                         </tr>
                       ))}

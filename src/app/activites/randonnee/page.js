@@ -6,7 +6,8 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getRandoPageBlocks, getRandoJeudiGroupes, getNordiquePageBlocks } from '@/lib/queries'
-import RichText from '@/components/ui/RichText'
+import Editable from '@/components/editable/Editable'
+import { blockSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Randonnée & Marche nordique — AGMR' }
 
@@ -65,10 +66,10 @@ export default async function RandoPage() {
                   <span>Randonnée</span>
                 </div>
                 <div className="page-header-eyebrow">
-                  {content.eyebrow ?? 'Activités · Fédération Française de Randonnée'}
+                  <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Activités · Fédération Française de Randonnée'}/>
                 </div>
-                <h1>{content.titre ?? 'La Randonnée'}</h1>
-                <RichText value={content.lede} fallback={'Forêt de Rambouillet et alentours. 5 groupes de niveau, sorties chaque jeudi et un dimanche sur deux, séjours en France.'} className="page-header-lede"/>
+                <h1><Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'La Randonnée'}/></h1>
+                <Editable src={blockSrc('rando_page_blocks', block.block_key, 'lede')} value={content.lede} fallback={'Forêt de Rambouillet et alentours. 5 groupes de niveau, sorties chaque jeudi et un dimanche sur deux, séjours en France.'} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -107,16 +108,16 @@ export default async function RandoPage() {
                       return (
                         <div key="intro">
                           <h2 id="intro" style={{ fontSize: "2.2rem", marginBottom: 18 }}>
-                            {content.titre ?? 'Marcher dans la forêt de Rambouillet'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Marcher dans la forêt de Rambouillet'}/>
                           </h2>
-                          <RichText value={content.texte} fallback={"Les randonnées se font en forêt de Rambouillet ou à proximité immédiate. Les adhérents se répartissent en 4 ou 5 groupes selon leurs possibilités ou affinités. Il est toujours possible de changer de groupe d'une fois sur l'autre."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={"Les randonnées se font en forêt de Rambouillet ou à proximité immédiate. Les adhérents se répartissent en 4 ou 5 groupes selon leurs possibilités ou affinités. Il est toujours possible de changer de groupe d'une fois sur l'autre."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
                           {(content.alerte || !content.titre) && (
                             <div style={{ background: "var(--accent-tint)", border: "1px solid var(--accent-soft)", borderRadius: "var(--r-md)", padding: 20, margin: "20px 0", fontSize: "0.96rem" }}>
                               <strong>Important :</strong>{' '}
-                              <RichText inline value={content.alerte} fallback="tout randonneur devrait avoir dans son sac la fiche individuelle de santé. Elle contribue à renforcer la sécurité lors des sorties."/>{' '}
+                              <Editable inline src={blockSrc('rando_page_blocks', block.block_key, 'alerte')} value={content.alerte} fallback="tout randonneur devrait avoir dans son sac la fiche individuelle de santé. Elle contribue à renforcer la sécurité lors des sorties."/>{' '}
                               {(content.alerte_lien || !content.titre) && (
                                 <a href={content.alerte_lien ?? '#'} style={{ fontWeight: 600 }}>
-                                  {content.alerte_lien_texte ?? 'Télécharger la fiche'}
+                                  <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'alerte_lien_texte')} value={content.alerte_lien_texte} fallback={'Télécharger la fiche'}/>
                                 </a>
                               )}
                             </div>
@@ -128,9 +129,9 @@ export default async function RandoPage() {
                       return (
                         <div key="jeudi">
                           <h3 id="jeudi" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
-                            {content.titre ?? 'Les randonnées du jeudi'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Les randonnées du jeudi'}/>
                           </h3>
-                          <RichText value={content.intro} fallback={'5 groupes de niveau, chaque jeudi après-midi.'}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'intro')} value={content.intro} fallback={'5 groupes de niveau, chaque jeudi après-midi.'}/>
                           <table className="tbl" style={{ marginTop: 16 }}>
                             <thead>
                               <tr><th>Groupe</th><th>Distance</th><th>Retour vers</th><th>Point de RDV</th></tr>
@@ -147,7 +148,7 @@ export default async function RandoPage() {
                             </tbody>
                           </table>
                           {(content.note || !content.titre) && (
-                            <RichText value={content.note} fallback={"Les groupes 2A et 2B pourront être réunis en fonction du nombre d'animateurs disponibles. Les départs se font en covoiturage."} style={{ marginTop: 12, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
+                            <Editable src={blockSrc('rando_page_blocks', block.block_key, 'note')} value={content.note} fallback={"Les groupes 2A et 2B pourront être réunis en fonction du nombre d'animateurs disponibles. Les départs se font en covoiturage."} style={{ marginTop: 12, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
                           )}
                           <Link
                             className="btn btn-primary"
@@ -163,10 +164,10 @@ export default async function RandoPage() {
                       return (
                         <div key="dimanche">
                           <h3 id="dimanche" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
-                            {content.titre ?? 'Les randonnées du dimanche'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Les randonnées du dimanche'}/>
                           </h3>
-                          <RichText value={content.texte1} fallback={'Environ tous les 15 jours. Parcours de 9 à 11 km. Rassemblement à 8h45 sur le parking du centre Leclerc, départ à 9h, retour vers midi.'}/>
-                          <RichText value={content.texte2} fallback={"Conditions : être inscrit à la section marche de l'AGMR. Une sortie d'essai est possible sans inscription."} style={{ color: "var(--ink-soft)", fontSize: "0.96rem" }}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'texte1')} value={content.texte1} fallback={'Environ tous les 15 jours. Parcours de 9 à 11 km. Rassemblement à 8h45 sur le parking du centre Leclerc, départ à 9h, retour vers midi.'}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'texte2')} value={content.texte2} fallback={"Conditions : être inscrit à la section marche de l'AGMR. Une sortie d'essai est possible sans inscription."} style={{ color: "var(--ink-soft)", fontSize: "0.96rem" }}/>
                         </div>
                       )
 
@@ -174,15 +175,15 @@ export default async function RandoPage() {
                       return (
                         <div key="sejours">
                           <h3 id="sejours" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
-                            {content.titre ?? 'Sorties à la journée et séjours'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Sorties à la journée et séjours'}/>
                           </h3>
-                          <RichText value={content.texte} fallback={'Sorties à thèmes plusieurs fois par trimestre, en train, en car ou en covoiturage. 1 séjour en car chaque saison + plusieurs séjours en covoiturage.'}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={'Sorties à thèmes plusieurs fois par trimestre, en train, en car ou en covoiturage. 1 séjour en car chaque saison + plusieurs séjours en covoiturage.'}/>
                           <Link
                             className="btn btn-green"
                             style={{ marginTop: 12, display: "inline-flex" }}
                             href={content.cta_lien ?? '/actualites/sejours'}
                           >
-                            {content.cta_texte ?? 'Voir les séjours'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'cta_texte')} value={content.cta_texte} fallback={'Voir les séjours'}/>
                           </Link>
                         </div>
                       )
@@ -192,15 +193,15 @@ export default async function RandoPage() {
                         <div key="temoignage" className="quote" style={{ padding: "48px 0 24px", marginTop: 32 }}>
                           <div className="quote-body" style={{ padding: 0 }}>
                             <div className="quote-text" style={{ fontSize: "1.7rem" }}>
-                              « <RichText inline value={content.citation} fallback={"On marche en silence dans la forêt, puis on rit fort autour d'un verre. C'est ça, l'esprit AGMR."}/> »
+                              « <Editable inline src={blockSrc('rando_page_blocks', block.block_key, 'citation')} value={content.citation} fallback={"On marche en silence dans la forêt, puis on rit fort autour d'un verre. C'est ça, l'esprit AGMR."}/> »
                             </div>
                             <div className="quote-attr">
                               <div className="quote-avatar">
                                 {(content.auteur ?? 'Jean-Pierre, animateur rando').charAt(0).toUpperCase()}
                               </div>
                               <div className="quote-attr-text">
-                                <span className="quote-attr-name">{content.auteur ?? 'Jean-Pierre, animateur rando'}</span>
-                                <span className="quote-attr-role">{content.role ?? 'Bénévole depuis 2014'}</span>
+                                <span className="quote-attr-name"><Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'auteur')} value={content.auteur} fallback={'Jean-Pierre, animateur rando'}/></span>
+                                <span className="quote-attr-role"><Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'role')} value={content.role} fallback={'Bénévole depuis 2014'}/></span>
                               </div>
                             </div>
                           </div>
@@ -211,27 +212,27 @@ export default async function RandoPage() {
                       return (
                         <div key="sante" style={{ marginTop: 32, padding: 32, background: "var(--green-tint)", borderRadius: "var(--r-md)" }}>
                           <h3 id="sante" style={{ marginBottom: 10 }}>
-                            {content.titre ?? 'Rando-Santé'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Rando-Santé'}/>
                           </h3>
-                          <RichText value={content.texte} fallback={"Plus lentement, moins longtemps et moins loin. Activité destinée aux personnes atteintes de diverses pathologies. L'AGMR a obtenu le label « Santé » de la FFR."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
+                          <Editable src={blockSrc('rando_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={"Plus lentement, moins longtemps et moins loin. Activité destinée aux personnes atteintes de diverses pathologies. L'AGMR a obtenu le label « Santé » de la FFR."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
                           <Link className="btn btn-green btn-sm" href={content.cta_lien ?? '/activites/sante'}>
-                            {content.cta_texte ?? 'En savoir plus'}
+                            <Editable plain src={blockSrc('rando_page_blocks', block.block_key, 'cta_texte')} value={content.cta_texte} fallback={'En savoir plus'}/>
                           </Link>
                         </div>
                       )
 
                     default:
-                      return <GenericBlockRenderer key={block.block_key} block={block} />
+                      return <GenericBlockRenderer key={block.block_key} block={block} table="rando_page_blocks" />
                   }
                 })}
 
                 {/* MARCHE NORDIQUE — contenu fusionné depuis /activites/nordique */}
                 <div id="marche-nordique" style={{ marginTop: 56, paddingTop: 40, borderTop: "1px solid var(--line)" }}>
-                  <div className="page-header-eyebrow">{nHeader.eyebrow ?? 'Activités · Marche dynamique'}</div>
+                  <div className="page-header-eyebrow"><Editable plain src={blockSrc('nordique_page_blocks', 'header', 'eyebrow')} value={nHeader.eyebrow} fallback="Activités · Marche dynamique"/></div>
                   <h2 style={{ fontSize: "2.2rem", marginBottom: 18 }}>
-                    {nHeader.titre ?? 'La Marche Nordique'}
+                    <Editable plain src={blockSrc('nordique_page_blocks', 'header', 'titre')} value={nHeader.titre} fallback="La Marche Nordique"/>
                   </h2>
-                  <RichText value={nHeader.lede} fallback={"Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
+                  <Editable src={blockSrc('nordique_page_blocks', 'header', 'lede')} value={nHeader.lede} fallback={"Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
 
                   {nordiqueBlocks.map(block => {
                     if (!block.visible || block.block_key === 'header') return null
@@ -241,10 +242,10 @@ export default async function RandoPage() {
                       case 'intro':
                         return (
                           <div key="n-intro">
-                            <RichText value={content.quote} fallback={"En appuyant sur les bâtons, on va plus vite et on fait travailler le haut du corps. La dépense d'énergie est accrue — et le plaisir arrive dès les premières foulées, car la technique est simple."} style={{ fontSize: "1.15rem", color: "var(--ink-soft)", fontFamily: "var(--serif)", fontStyle: "italic", margin: "24px 0 20px" }}/>
+                            <Editable src={blockSrc('nordique_page_blocks', block.block_key, 'quote')} value={content.quote} fallback={"En appuyant sur les bâtons, on va plus vite et on fait travailler le haut du corps. La dépense d'énergie est accrue — et le plaisir arrive dès les premières foulées, car la technique est simple."} style={{ fontSize: "1.15rem", color: "var(--ink-soft)", fontFamily: "var(--serif)", fontStyle: "italic", margin: "24px 0 20px" }}/>
                             <div style={{ background: "var(--accent-tint)", borderRadius: "var(--r-md)", padding: "20px 24px", margin: "20px 0", display: "flex", gap: 14, alignItems: "center" }}>
                               <Icon name="leaf" size={20}/>
-                              <strong>{content.alerte ?? 'On peut vous prêter des bâtons pour un essai.'}</strong>
+                              <strong><Editable plain src={blockSrc('nordique_page_blocks', block.block_key, 'alerte')} value={content.alerte} fallback={'On peut vous prêter des bâtons pour un essai.'}/></strong>
                             </div>
                           </div>
                         )
@@ -253,8 +254,8 @@ export default async function RandoPage() {
                         const steps = Array.isArray(content.steps) ? content.steps : DEFAULT_NORDIQUE_STEPS
                         return (
                           <div key="n-seance">
-                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>{content.titre ?? 'Comment se déroule une séance'}</h3>
-                            <RichText value={content.texte} fallback={'Chaque séance dure entre 1h30 et 2h.'}/>
+                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}><Editable plain src={blockSrc('nordique_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Comment se déroule une séance'}/></h3>
+                            <Editable src={blockSrc('nordique_page_blocks', block.block_key, 'texte')} value={content.texte} fallback={'Chaque séance dure entre 1h30 et 2h.'}/>
                             <ol style={{ fontSize: "1.05rem", lineHeight: 1.9, margin: "20px 0 0 20px" }}>
                               {steps.map((s, i) => <li key={i}>{s}</li>)}
                             </ol>
@@ -266,13 +267,13 @@ export default async function RandoPage() {
                         const cards = Array.isArray(content.cards) ? content.cards : DEFAULT_NORDIQUE_CARDS
                         return (
                           <div key="n-quand">
-                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>{content.titre ?? 'Quand pratiquer'}</h3>
+                            <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}><Editable plain src={blockSrc('nordique_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={'Quand pratiquer'}/></h3>
                             <div className="affil-grid">
                               {cards.map((card, i) => (
                                 <div key={i} className="affil">
-                                  <div className="affil-eyebrow">{card.eyebrow}</div>
-                                  <h4>{card.titre}</h4>
-                                  <RichText value={card.texte}/>
+                                  <div className="affil-eyebrow"><Editable plain src={Array.isArray(content.cards) ? blockSrc('nordique_page_blocks', block.block_key, `cards.${i}.eyebrow`) : null} value={card.eyebrow}/></div>
+                                  <h4><Editable plain src={Array.isArray(content.cards) ? blockSrc('nordique_page_blocks', block.block_key, `cards.${i}.titre`) : null} value={card.titre}/></h4>
+                                  <Editable src={Array.isArray(content.cards) ? blockSrc('nordique_page_blocks', block.block_key, `cards.${i}.texte`) : null} value={card.texte} simple/>
                                 </div>
                               ))}
                             </div>
@@ -281,7 +282,7 @@ export default async function RandoPage() {
                       }
 
                       default:
-                        return <GenericBlockRenderer key={block.block_key} block={block} />
+                        return <GenericBlockRenderer key={block.block_key} block={block} table="nordique_page_blocks" />
                     }
                   })}
 

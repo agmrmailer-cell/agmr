@@ -5,6 +5,8 @@ import Footer from '@/components/shell/Footer'
 import GalerieClient from './GalerieClient'
 import { getGaleriePhotos, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
+import Editable from '@/components/editable/Editable'
+import { textSrc } from '@/lib/editable-src'
 
 export const metadata = { title: 'Galerie Photos — AGMR' }
 
@@ -24,7 +26,7 @@ export default async function GaleriePage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <PageHeader t={t}/>
+        <PageHeader t={t} page="galerie"/>
         <section className="section">
           <div className="container">
             <GalerieClient albumsMap={albumsMap}/>
