@@ -10,7 +10,7 @@ import { blockSrc } from '@/lib/editable-src'
 import { renderBlocks } from '@/components/editable/renderBlocks'
 import { getEditMode } from '@/lib/edit-mode'
 
-export const metadata = { title: "Santé par le sport — AGMR" }
+export const metadata = { title: "Santé — AGMR" }
 
 export default async function SantePage() {
   const blocks = await getSantePageBlocks()
@@ -34,7 +34,7 @@ export default async function SantePage() {
               <div className="container">
                 <div className="crumb">
                   <Link href="/">Accueil</Link><span>/</span>
-                  <span>Santé par le sport</span>
+                  <span>Santé</span>
                 </div>
                 <div className="page-header-eyebrow"><Editable plain src={blockSrc('sante_page_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Santé par le Sport · Activités Physiques Adaptées'}/></div>
                 <h1><Editable plain src={blockSrc('sante_page_blocks', block.block_key, 'titre')} value={content.titre} fallback={"Prescri'Forme & Rando-Santé"}/></h1>

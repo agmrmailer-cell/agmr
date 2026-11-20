@@ -11,7 +11,7 @@ import { blockSrc } from '@/lib/editable-src'
 import { renderBlocks } from '@/components/editable/renderBlocks'
 import { getEditMode } from '@/lib/edit-mode'
 
-export const metadata = { title: 'Randonnée & Marche nordique — AGMR' }
+export const metadata = { title: 'Marche — AGMR' }
 
 const DEFAULT_NORDIQUE_STEPS = ['Échauffement', 'Marche nordique', 'Renforcement musculaire', 'Retour à la marche', 'Étirements']
 

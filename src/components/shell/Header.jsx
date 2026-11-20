@@ -55,8 +55,8 @@ export default function Header() {
     { id: "home", label: "Accueil", href: "/" },
     { id: "activites", label: "Activités", group: ["/activites"], drop: [
       { href: "/activites/gym",       label: "Gymnastique",        meta: navMeta.gym   },
-      { href: "/activites/randonnee", label: "Randonnée & Marche nordique", meta: navMeta.rando },
-      { href: "/activites/sante",     label: "Santé par le sport", meta: "Prescri'Forme · Rando-Santé" },
+      { href: "/activites/randonnee", label: "Marche", meta: navMeta.rando },
+      { href: "/activites/sante",     label: "Santé", meta: "Prescri'Forme · Rando-Santé" },
     ]},
     { id: "planning", label: "Planning", group: ["/planning"], drop: [
       { href: "/planning/gym", label: "Planning Gym", meta: "Grille hebdomadaire" },
