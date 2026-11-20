@@ -9,6 +9,7 @@ import Editable from '@/components/editable/Editable'
 import { blockSrc, rowSrc } from '@/lib/editable-src'
 import { renderBlocks } from '@/components/editable/renderBlocks'
 import { getEditMode } from '@/lib/edit-mode'
+import ImageEditButton from '@/components/editable/ImageEditButton'
 
 export const metadata = { title: 'La Gym — AGMR' }
 
@@ -197,6 +198,7 @@ export default async function GymPage() {
                             className="team-photo"
                             style={a.photo_url ? { backgroundImage: `url(${a.photo_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
                           >
+                            <ImageEditButton src={rowSrc('gym_animateurs', a.id, 'photo_url')} value={a.photo_url} aspect={1} folder="equipe" position="center"/>
                             {!a.photo_url && (
                               <div className="team-photo-initial">
                                 {a.nom?.charAt(0)?.toUpperCase() ?? '?'}

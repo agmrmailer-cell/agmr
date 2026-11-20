@@ -2154,3 +2154,18 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
 @media (hover: none) { .agmr-edit-mode .block-frame-bar { opacity: 1; pointer-events: auto; } }
 .trio > .block-frame { display: flex; }
 .trio > .block-frame > .trio-card { flex: 1; }
+
+/* Remplacement d'image en mode édition */
+.image-edit { position: absolute; z-index: 60; display: flex; gap: 6px; }
+.image-edit-top-left { top: 12px; left: 12px; }
+.image-edit-top-right { top: 12px; right: 12px; }
+.image-edit-bottom-left { bottom: 12px; left: 12px; }
+.image-edit-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.image-edit button {
+  padding: 7px 12px; border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(31,42,34,.88); color: #fff; font: 600 0.8rem/1 var(--sans, sans-serif);
+  box-shadow: 0 3px 12px rgba(0,0,0,.25); white-space: nowrap;
+}
+.image-edit button:hover:not(:disabled) { background: #e0703f; }
+.image-edit button:disabled { opacity: .6; cursor: default; }
+.sejour-page-img { position: relative; }

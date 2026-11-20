@@ -13,6 +13,7 @@ import { blockSrc, textSrc, rowSrc } from '@/lib/editable-src'
 import { renderBlocks } from '@/components/editable/renderBlocks'
 import BlockControls from '@/components/editable/BlockControls'
 import { getEditMode } from '@/lib/edit-mode'
+import ImageEditButton from '@/components/editable/ImageEditButton'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -76,6 +77,7 @@ export default async function HomePage() {
                           <div className={`trio-photo ${cls}`} style={tc.photo_url ? { backgroundImage: `url(${tc.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} data-tag={tc.tag ?? ''}>
                             <div className="trio-photo-overlay"/>
                             <div className="trio-photo-num">{n}</div>
+                            <ImageEditButton src={blockSrc('home_blocks', key, 'photo_url')} value={tc.photo_url} aspect={4 / 3} folder="accueil"/>
                           </div>
                           <div className="trio-body">
                             <h3><Editable plain src={blockSrc('home_blocks', key, 'titre')} value={tc.titre}/></h3>
@@ -119,6 +121,7 @@ export default async function HomePage() {
                     {!content.photo_url && <div className="hero-photo-trees"/>}
                     <div className="hero-grain"/>
                   </div>
+                  <ImageEditButton src={blockSrc('home_blocks', block.block_key, 'photo_url')} value={content.photo_url} folder="accueil" position="bottom-left"/>
                   <div className="hero-content">
                     <span className="hero-eyebrow"><Editable plain src={blockSrc('home_blocks', block.block_key, 'eyebrow')} value={content.eyebrow} fallback={'Depuis 1970 · Rambouillet'}/></span>
                     <h1>
@@ -153,6 +156,7 @@ export default async function HomePage() {
                     <div className="manifesto">
                       <div className="manifesto-vis">
                         <div className="manifesto-vis-photo" style={content.photo_url ? { backgroundImage: `url(${content.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}/>
+                        <ImageEditButton src={blockSrc('home_blocks', block.block_key, 'photo_url')} value={content.photo_url} aspect={4 / 5} folder="accueil"/>
                         <div className="manifesto-badge">
                           <strong><Editable plain src={blockSrc('home_blocks', block.block_key, 'badge')} value={content.badge} fallback={"L'épanouissement avant la performance"}/></strong>
                           <Editable plain src={blockSrc('home_blocks', block.block_key, 'badge_meta')} value={content.badge_meta} fallback={'Charte AGMR — 2018'}/>
@@ -198,7 +202,9 @@ export default async function HomePage() {
                               backgroundImage: `url(${actualites[0].image_url})`,
                               backgroundSize: 'cover',
                               backgroundPosition: 'center',
-                            } : undefined}/>
+                            } : undefined}>
+                              <ImageEditButton src={rowSrc('actualites', actualites[0].id, 'image_url')} value={actualites[0].image_url} folder="actualites"/>
+                            </div>
                             <div className="news-feature-body">
                               <div className="news-meta">
                                 <span className={`news-cat news-cat-${actualites[0].cat}`}>

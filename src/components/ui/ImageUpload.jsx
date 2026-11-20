@@ -71,6 +71,16 @@ async function resizeBlob(blob, maxW = 1200) {
   )
 }
 
+// Envoie une image (déjà recadrée) dans le stockage Supabase et renvoie son URL publique
+export async function uploadImageBlob(supabase, blob, folder = 'medias') {
+  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`
+  const { error } = await supabase.storage
+    .from('galerie')
+    .upload(fileName, blob, { contentType: 'image/webp', upsert: false })
+  if (error) throw error
+  return supabase.storage.from('galerie').getPublicUrl(fileName).data.publicUrl
+}
+
 // ── Ratios disponibles ────────────────────────────────────────
 const RATIOS = [
   { label: '16 : 9', value: 16 / 9 },
@@ -81,7 +91,7 @@ const RATIOS = [
 ]
 
 // ── Modal de recadrage ────────────────────────────────────────
-function CropModal({ src, onConfirm, onCancel, defaultAspect = 16 / 9 }) {
+export function CropModal({ src, onConfirm, onCancel, defaultAspect = 16 / 9 }) {
   const [crop, setCrop]           = useState({ x: 0, y: 0 })
   const [zoom, setZoom]           = useState(1)
   const [rotation, setRotation]   = useState(0)

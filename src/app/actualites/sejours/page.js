@@ -7,6 +7,7 @@ import { getSejours, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
 import Editable from '@/components/editable/Editable'
 import { textSrc, rowSrc } from '@/lib/editable-src'
+import ImageEditButton from '@/components/editable/ImageEditButton'
 
 export const metadata = { title: 'Séjours & Sorties — AGMR' }
 
@@ -41,7 +42,9 @@ export default async function SejoursPage() {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     ...(s.image_url ? { backgroundImage: `url(${s.image_url})` } : {}),
-                  }}/>
+                  }}>
+                    <ImageEditButton src={rowSrc('sejours', s.id, 'image_url')} value={s.image_url} folder="sejours"/>
+                  </div>
                   <div className="sejour-page-body">
                     <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 6 }}>
                       {s.transport}

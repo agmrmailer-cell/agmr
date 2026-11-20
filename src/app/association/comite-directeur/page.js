@@ -5,7 +5,8 @@ import Footer from '@/components/shell/Footer'
 import { getBureau, getGymAnimateurs, getSiteTexts } from '@/lib/queries'
 import PageHeader from '@/components/shell/PageHeader'
 import Editable from '@/components/editable/Editable'
-import { textSrc } from '@/lib/editable-src'
+import { textSrc, rowSrc } from '@/lib/editable-src'
+import ImageEditButton from '@/components/editable/ImageEditButton'
 
 export const metadata = { title: 'Comité Directeur — AGMR' }
 
@@ -42,6 +43,7 @@ export default async function ComitePage() {
                           className="team-photo"
                           style={b.photo_url ? { backgroundImage: `url(${b.photo_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
                         >
+                          <ImageEditButton src={rowSrc('bureau', b.id, 'photo_url')} value={b.photo_url} aspect={1} folder="equipe" position="center"/>
                           {!b.photo_url && <div className="team-photo-initial">{b.nom.charAt(0)}</div>}
                         </div>
                         <div className="team-body">
@@ -65,6 +67,7 @@ export default async function ComitePage() {
                         className="team-photo"
                         style={a.photo_url ? { backgroundImage: `url(${a.photo_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
                       >
+                        <ImageEditButton src={rowSrc('gym_animateurs', a.id, 'photo_url')} value={a.photo_url} aspect={1} folder="equipe" position="center"/>
                         {!a.photo_url && <div className="team-photo-initial">{a.nom?.charAt(0)?.toUpperCase() ?? '?'}</div>}
                       </div>
                       <div className="team-body">
