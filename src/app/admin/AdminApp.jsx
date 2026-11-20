@@ -29,6 +29,7 @@ import AdminBackupSection from './sections/AdminBackupSection'
 import AdminBannerSection from './sections/AdminBannerSection'
 import AdminLinksSection from './sections/AdminLinksSection'
 import AdminSiteTextsSection from './sections/AdminSiteTextsSection'
+import AdminMembersPasswordSection from './sections/AdminMembersPasswordSection'
 import { setEditModeCookie } from '@/components/editable/EditModeBar'
 
 // Ouvre le site public en mode édition visuelle (textes modifiables en cliquant dessus)
@@ -83,6 +84,7 @@ function getNav(isSuperAdmin) {
       desc: "Votre compte, le guide d'utilisation et l'administration.",
       children: [
         { id: 'guide',    label: "Guide d'utilisation", icon: 'file',     desc: 'Comment utiliser le back-office', always: true },
+        { id: 'members-password', label: 'Mot de passe adhérents', icon: 'lock', desc: 'Accès à l\'Espace adhérents et au Planning Rando' },
         { id: 'settings', label: 'Mon compte',          icon: 'settings', desc: 'Mot de passe et informations', always: true },
         ...(isSuperAdmin ? [
           { id: 'access', label: 'Gestion des accès', icon: 'user',     desc: 'Comptes administrateurs et droits', always: true },
@@ -770,6 +772,7 @@ export default function AdminApp({ user, profile }) {
           {section === "actu"          && canAccess("actu")          && <AdminActuSection/>}
           {section === "links"         && canAccess("links")         && <AdminLinksSection/>}
           {section === "site-texts"    && canAccess("site-texts")    && <AdminSiteTextsSection/>}
+          {section === "members-password" && canAccess("members-password") && <AdminMembersPasswordSection/>}
           {section === "galerie"       && canAccess("galerie")       && <AdminGalerieSection/>}
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}
           {section === "gym-page"      && canAccess("gym-page")      && <AdminGymPageSection/>}

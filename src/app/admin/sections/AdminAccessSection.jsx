@@ -21,6 +21,7 @@ export const ALL_SECTIONS = [
   { id: 'comite',        label: 'Comité directeur',   group: 'Association' },
   { id: 'ag',            label: 'Assemblée générale', group: 'Association' },
   { id: 'tarifs',        label: 'Tarifs',             group: 'Association' },
+  { id: 'members-password', label: 'Mot de passe adhérents', group: 'Association' },
 ]
 
 const GROUPS = ['Pages du site', 'Plannings', 'Actualités', 'Contenus', 'Association']

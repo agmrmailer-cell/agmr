@@ -12,19 +12,27 @@ function isCurrent(link) {
   return true
 }
 
+// Mot de passe adhérents : défini dans l'admin (table privée site_settings),
+// sinon repli sur la variable d'environnement ADHERENTS_ACCESS_CODE.
+async function getExpectedCode(supabase) {
+  const { data } = await supabase.from('site_settings').select('value').eq('key', 'members_password').maybeSingle()
+  return data?.value?.trim() || process.env.ADHERENTS_ACCESS_CODE || null
+}
+
 export async function POST(request) {
-  const expectedCode = process.env.ADHERENTS_ACCESS_CODE
+  const body = await request.json().catch(() => ({}))
+  const supabase = createAdminClient()
+  const expectedCode = await getExpectedCode(supabase)
 
   if (!expectedCode) {
     return Response.json(
-      { ok: false, error: 'ADHERENTS_ACCESS_CODE is not configured' },
+      { ok: false, error: "Le mot de passe adhérents n'est pas encore défini (Réglages → Mot de passe adhérents)." },
       { status: 500 }
     )
   }
 
-  const body = await request.json().catch(() => ({}))
-  if (body.code !== expectedCode) {
-    return Response.json({ ok: false, error: 'Code incorrect' }, { status: 401 })
+  if (typeof body.code !== 'string' || body.code.trim() !== expectedCode) {
+    return Response.json({ ok: false, error: 'Mot de passe incorrect' }, { status: 401 })
   }
 
   // Zones protégées par le mot de passe adhérents
@@ -32,7 +40,6 @@ export async function POST(request) {
   //  - planning-rando   : tous les liens du planning (non public pour des raisons de sécurité)
   const zone = body.zone === 'planning-rando' ? 'planning-rando' : 'espace-adherents'
 
-  const supabase = createAdminClient()
   let query = supabase
     .from('external_links')
     .select('*')
