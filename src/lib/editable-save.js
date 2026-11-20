@@ -30,8 +30,17 @@ export async function saveEditable(supabase, src, value) {
       .eq('block_key', src.blockKey)
       .maybeSingle()
     if (readError) error = readError
-    else if (!data) error = { message: "Ce bloc n'existe pas encore en base : enregistrez-le une première fois depuis l'admin." }
-    else {
+    else if (!data) {
+      // Bloc jamais enregistré (contenu par défaut) : on le crée à la volée en fin de page
+      const { data: last } = await supabase.from(src.table).select('ordre').order('ordre', { ascending: false }).limit(1).maybeSingle()
+      ;({ error } = await supabase.from(src.table).insert({
+        block_key: src.blockKey,
+        label: src.label ?? src.blockKey,
+        visible: true,
+        ordre: (last?.ordre ?? 0) + 10,
+        content: setPath({}, src.field, value),
+      }))
+    } else {
       const content = setPath(data.content ?? {}, src.field, value)
       ;({ error } = await supabase.from(src.table).update({ content }).eq('id', data.id))
     }

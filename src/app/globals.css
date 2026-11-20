@@ -552,6 +552,11 @@ img { max-width: 100%; display: block; }
     radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.5), transparent 50%),
     linear-gradient(155deg, #b8c5a2 0%, #8aa580 40%, #5a7d56 70%, #3a5538 100%);
 }
+.trio-photo-sante {
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(255,255,255,0.45), transparent 50%),
+    linear-gradient(150deg, #e3c4a8 0%, #cf9a7c 38%, #b06f55 70%, #7f4a3a 100%);
+}
 .trio-photo::after {
   content: attr(data-tag);
   position: absolute;

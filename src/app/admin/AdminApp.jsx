@@ -37,6 +37,112 @@ function openVisualEditor(path = '/') {
   window.location.href = path
 }
 
+
+// ── Navigation simplifiée ─────────────────────────────────────
+// Chaque entrée du menu ouvre soit une section, soit un « groupe » (page de choix avec des cartes).
+// Les identifiants de section restent ceux utilisés pour les droits d'accès.
+function getNav(isSuperAdmin) {
+  return [
+    { id: 'dash', label: 'Accueil', icon: 'home', always: true },
+    { id: 'visual-edit', label: 'Modifier le site', icon: 'edit', always: true, action: () => openVisualEditor('/'), highlight: true,
+      desc: 'Cliquez directement sur les textes et les images du site pour les modifier.' },
+    { id: 'hub:pages', label: 'Pages du site', icon: 'file',
+      desc: 'Contenu des pages : textes, blocs, photos. Astuce : « Modifier sur le site » est souvent le plus simple.',
+      children: [
+        { id: 'home',       label: "Page d'accueil",             icon: 'home',          desc: 'Grande photo, 3 rubriques, philosophie, bandeaux', href: '/' },
+        { id: 'gym-page',   label: 'Gym',                         icon: 'leaf',          desc: 'Présentation, disciplines, animateurs', href: '/activites/gym' },
+        { id: 'rando-page', label: 'Marche (Rando & Nordique)',   icon: 'mountain',      desc: 'Randonnée, groupes du jeudi, marche nordique', href: '/activites/randonnee' },
+        { id: 'sante-page', label: 'Santé',                       icon: 'accessibility', desc: "Prescri'Forme, Rando-Santé, témoignages", href: '/activites/sante' },
+        { id: 'asso-page',  label: "L'association",              icon: 'user',          desc: 'Histoire, sections, gouvernance, affiliations', href: '/association' },
+        { id: 'site-texts', label: 'Autres pages & pied de page', icon: 'file',          desc: "Contact, S'inscrire, mentions légales, pied de page…", href: '/contact' },
+      ] },
+    { id: 'hub:plannings', label: 'Plannings', icon: 'calendar',
+      desc: 'Horaires des cours de gym et plannings des sorties de marche.',
+      children: [
+        { id: 'gym',                 label: 'Cours de gym',       icon: 'calendar', desc: 'Jours, horaires, salles, animateurs' },
+        { id: 'vacances',            label: 'Vacances scolaires', icon: 'calendar', desc: 'Périodes sans cours de gym', perm: 'gym' },
+        { id: 'planning-rando-page', label: 'Planning rando',     icon: 'mountain', desc: 'Liens vers les plannings (réservés aux adhérents)' },
+      ] },
+    { id: 'hub:news', label: 'Actualités', icon: 'file',
+      desc: 'Annonces, séjours et message défilant en haut du site.',
+      children: [
+        { id: 'actu',    label: 'Annonces',          icon: 'file', desc: 'Actualités affichées sur le site' },
+        { id: 'sejours', label: 'Séjours & sorties', icon: 'pin',  desc: 'Séjours, dates, statut, photo' },
+        { id: 'banner',  label: "Bandeau d'info",    icon: 'info', desc: 'Message défilant en haut de toutes les pages', always: true },
+      ] },
+    { id: 'galerie', label: 'Photos', icon: 'image' },
+    { id: 'links', label: 'Liens & documents', icon: 'file' },
+    { id: 'hub:asso', label: 'Association', icon: 'user',
+      desc: "Équipe dirigeante, documents d'assemblée générale et tarifs.",
+      children: [
+        { id: 'comite', label: 'Comité directeur',   icon: 'user', desc: 'Membres du bureau et photos' },
+        { id: 'ag',     label: 'Assemblée générale', icon: 'file', desc: 'Comptes rendus et documents' },
+        { id: 'tarifs', label: 'Tarifs',             icon: 'file', desc: 'Cotisations et licences' },
+      ] },
+    { id: 'hub:settings', label: 'Réglages & aide', icon: 'settings', bottom: true,
+      desc: "Votre compte, le guide d'utilisation et l'administration.",
+      children: [
+        { id: 'guide',    label: "Guide d'utilisation", icon: 'file',     desc: 'Comment utiliser le back-office', always: true },
+        { id: 'settings', label: 'Mon compte',          icon: 'settings', desc: 'Mot de passe et informations', always: true },
+        ...(isSuperAdmin ? [
+          { id: 'access', label: 'Gestion des accès', icon: 'user',     desc: 'Comptes administrateurs et droits', always: true },
+          { id: 'backup', label: 'Sauvegarde',        icon: 'download', desc: 'Sauvegardes et restauration', always: true },
+        ] : []),
+      ] },
+  ]
+}
+
+// Droit d'accès à une entrée (section simple)
+function allowed(item, canAccess) {
+  return item.always || canAccess(item.perm ?? item.id)
+}
+
+// Entrées visibles du menu, avec seulement les sous-sections autorisées
+function visibleNav(isSuperAdmin, canAccess) {
+  return getNav(isSuperAdmin)
+    .map(it => it.children ? { ...it, children: it.children.filter(c => allowed(c, canAccess)) } : it)
+    .filter(it => it.children ? it.children.length > 0 : allowed(it, canAccess))
+}
+
+function parentOf(nav, sectionId) {
+  return nav.find(it => it.children?.some(c => c.id === sectionId)) ?? null
+}
+
+// ── Page de groupe : cartes vers les sous-sections ────────────
+function HubView({ hub, setSection }) {
+  return (
+    <>
+      <div className="admin-head">
+        <div>
+          <h1>{hub.label}</h1>
+          {hub.desc && <p className="muted" style={{ margin: 0 }}>{hub.desc}</p>}
+        </div>
+      </div>
+      <div className="hub-grid">
+        {hub.children.map(c => (
+          <div key={c.id} className="hub-card">
+            <button type="button" className="hub-card-main" onClick={() => setSection(c.id)}>
+              <span className="hub-card-icon"><Icon name={c.icon} size={20}/></span>
+              <span>
+                <strong>{c.label}</strong>
+                {c.desc && <span className="hub-card-desc">{c.desc}</span>}
+              </span>
+            </button>
+            {c.href && (
+              <div className="hub-card-actions">
+                <button type="button" className="btn btn-primary btn-sm" onClick={() => openVisualEditor(c.href)}>
+                  <Icon name="edit" size={13}/> Modifier sur le site
+                </button>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSection(c.id)}>Formulaire</button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   const router = useRouter()
@@ -49,51 +155,30 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
       .then(({ data }) => setBannerActive((data ?? []).length > 0))
   }, [section, supabase]) // re-check quand on change de section
 
-  const allItems = [
-    { id: "dash",          label: "Tableau de bord",    icon: "home",          always: true },
-    { id: "visual-edit",   label: "Éditer le site en direct", icon: "edit", always: true, action: () => openVisualEditor("/") },
-    { divider: "Activités" },
-    { id: "home",          label: "Page principale",    icon: "file" },
-    { id: "gym-page",      label: "Page Gym",           icon: "leaf" },
-    { id: "gym",           label: "Planning Gym",       icon: "calendar" },
-    { id: "vacances",      label: "Vacances scolaires", icon: "calendar" },
-    { id: "rando-page",    label: "Page Randonnée & Nordique", icon: "mountain" },
-    { id: "planning-rando-page", label: "Planning Rando", icon: "mountain" },
-    { id: "sante-page",    label: "Santé par le sport", icon: "accessibility" },
-    { divider: "Contenus" },
-    { id: "sejours",       label: "Séjours",            icon: "pin" },
-    { id: "actu",          label: "Actualités",         icon: "file" },
-    { id: "links",         label: "Liens",              icon: "file" },
-    { id: "site-texts",    label: "Textes du site",     icon: "edit" },
-    { id: "galerie",       label: "Galerie",            icon: "image" },
-    { divider: "Association" },
-    { id: "asso-page",     label: "Présentation",       icon: "file" },
-    { id: "comite",        label: "Comité directeur",   icon: "user" },
-    { id: "ag",            label: "Assemblée générale", icon: "file" },
-    { id: "tarifs",        label: "Tarifs",             icon: "file" },
-    { divider: "" },
-    { id: "banner",        label: "Bandeau d'info",       icon: "info",     always: true },
-    { id: "guide",         label: "Guide d'utilisation",  icon: "file",     always: true },
-    { id: "settings",      label: "Paramètres",          icon: "settings", always: true },
-    ...(isSuperAdmin ? [{ id: "access", label: "Gestion des accès", icon: "user", always: true }] : []),
-    ...(isSuperAdmin ? [{ id: "backup", label: "Sauvegarde", icon: "download", always: true }] : []),
-  ]
+  const items = visibleNav(isSuperAdmin, canAccess)
+  const mainItems = items.filter(it => !it.bottom)
+  const bottomItems = items.filter(it => it.bottom)
 
-  // IDs visibles (always + ceux autorisés)
-  const visibleIds = new Set(
-    allItems.filter(it => it.id && (it.always || canAccess(it.id))).map(it => it.id)
+  const open = it => {
+    if (it.action) return it.action()
+    if (it.children) return setSection(it.children.length === 1 ? it.children[0].id : it.id)
+    setSection(it.id)
+  }
+  const isActive = it => section === it.id || !!it.children?.some(c => c.id === section)
+
+  const renderItem = it => (
+    <a
+      key={it.id}
+      href="#"
+      className={`${isActive(it) ? 'active' : ''}${it.highlight ? ' nav-highlight' : ''}`}
+      onClick={e => { e.preventDefault(); open(it) }}
+    >
+      <Icon name={it.icon} size={16}/> {it.label}
+      {(it.id === 'hub:news') && bannerActive && (
+        <span title="Un bandeau d'info est actif" style={{ marginLeft: "auto", width: 18, height: 18, borderRadius: "50%", background: "#e88a5a", color: "#fff", fontSize: "0.65rem", fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, lineHeight: 1 }}>!</span>
+      )}
+    </a>
   )
-
-  // Ne conserver un divider que s'il précède au moins un item visible
-  const items = allItems.reduce((acc, it, i, arr) => {
-    if (it.divider !== undefined) {
-      const hasVisible = arr.slice(i + 1).some(x => x.divider !== undefined ? false : x.id && visibleIds.has(x.id))
-      if (hasVisible) acc.push(it)
-    } else if (!it.id || visibleIds.has(it.id)) {
-      acc.push(it)
-    }
-    return acc
-  }, [])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -109,25 +194,9 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
         <div className="asb-2">Back-office</div>
       </div>
       <nav>
-        {items.map((it, i) => {
-          if (it.divider !== undefined) {
-            return it.divider ? (
-              <div key={`div-${i}`} style={{ padding: "14px 24px 4px", fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#4a5a4d", fontWeight: 700 }}>
-                {it.divider}
-              </div>
-            ) : (
-              <div key={`sep-${i}`} style={{ margin: "8px 20px", borderTop: "1px solid #1f2a23" }}/>
-            )
-          }
-          return (
-            <a key={it.id} href="#" className={section === it.id ? "active" : ""} style={it.action ? { color: "#e88a5a", fontWeight: 600 } : undefined} onClick={e => { e.preventDefault(); if (it.action) it.action(); else setSection(it.id) }}>
-              <Icon name={it.icon} size={16}/> {it.label}
-              {it.id === "banner" && bannerActive && (
-                <span style={{ marginLeft: "auto", width: 18, height: 18, borderRadius: "50%", background: "#e88a5a", color: "#fff", fontSize: "0.65rem", fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, lineHeight: 1 }}>!</span>
-              )}
-            </a>
-          )
-        })}
+        {mainItems.map(renderItem)}
+        {bottomItems.length > 0 && <div style={{ margin: "10px 20px", borderTop: "1px solid #1f2a23" }}/>}
+        {bottomItems.map(renderItem)}
       </nav>
       <div className="admin-side-foot">
         <div style={{ marginBottom: 8 }}>
@@ -614,6 +683,20 @@ function AdminSettings({ user }) {
 
 // ── CSS Admin ─────────────────────────────────────────────────
 const ADMIN_CSS = `
+.admin-side nav a.nav-highlight { color: #f3b08e; font-weight: 600; }
+.admin-side nav a.nav-highlight:hover { color: #fff; }
+.admin-crumb { margin: -12px 0 18px; font-size: 0.86rem; color: var(--ink-mute); }
+.admin-crumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.admin-crumb a:hover { text-decoration: underline; }
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.hub-card { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-md); display: flex; flex-direction: column; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
+.hub-card:hover { border-color: var(--accent-soft, var(--line-strong)); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+.hub-card-main { display: flex; gap: 14px; align-items: flex-start; text-align: left; padding: 20px 22px; background: none; border: 0; cursor: pointer; font: inherit; color: var(--ink); flex: 1; }
+.hub-card-main strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.hub-card-desc { display: block; font-size: 0.86rem; color: var(--ink-mute); line-height: 1.45; }
+.hub-card-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 10px; background: var(--accent-tint); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; }
+.hub-card-actions { display: flex; gap: 8px; padding: 0 22px 18px 76px; flex-wrap: wrap; }
+
 .admin-shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; background: var(--bg); }
 .admin-side { background: #0f1813; color: #d2cdbf; padding: 26px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
 .admin-side-brand { padding: 24px 24px 22px; border-bottom: 1px solid #1f2a23; margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
@@ -666,6 +749,20 @@ export default function AdminApp({ user, profile }) {
           isSuperAdmin={isSuperAdmin}
         />
         <div className="admin-main">
+          {(() => {
+            const nav = visibleNav(isSuperAdmin, canAccess)
+            const hub = nav.find(it => it.id === section && it.children)
+            if (hub) return <HubView hub={hub} setSection={setSection}/>
+            const parent = parentOf(nav, section)
+            if (!parent || parent.children.length < 2) return null
+            const current = parent.children.find(c => c.id === section)
+            return (
+              <div className="admin-crumb">
+                <a href="#" onClick={e => { e.preventDefault(); setSection(parent.id) }}>← {parent.label}</a>
+                <span> / {current?.label}</span>
+              </div>
+            )
+          })()}
           {section === "dash"          && <Dashboard setSection={setSection}/>}
           {section === "gym"           && canAccess("gym")           && <AdminGymSection/>}
           {section === "vacances"      && canAccess("gym")           && <AdminVacancesSection/>}

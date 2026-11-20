@@ -17,7 +17,7 @@ const KIND_LABELS = {
 }
 
 const ZONES = [
-  { id: 'planning-rando', label: 'Planning rando' },
+  { id: 'planning-rando', label: 'Planning rando (mot de passe)' },
   { id: 'home-rando-sante', label: 'Accueil - Rando-Sante' },
   { id: 'actualites', label: 'Actualites' },
   { id: 'espace-adherents', label: 'Espace adherents' },

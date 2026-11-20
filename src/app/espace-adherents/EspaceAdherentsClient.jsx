@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { fetchMembersLinks, getStoredCode, storeCode } from '@/lib/members-access'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
 import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
@@ -10,22 +11,26 @@ export default function EspaceAdherentsClient({ t = {}, loginTexte, liensIntro, 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // Mot de passe déjà saisi pendant la session (ex. sur le planning rando) : ouverture directe
+  useEffect(() => {
+    const stored = getStoredCode()
+    if (!stored) return
+    fetchMembersLinks(stored, 'espace-adherents')
+      .then(setLinks)
+      .catch(() => storeCode(''))
+  }, [])
+
   const submit = async (event) => {
     event.preventDefault()
     setLoading(true); setError(null)
-    const res = await fetch('/api/espace-adherents/links', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code }),
-    })
-    const json = await res.json().catch(() => ({}))
-    setLoading(false)
-    if (!res.ok || json.ok === false) {
-      setError(json.error ?? 'Acces impossible')
+    try {
+      setLinks(await fetchMembersLinks(code, 'espace-adherents'))
+      storeCode(code)
+    } catch (e) {
+      setError(e.message)
       setLinks(null)
-      return
     }
-    setLinks(json.links ?? [])
+    setLoading(false)
   }
 
   if (links) {
@@ -38,7 +43,7 @@ export default function EspaceAdherentsClient({ t = {}, loginTexte, liensIntro, 
             </div>
             <h1 style={{ margin: 0 }}>{t.res_titre}</h1>
           </div>
-          <button className="btn btn-ghost" onClick={() => { setLinks(null); setCode('') }}>
+          <button className="btn btn-ghost" onClick={() => { setLinks(null); setCode(''); storeCode('') }}>
             <Icon name="lock" size={14}/> Verrouiller
           </button>
         </div>

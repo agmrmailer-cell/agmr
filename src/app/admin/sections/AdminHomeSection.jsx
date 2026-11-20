@@ -13,7 +13,8 @@ const BLOCK_META = {
   hero:          { label: 'Hero',                   desc: 'Accroche, titre, sous-titre, boutons' },
   trio_gym:      { label: 'Carte Gym',               desc: 'Photo, titre, description, stat, lien' },
   trio_rando:    { label: 'Carte Randonnée',          desc: 'Photo, titre, description, stat, lien' },
-  trio_nordique: { label: 'Carte Marche nordique',    desc: 'Photo, titre, description, stat, lien' },
+  trio_sante:    { label: 'Carte Santé',              desc: 'APA, Rando-Santé, Marche Nordique Santé — photo, titre, description, lien' },
+  trio_nordique: { label: 'Ancienne carte Marche nordique', desc: "N'est plus affichée (remplacée par la carte Santé) — peut être supprimée" },
   manifesto:     { label: 'Section Philosophie',      desc: 'Photo, texte éditorial, citation, boutons' },
   actualites:    { label: 'Section Actualités',       desc: 'Reprend automatiquement les dernières actualités' },
   stats_band:    { label: 'Bandeau de statistiques',  desc: 'Chiffres clés (adhérents, cours, animateurs…) — géré dans Statistiques' },
@@ -147,7 +148,7 @@ export default function AdminHomeSection() {
         onReorder={handleReorder}
         renderBlock={(block, idx, total) => {
           const meta = BLOCK_META[block.block_key] ?? { label: block.label ?? block.block_key, desc: '' }
-          const hasPhoto = ['trio_gym','trio_rando','trio_nordique','manifesto'].includes(block.block_key)
+          const hasPhoto = ['trio_gym','trio_rando','trio_sante','manifesto'].includes(block.block_key)
           const hasContent = block.block_key !== 'actualites'
           const photoUrl = block.content?.photo_url
           return (

@@ -1,88 +1,77 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '@/components/ui/Icon'
 import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
-import { labelType } from '@/utils/format'
+import { fetchMembersLinks, getStoredCode, storeCode } from '@/lib/members-access'
 
-const TYPES = ["all","rando-jeudi","rando-dimanche","nordique-mardi","nordique-samedi","sortie-journee","sejour"]
-const DOW = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"]
-const MSHORT = ["jan","fév","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"]
-const INTERNAL_RANDO_PLANNING_ENABLED = false
+// Planning rando réservé aux adhérents (mot de passe adhérents) :
+// les liens ne sont jamais envoyés au navigateur sans le bon mot de passe.
+export default function PlanningRandoClient({ title, intro, loginTitle, loginText, emptyText }) {
+  const [code, setCode] = useState('')
+  const [links, setLinks] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-export default function PlanningRandoClient({ sorties, links = [], linkContent = {} }) {
-  if (!INTERNAL_RANDO_PLANNING_ENABLED) {
+  useEffect(() => {
+    const stored = getStoredCode()
+    if (!stored) return
+    fetchMembersLinks(stored, 'planning-rando')
+      .then(setLinks)
+      .catch(() => storeCode(''))
+  }, [])
+
+  const submit = async e => {
+    e.preventDefault()
+    setLoading(true); setError(null)
+    try {
+      setLinks(await fetchMembersLinks(code, 'planning-rando'))
+      storeCode(code)
+    } catch (err) {
+      setError(err.message)
+    }
+    setLoading(false)
+  }
+
+  if (links) {
     return (
       <section className="section">
         <div className="container">
-          <ExternalLinksPanel
-            links={links}
-            title={linkContent.title ?? 'Plannings complets en ligne'}
-            intro={linkContent.intro ?? 'Calendriers, documents et ressources externes pour la saison en cours.'}
-          />
+          <ExternalLinksPanel links={links} title={title} intro={intro}/>
+          {links.length === 0 && (
+            <div style={{ marginTop: 16, background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: 28, textAlign: 'center', color: 'var(--ink-mute)' }}>
+              {emptyText}
+            </div>
+          )}
+          <div style={{ marginTop: 18 }}>
+            <button className="btn btn-ghost btn-sm" onClick={() => { setLinks(null); setCode(''); storeCode('') }}>
+              <Icon name="lock" size={14}/> Verrouiller
+            </button>
+          </div>
         </div>
       </section>
     )
   }
 
-  return <InternalRandoPlanning sorties={sorties} links={links} linkContent={linkContent}/>
-}
-
-function InternalRandoPlanning({ sorties, links, linkContent }) {
-  const [filter, setFilter] = useState("all")
-
-  const filtered = sorties
-    .filter(s => filter === "all" || s.type === filter)
-    .sort((a, b) => a.date.localeCompare(b.date))
-
   return (
     <section className="section">
-      <div className="container">
-        <div style={{ display: "flex", gap: 8, marginBottom: 28, flexWrap: "wrap" }}>
-          {TYPES.map(t => (
-            <button key={t} className={`chip ${filter === t ? "active" : ""}`} onClick={() => setFilter(t)}>
-              {t === "all" ? "Toutes les sorties" : labelType(t)}
+      <div className="container-narrow">
+        <div style={{ maxWidth: 460, margin: '0 auto', background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: '32px 36px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <Icon name="lock" size={18}/>
+            <h2 style={{ fontSize: '1.5rem', margin: 0 }}>{loginTitle}</h2>
+          </div>
+          {loginText}
+          <form className="form" onSubmit={submit} style={{ marginTop: 18 }}>
+            <div className="field">
+              <label>Mot de passe adhérents</label>
+              <input type="password" value={code} onChange={e => setCode(e.target.value)} placeholder="••••••••" autoComplete="current-password"/>
+            </div>
+            <button className="btn btn-primary" disabled={loading || !code.trim()}>
+              {loading ? 'Vérification…' : 'Voir le planning'}
             </button>
-          ))}
+            {error && <p style={{ color: 'var(--red)', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
+          </form>
         </div>
-
-        <div className="rando-list">
-          {filtered.map(s => {
-            const d = new Date(s.date)
-            return (
-              <div key={s.id} className="rando-card" style={{ opacity: s.annule ? 0.6 : 1 }}>
-                <div className="rando-date-col">
-                  <div className="rando-dow">{DOW[d.getDay()]}</div>
-                  <div className="rando-day">{d.getDate()}</div>
-                  <div className="rando-month">{MSHORT[d.getMonth()]}</div>
-                </div>
-                <div className="rando-info">
-                  <div className="rando-title">{s.titre}</div>
-                  <div className="rando-meta">
-                    <span><Icon name="clock" size={13}/> Départ {s.heureDepart}</span>
-                    <span><Icon name="pin" size={13}/> {s.pointDepart}</span>
-                    {s.distanceKm && <span>{s.distanceKm} km{s.denivele ? ` · ${s.denivele}m D+` : ""}</span>}
-                    {s.animateur && <span>{s.animateur}</span>}
-                  </div>
-                  <div className="rando-tags">
-                    {s.groupes.map(g => <span key={g} className="rando-tag-groupe">{g}</span>)}
-                    <span className={`rando-type type-${s.type}`}>{labelType(s.type)}</span>
-                  </div>
-                </div>
-                <div className="rando-status">
-                  {s.complet && <span className="badge badge-full">Complet</span>}
-                  {s.annule && <span className="badge badge-cancel">Annulée</span>}
-                  {!s.complet && !s.annule && <span className="badge badge-ok">Ouverte</span>}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        <ExternalLinksPanel
-          links={links}
-          title={linkContent.title ?? 'Plannings complets en ligne'}
-          intro={linkContent.intro ?? 'Calendriers, documents et ressources externes pour la saison en cours.'}
-        />
       </div>
     </section>
   )

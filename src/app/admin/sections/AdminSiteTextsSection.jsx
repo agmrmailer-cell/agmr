@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import { SITE_TEXT_PAGES, mergeSiteTexts } from '@/lib/site-texts'
 
-function PageForm({ page, rows, onSaved, supabase }) {
+export function PageForm({ page, rows, onSaved, supabase }) {
   const [values, setValues] = useState(() => mergeSiteTexts(page.id, rows))
   const [saving, setSaving] = useState(false)
   const [resets, setResets] = useState({})

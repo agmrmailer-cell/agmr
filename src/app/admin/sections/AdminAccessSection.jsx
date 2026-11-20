@@ -6,24 +6,24 @@ import HelpTip from '@/components/ui/HelpTip'
 
 // Toutes les sections disponibles — id = clé utilisée dans le sidebar
 export const ALL_SECTIONS = [
-  { id: 'home',          label: 'Page principale',    group: 'Activités' },
-  { id: 'gym-page',      label: 'Page Gym',           group: 'Activités' },
-  { id: 'gym',           label: 'Planning Gym',       group: 'Activités' },
-  { id: 'rando-page',    label: 'Page Randonnée & Nordique', group: 'Activités' },
-  { id: 'planning-rando-page', label: 'Planning Rando', group: 'Activités' },
-  { id: 'sante-page',    label: 'Santé par le sport', group: 'Activités' },
-  { id: 'sejours',       label: 'Séjours',            group: 'Contenus' },
-  { id: 'actu',          label: 'Actualités',         group: 'Contenus' },
-  { id: 'links',         label: 'Liens',              group: 'Contenus' },
-  { id: 'site-texts',    label: 'Textes du site',     group: 'Contenus' },
-  { id: 'galerie',       label: 'Galerie',            group: 'Contenus' },
-  { id: 'asso-page',     label: 'Présentation asso',  group: 'Association' },
+  { id: 'home',          label: "Page d'accueil",     group: 'Pages du site' },
+  { id: 'gym-page',      label: 'Gym',                group: 'Pages du site' },
+  { id: 'gym',           label: 'Cours de gym',       group: 'Plannings' },
+  { id: 'rando-page',    label: 'Marche (Rando & Nordique)', group: 'Pages du site' },
+  { id: 'planning-rando-page', label: 'Planning rando', group: 'Plannings' },
+  { id: 'sante-page',    label: 'Santé',              group: 'Pages du site' },
+  { id: 'sejours',       label: 'Séjours & sorties',  group: 'Actualités' },
+  { id: 'actu',          label: 'Annonces',           group: 'Actualités' },
+  { id: 'links',         label: 'Liens & documents',  group: 'Contenus' },
+  { id: 'site-texts',    label: 'Autres pages & pied de page', group: 'Pages du site' },
+  { id: 'galerie',       label: 'Photos',             group: 'Contenus' },
+  { id: 'asso-page',     label: "L'association",     group: 'Pages du site' },
   { id: 'comite',        label: 'Comité directeur',   group: 'Association' },
   { id: 'ag',            label: 'Assemblée générale', group: 'Association' },
   { id: 'tarifs',        label: 'Tarifs',             group: 'Association' },
 ]
 
-const GROUPS = ['Activités', 'Contenus', 'Association']
+const GROUPS = ['Pages du site', 'Plannings', 'Actualités', 'Contenus', 'Association']
 
 function Modal({ title, onClose, children }) {
   return (

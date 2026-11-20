@@ -74,6 +74,19 @@ export const SITE_TEXT_PAGES = [
     ],
   },
   {
+    id: 'planning-rando',
+    label: 'Planning Rando (réservé aux adhérents)',
+    href: '/planning/randonnee',
+    fields: [
+      ...header({ crumb: 'Accueil / Planning / Rando & Nordique', eyebrow: 'Planning · Saison 2025-2026', title: 'Planning Rando & Nordique', lede: '<p>Calendrier des sorties randonnée et des séances de marche nordique.</p>' }),
+      { key: 'login_titre', label: 'Accès — titre',                type: 'text', default: 'Planning réservé aux adhérents' },
+      { key: 'login_texte', label: 'Accès — texte',                type: 'rich', default: "<p>Pour des raisons de sécurité (vols sur les parkings de départ), le planning des sorties n'est visible qu'avec le mot de passe adhérents communiqué lors de l'inscription.</p>" },
+      { key: 'liens_titre', label: 'Bloc des liens — titre',       type: 'text', default: 'Plannings complets en ligne' },
+      { key: 'liens_intro', label: 'Bloc des liens — introduction', type: 'rich', default: '<p>Calendriers, documents et ressources externes pour la saison en cours.</p>' },
+      { key: 'vide',        label: 'Message si aucun lien',         type: 'rich', default: "<p>Aucun planning n'est publié pour le moment.</p>" },
+    ],
+  },
+  {
     id: 'actualites',
     label: 'Actualités',
     href: '/actualites',

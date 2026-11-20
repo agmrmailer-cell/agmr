@@ -21,9 +21,21 @@ export default function AdminGuideSection() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         <GuideBlock
+          icon={<Icon name="edit" size={18}/>}
+          title="Modifier le site directement"
+          section="Menu → Modifier le site"
+          items={[
+            ["Textes", "Le site s'ouvre en mode édition : les textes modifiables sont encadrés en orange. Cliquez sur un titre pour le corriger (Entrée pour valider), ou sur un paragraphe pour ouvrir l'éditeur (gras, listes, liens…) puis « Enregistrer »."],
+            ["Images", "Cliquez sur « Changer l'image » posé sur une photo, choisissez un fichier, recadrez, validez."],
+            ["Blocs", "Survolez un bloc : une barre permet de le monter, le descendre, le masquer ou le supprimer. Un bloc masqué reste visible (grisé) pour vous seul."],
+            ["Terminer", "Cliquez sur « Quitter le mode édition » en haut de la page."],
+          ]}
+        />
+
+        <GuideBlock
           icon={<Icon name="home" size={18}/>}
           title="Page principale"
-          section="Activités → Page principale"
+          section="Pages du site → Page d'accueil"
           items={[
             ["Hero (bannière d'accueil)", "Modifiez le titre, le sous-titre, les boutons d'action et la photo de fond. La photo doit être au format 16:9, minimum 1920×1080 px."],
             ["Blocs d'activités", "Activez ou désactivez chaque activité (Gym, Rando, Nordique), modifiez les textes et les photos."],
@@ -35,7 +47,7 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="calendar" size={18}/>}
           title="Planning Gym"
-          section="Activités → Planning Gym"
+          section="Plannings → Cours de gym"
           items={[
             ["Ajouter un créneau", "Cliquez sur « Ajouter un créneau ». Renseignez le jour, l'horaire, la discipline, l'animateur et la salle."],
             ["Récurrence", "Par défaut : toutes les semaines. Vous pouvez définir 1 semaine sur 2, le Nᵉ lundi du mois, etc. — identique à Google Agenda."],
@@ -48,7 +60,7 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="sun" size={18}/>}
           title="Vacances scolaires"
-          section="Activités → Vacances scolaires"
+          section="Plannings → Vacances scolaires"
           items={[
             ["Ajouter une période", "Renseignez le nom, les dates de début/fin et la zone scolaire (C par défaut pour Rambouillet)."],
             ["Effet sur le planning", "Les jours de vacances sont automatiquement grisés sur le planning gym public — aucun cours ne s'affiche pendant ces périodes."],
@@ -58,17 +70,17 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="mountain" size={18}/>}
           title="Planning Randonnée"
-          section="Activités → Planning Rando"
+          section="Plannings → Planning rando"
           items={[
-            ["Programmer une sortie", "Renseignez la date, le type (Rando jeudi, dimanche, nordique…), le titre, la distance, le dénivelé, l'heure et le point de départ."],
-            ["Marquer complet / Annuler", "Utilisez les boutons rapides sur chaque ligne du tableau. Une sortie annulée reste visible avec un badge rouge."],
+            ["Publier un planning", "Cliquez sur « Ajouter / modifier un planning », collez le lien du document (Google Docs, Sheets…), donnez-lui un titre et cochez la zone « Planning rando (mot de passe) »."],
+            ["Accès réservé", "La page Planning Rando n'est visible qu'avec le mot de passe adhérents (le même que l'espace adhérents), pour des raisons de sécurité."],
           ]}
         />
 
         <GuideBlock
           icon={<Icon name="file" size={18}/>}
           title="Actualités"
-          section="Contenus → Actualités"
+          section="Actualités → Annonces"
           items={[
             ["Créer un article", "Choisissez la catégorie (Gym, Rando, Asso…), la date, rédigez le titre et le contenu."],
             ["Image d'illustration", "Cliquez sur « Choisir et recadrer ». Une fenêtre s'ouvre : déplacez l'image pour cadrer, ajustez le zoom et l'inclinaison, choisissez le ratio. Le format 16:9 est recommandé car l'image de l'article le plus récent s'affiche en grand sur la page d'accueil."],
@@ -79,7 +91,7 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="pin" size={18}/>}
           title="Séjours"
-          section="Contenus → Séjours"
+          section="Actualités → Séjours & sorties"
           items={[
             ["Créer un séjour", "Renseignez le titre, les dates (texte libre), le transport et une description. Ajoutez une photo ou choisissez une couleur de carte."],
             ["Statuts", "Ouverte : inscriptions possibles. Complet : le badge rouge s'affiche. Terminé : le séjour est archivé mais reste visible."],
@@ -90,7 +102,7 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="image" size={18}/>}
           title="Galerie photos"
-          section="Contenus → Galerie"
+          section="Photos"
           items={[
             ["Albums", "Les photos sont organisées par albums. Cliquez sur un album pour l'ouvrir. Vous pouvez renommer ou supprimer un album entier."],
             ["Uploader des photos", "Sélectionnez un album existant ou créez-en un nouveau, puis cliquez « Choisir des photos ». Les images sont automatiquement converties en WebP et stockées sur Cloudinary."],
@@ -128,7 +140,7 @@ export default function AdminGuideSection() {
         <GuideBlock
           icon={<Icon name="lock" size={18}/>}
           title="Gestion des accès"
-          section="Paramètres → Gestion des accès"
+          section="Réglages & aide → Gestion des accès"
           items={[
             ["Rôles", "Super Admin : accès complet à tout le back-office. Admin : accès limité aux sections cochées."],
             ["Créer un compte", "Cliquez sur « Ajouter un admin ». Renseignez l'email, le nom, le rôle et les permissions. Un mot de passe temporaire est généré automatiquement — cliquez « ↺ Générer » pour en créer un nouveau, « ⎘ Copier » pour le copier, puis communiquez-le à la personne."],

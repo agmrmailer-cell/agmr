@@ -18,10 +18,23 @@ import ImageEditButton from '@/components/editable/ImageEditButton'
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
   { key: 'trio_rando',    cls: 'trio-photo-rando',     n: '02' },
-  { key: 'trio_nordique', cls: 'trio-photo-nordique',  n: '03' },
+  // 3e rubrique : Santé (APA, Rando-Santé, Marche Nordique Santé) — remplace l'ancienne carte Marche nordique
+  {
+    key: 'trio_sante', cls: 'trio-photo-sante', n: '03', label: 'Carte Santé', after: 'trio_nordique',
+    defaults: {
+      titre: 'La Santé',
+      description: "<p>Activité Physique Adaptée (Prescri'Forme), Rando-Santé et Marche Nordique Santé : reprendre une activité en douceur, avec des animateurs formés.</p>",
+      cta: 'En savoir plus',
+      stat: 'APA · Rando-Santé · Nordique',
+      lien: '/activites/sante',
+      tag: 'Santé',
+    },
+  },
 ]
 
-const TRIO_KEYS = new Set(['trio_gym', 'trio_rando', 'trio_nordique'])
+const TRIO_KEYS = new Set(TRIO_DEFS.map(d => d.key))
+// Blocs rendus dans la section des 3 rubriques (l'ancienne carte nordique n'est plus affichée)
+const inTrio = key => TRIO_KEYS.has(key) || key === 'trio_nordique'
 
 export default async function HomePage() {
   const [stats, blocks, actualites, randoSanteLinks] = await Promise.all([
@@ -34,7 +47,9 @@ export default async function HomePage() {
   const t = await getSiteTexts('home')
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
-  const c  = (key) => bm[key]?.content ?? {}
+  const c  = (key) => ({ ...(TRIO_DEFS.find(d => d.key === key)?.defaults ?? {}), ...(bm[key]?.content ?? {}) })
+  // Ordre d'une carte : celui de son bloc, ou à défaut celui du bloc qu'elle remplace
+  const trioOrder = def => bm[def.key]?.ordre ?? bm[def.after]?.ordre ?? 999
 
   // sortedBlocks already ordered by ordre ASC from the query
   const sortedBlocks = blocks
@@ -42,10 +57,11 @@ export default async function HomePage() {
   // Collect visible trio blocks in sorted order for the grouped section
   const visibleTrios = TRIO_DEFS.filter(t => {
     const b = bm[t.key]
-    return b && (b.visible !== false || editMode)
-  }).sort((a, b) => (bm[a.key]?.ordre ?? 0) - (bm[b.key]?.ordre ?? 0))
+    if (!b) return !!t.defaults // carte pas encore enregistrée : affichée avec son contenu par défaut
+    return b.visible !== false || editMode
+  }).sort((a, b) => trioOrder(a) - trioOrder(b))
 
-  const firstTrioKey = sortedBlocks.find(block => (block.visible || editMode) && TRIO_KEYS.has(block.block_key))?.block_key
+  const firstTrioKey = sortedBlocks.find(block => (block.visible || editMode) && inTrio(block.block_key))?.block_key
 
   return (
     <div className="page-shell">
@@ -53,12 +69,12 @@ export default async function HomePage() {
       <Header/>
       <main className="page-main">
 
-        {renderBlocks({ table: 'home_blocks', editMode, frame: key => !TRIO_KEYS.has(key) }, sortedBlocks, block => {
+        {renderBlocks({ table: 'home_blocks', editMode, frame: key => !inTrio(key) }, sortedBlocks, block => {
           if (!block.visible) return null
           const content = block.content ?? {}
 
           // Trio blocks: render the whole trio section on the first trio encountered
-          if (TRIO_KEYS.has(block.block_key)) {
+          if (inTrio(block.block_key)) {
             if (block.block_key !== firstTrioKey) return null
             if (visibleTrios.length === 0) return null
             return (
@@ -70,21 +86,21 @@ export default async function HomePage() {
                     <Editable src={textSrc('home', 'trio_lede')} value={t.trio_lede} className="section-lede"/>
                   </div>
                   <div className="trio">
-                    {visibleTrios.map(({ key, cls, n }) => {
+                    {visibleTrios.map(({ key, cls, n, label }) => {
                       const tc = c(key)
                       const card = (
                         <Link key={key} className="trio-card" href={tc.lien ?? '#'}>
                           <div className={`trio-photo ${cls}`} style={tc.photo_url ? { backgroundImage: `url(${tc.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} data-tag={tc.tag ?? ''}>
                             <div className="trio-photo-overlay"/>
                             <div className="trio-photo-num">{n}</div>
-                            <ImageEditButton src={blockSrc('home_blocks', key, 'photo_url')} value={tc.photo_url} aspect={4 / 3} folder="accueil"/>
+                            <ImageEditButton src={blockSrc('home_blocks', key, 'photo_url', label)} value={tc.photo_url} aspect={4 / 3} folder="accueil"/>
                           </div>
                           <div className="trio-body">
-                            <h3><Editable plain src={blockSrc('home_blocks', key, 'titre')} value={tc.titre}/></h3>
-                            <Editable src={blockSrc('home_blocks', key, 'description')} value={tc.description}/>
+                            <h3><Editable plain src={blockSrc('home_blocks', key, 'titre', label)} value={tc.titre}/></h3>
+                            <Editable src={blockSrc('home_blocks', key, 'description', label)} value={tc.description}/>
                             <div className="trio-foot">
-                              <span className="trio-link"><Editable plain src={blockSrc('home_blocks', key, 'cta')} value={tc.cta}/> →</span>
-                              <span className="trio-stat"><Editable plain src={blockSrc('home_blocks', key, 'stat')} value={tc.stat}/></span>
+                              <span className="trio-link"><Editable plain src={blockSrc('home_blocks', key, 'cta', label)} value={tc.cta}/> →</span>
+                              <span className="trio-stat"><Editable plain src={blockSrc('home_blocks', key, 'stat', label)} value={tc.stat}/></span>
                             </div>
                           </div>
                         </Link>

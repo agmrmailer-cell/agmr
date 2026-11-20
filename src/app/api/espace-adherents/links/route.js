@@ -27,14 +27,20 @@ export async function POST(request) {
     return Response.json({ ok: false, error: 'Code incorrect' }, { status: 401 })
   }
 
+  // Zones protégées par le mot de passe adhérents
+  //  - espace-adherents : liens marqués « réservés aux adhérents »
+  //  - planning-rando   : tous les liens du planning (non public pour des raisons de sécurité)
+  const zone = body.zone === 'planning-rando' ? 'planning-rando' : 'espace-adherents'
+
   const supabase = createAdminClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from('external_links')
     .select('*')
     .eq('active', true)
-    .eq('members_only', true)
-    .contains('zones', ['espace-adherents'])
+    .contains('zones', [zone])
     .order('ordre')
+  if (zone === 'espace-adherents') query = query.eq('members_only', true)
+  const { data, error } = await query
 
   if (error) return Response.json({ ok: false, error: error.message }, { status: 500 })
 

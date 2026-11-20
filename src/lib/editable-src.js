@@ -4,7 +4,7 @@
 export const textSrc = (page, field) => ({ kind: 'text', key: `${page}.${field}` })
 
 // Champ du JSON `content` d'un bloc de page (field peut être un chemin : "cards.0.texte")
-export const blockSrc = (table, blockKey, field) => ({ kind: 'block', table, blockKey, field })
+export const blockSrc = (table, blockKey, field, label) => ({ kind: 'block', table, blockKey, field, ...(label ? { label } : {}) })
 
 // Colonne d'une ligne de table (actualités, séjours, disciplines…)
 export const rowSrc = (table, id, field) => ({ kind: 'row', table, id, field })
