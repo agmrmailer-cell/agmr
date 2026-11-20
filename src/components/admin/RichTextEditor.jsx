@@ -1,0 +1,101 @@
+'use client'
+import { useEditor, useEditorState, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { plainTextToHtml } from '@/lib/rich-text'
+
+const BUTTONS = [
+  { key: 'bold',        label: 'G',   title: 'Gras (Ctrl+B)',        style: { fontWeight: 800 },              run: c => c.toggleBold() },
+  { key: 'italic',      label: 'I',   title: 'Italique (Ctrl+I)',    style: { fontStyle: 'italic' },          run: c => c.toggleItalic() },
+  { key: 'underline',   label: 'S',   title: 'Souligné (Ctrl+U)',    style: { textDecoration: 'underline' },  run: c => c.toggleUnderline() },
+  { key: 'strike',      label: 'B',   title: 'Barré',                style: { textDecoration: 'line-through' }, run: c => c.toggleStrike() },
+  { sep: true },
+  { key: 'h2',          label: 'T1',  title: 'Titre',                active: e => e.isActive('heading', { level: 2 }), run: c => c.toggleHeading({ level: 2 }) },
+  { key: 'h3',          label: 'T2',  title: 'Sous-titre',           active: e => e.isActive('heading', { level: 3 }), run: c => c.toggleHeading({ level: 3 }) },
+  { sep: true },
+  { key: 'bulletList',  label: '•',   title: 'Liste à puces',        run: c => c.toggleBulletList() },
+  { key: 'orderedList', label: '1.',  title: 'Liste numérotée',      run: c => c.toggleOrderedList() },
+  { key: 'blockquote',  label: '“',   title: 'Citation',             run: c => c.toggleBlockquote() },
+  { sep: true },
+  { key: 'link',        label: '🔗',  title: 'Lien',                 custom: 'link' },
+  { key: 'clear',       label: '⌫',   title: 'Effacer la mise en forme', run: c => c.unsetAllMarks().clearNodes(), noActive: true },
+  { sep: true },
+  { key: 'undo',        label: '↶',   title: 'Annuler (Ctrl+Z)',     run: c => c.undo(), noActive: true },
+  { key: 'redo',        label: '↷',   title: 'Rétablir (Ctrl+Y)',    run: c => c.redo(), noActive: true },
+]
+
+export default function RichTextEditor({ value, onChange, minHeight = 120 }) {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [2, 3] },
+        code: false,
+        codeBlock: false,
+        horizontalRule: false,
+        link: { openOnClick: false, autolink: true, defaultProtocol: 'https' },
+      }),
+    ],
+    content: plainTextToHtml(value ?? ''),
+    editorProps: {
+      attributes: { class: 'rte-content' },
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.isEmpty ? '' : editor.getHTML())
+    },
+  })
+
+  const state = useEditorState({
+    editor,
+    selector: ({ editor }) => {
+      if (!editor) return {}
+      const s = {}
+      for (const b of BUTTONS) {
+        if (b.sep || b.noActive) continue
+        s[b.key] = b.active ? b.active(editor) : editor.isActive(b.key)
+      }
+      s.canUndo = editor.can().undo()
+      s.canRedo = editor.can().redo()
+      return s
+    },
+  }) ?? {}
+
+  const setLink = () => {
+    if (!editor) return
+    const previous = editor.getAttributes('link').href ?? ''
+    const url = window.prompt('Adresse du lien (laisser vide pour retirer le lien)', previous || 'https://')
+    if (url === null) return
+    const chain = editor.chain().focus().extendMarkRange('link')
+    if (url.trim() === '' || url.trim() === 'https://') chain.unsetLink().run()
+    else chain.setLink({ href: url.trim() }).run()
+  }
+
+  return (
+    <div className="rte">
+      <div className="rte-toolbar" role="toolbar" aria-label="Mise en forme">
+        {BUTTONS.map((b, i) => b.sep
+          ? <span key={`sep-${i}`} className="rte-sep"/>
+          : (
+            <button
+              key={b.key}
+              type="button"
+              title={b.title}
+              aria-label={b.title}
+              aria-pressed={!!state[b.key]}
+              className={`rte-btn${state[b.key] ? ' is-active' : ''}`}
+              style={b.style}
+              disabled={!editor || (b.key === 'undo' && !state.canUndo) || (b.key === 'redo' && !state.canRedo)}
+              onMouseDown={e => e.preventDefault()}
+              onClick={() => {
+                if (!editor) return
+                if (b.custom === 'link') return setLink()
+                b.run(editor.chain().focus()).run()
+              }}
+            >
+              {b.label}
+            </button>
+          ))}
+      </div>
+      <EditorContent editor={editor} style={{ '--rte-min-height': `${minHeight}px` }}/>
+    </div>
+  )
+}

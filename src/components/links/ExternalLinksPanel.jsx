@@ -33,7 +33,9 @@ export default function ExternalLinksPanel({ links, title = 'Liens utiles', intr
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, alignItems: compact ? 'flex-start' : 'center', marginBottom: 16 }}>
         <div>
           <strong>{title}</strong>
-          {intro && <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: 'var(--ink-mute)' }}>{intro}</p>}
+          {intro && (typeof intro === 'string'
+            ? <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: 'var(--ink-mute)' }}>{intro}</p>
+            : intro)}
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>

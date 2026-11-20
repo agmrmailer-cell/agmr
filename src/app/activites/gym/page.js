@@ -5,6 +5,7 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getGymPageBlocks, getGymDisciplines, getGymAnimateurs } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: 'La Gym — AGMR' }
 
@@ -60,9 +61,7 @@ export default async function GymPage() {
                   {content.eyebrow ?? 'Activités · FFEPGV · Label Qualité Club Sport Santé'}
                 </div>
                 <h1>{content.titre ?? 'La Gym'}</h1>
-                <p className="page-header-lede">
-                  {content.lede ?? '43 heures de cours par semaine, 8 animateurs brevetés professionnels, 5 salles municipales. Construisez votre propre programme.'}
-                </p>
+                <RichText value={content.lede} fallback={'43 heures de cours par semaine, 8 animateurs brevetés professionnels, 5 salles municipales. Construisez votre propre programme.'} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -104,12 +103,8 @@ export default async function GymPage() {
                           <h2 id="intro" style={{ fontSize: "2.2rem", marginBottom: 18 }}>
                             {content.titre ?? 'La Gymnastique Volontaire à Rambouillet'}
                           </h2>
-                          <p style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}>
-                            {content.texte1 ?? "Notre section est affiliée à la Fédération Française d'Éducation Physique et de Gymnastique Volontaire (FFEPGV). Elle bénéficie du label Qualité Club Sport Santé."}
-                          </p>
-                          <p>
-                            {content.texte2 ?? "Tous les cours sont donnés par des animateurs brevetés d'État. Ils proposent 43 heures de cours par semaine, d'une grande variété, répartis dans 5 salles mises à disposition par la municipalité."}
-                          </p>
+                          <RichText value={content.texte1} fallback={"Notre section est affiliée à la Fédération Française d'Éducation Physique et de Gymnastique Volontaire (FFEPGV). Elle bénéficie du label Qualité Club Sport Santé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
+                          <RichText value={content.texte2} fallback={"Tous les cours sont donnés par des animateurs brevetés d'État. Ils proposent 43 heures de cours par semaine, d'une grande variété, répartis dans 5 salles mises à disposition par la municipalité."}/>
                         </div>
                       )
 
@@ -124,16 +119,12 @@ export default async function GymPage() {
                           <h3 id="programme" style={{ fontFamily: "var(--serif)", fontSize: "1.5rem", marginBottom: 10 }}>
                             {content.titre ?? 'Construisez votre propre programme'}
                           </h3>
-                          <p style={{ margin: 0, color: "var(--ink-soft)" }}>
-                            {content.texte_intro ?? "Vous pouvez assister à 2 ou 3 heures de cours par semaine. L'adhésion vous permet de choisir, parmi les 43 cours proposés, au maximum :"}
-                          </p>
+                          <RichText value={content.texte_intro} fallback={"Vous pouvez assister à 2 ou 3 heures de cours par semaine. L'adhésion vous permet de choisir, parmi les 43 cours proposés, au maximum :"} style={{ margin: 0, color: "var(--ink-soft)" }}/>
                           <ul style={{ margin: "12px 0 0 20px", color: "var(--ink-soft)" }}>
                             {progItems.map((item, i) => <li key={i}>{item}</li>)}
                           </ul>
                           {(content.note || !content.titre) && (
-                            <p style={{ marginTop: 14, fontSize: "0.92rem", color: "var(--ink-mute)" }}>
-                              {content.note ?? 'Chaque cours couvre la saison complète, soit environ 34 séances.'}
-                            </p>
+                            <RichText value={content.note} fallback={'Chaque cours couvre la saison complète, soit environ 34 séances.'} style={{ marginTop: 14, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
                           )}
                           <div style={{ marginTop: 20, display: "flex", gap: 12 }}>
                             <Link className="btn btn-primary" href={content.cta1_lien ?? '/planning/gym'}>
@@ -153,9 +144,7 @@ export default async function GymPage() {
                           <h3 id="prescri" style={{ marginBottom: 10 }}>
                             {content.titre ?? "Prescri'Forme — sport sur ordonnance"}
                           </h3>
-                          <p style={{ color: "var(--ink-soft)", marginBottom: 14 }}>
-                            {content.texte ?? "L'Association est agréée pour dispenser des cours de gym volontaire sur prescription médicale (dispositif Prescri'Forme, Île-de-France, depuis septembre 2019)."}
-                          </p>
+                          <RichText value={content.texte} fallback={"L'Association est agréée pour dispenser des cours de gym volontaire sur prescription médicale (dispositif Prescri'Forme, Île-de-France, depuis septembre 2019)."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
                           <Link className="btn btn-ghost btn-sm" href={content.cta_lien ?? '/activites/sante'}>
                             {content.cta_texte ?? 'En savoir plus'}
                           </Link>

@@ -7,6 +7,7 @@ import Footer from '@/components/shell/Footer'
 import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
 import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -74,7 +75,7 @@ export default async function HomePage() {
                           </div>
                           <div className="trio-body">
                             <h3>{tc.titre}</h3>
-                            <p>{tc.description}</p>
+                            <RichText value={tc.description}/>
                             <div className="trio-foot">
                               <span className="trio-link">{tc.cta} →</span>
                               <span className="trio-stat">{tc.stat}</span>
@@ -141,7 +142,7 @@ export default async function HomePage() {
                       <div className="manifesto-text">
                         <div className="section-eyebrow">{content.eyebrow ?? 'Notre philosophie'}</div>
                         <h2 style={{ whiteSpace: 'pre-line' }}>{content.titre ?? "Le plaisir d'abord,\nle reste suit."}</h2>
-                        <p>{content.texte}</p>
+                        <RichText value={content.texte}/>
                         <div className="pull">{content.pull}</div>
                         <div style={{ marginTop: 28, display: "flex", gap: 14 }}>
                           <Link className="btn btn-ghost" href={content.cta1_lien ?? '/association'}>

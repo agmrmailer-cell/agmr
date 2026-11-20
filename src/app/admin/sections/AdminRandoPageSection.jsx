@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-client'
 import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
+import RichTextEditor from '@/components/admin/RichTextEditor'
 
 const RANDO_BLOCK_META = {
   header:     { label: 'En-tête de page',         desc: 'Accroche, titre principal, chapeau' },
@@ -245,7 +246,7 @@ function GenericFields({ blockKey, c, u }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
         </div>
       </>}
       {type === 'citation' && <>
@@ -264,7 +265,7 @@ function GenericFields({ blockKey, c, u }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
         </div>
         <div className="field"><label>Texte du bouton</label>
           <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
@@ -278,7 +279,7 @@ function GenericFields({ blockKey, c, u }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
       </>}
     </>
@@ -302,7 +303,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="La Randonnée"/>
         </div>
         <div className="field"><label>Chapeau</label>
-          <textarea rows={3} value={c.lede ?? ''} onChange={e => u('lede', e.target.value)} placeholder="Forêt de Rambouillet et alentours…"/>
+          <RichTextEditor value={c.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/>
         </div>
       </>}
 
@@ -311,10 +312,10 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Marcher dans la forêt de Rambouillet"/>
         </div>
         <div className="field"><label>Paragraphe principal</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
         <div className="field"><label>Texte de l'encadré Important</label>
-          <textarea rows={3} value={c.alerte ?? ''} onChange={e => u('alerte', e.target.value)} placeholder="tout randonneur devrait avoir dans son sac…"/>
+          <RichTextEditor value={c.alerte ?? ''} onChange={v => u('alerte', v)} minHeight={84}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Lien de l'encadré — texte</label>
@@ -334,7 +335,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.intro ?? ''} onChange={e => u('intro', e.target.value)} placeholder="5 groupes de niveau, chaque jeudi après-midi."/>
         </div>
         <div className="field"><label>Note sous le tableau</label>
-          <textarea rows={3} value={c.note ?? ''} onChange={e => u('note', e.target.value)} placeholder="Les groupes 2A et 2B pourront être réunis…"/>
+          <RichTextEditor value={c.note ?? ''} onChange={v => u('note', v)} minHeight={84}/>
         </div>
       </>}
 
@@ -343,10 +344,10 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Les randonnées du dimanche"/>
         </div>
         <div className="field"><label>Premier paragraphe</label>
-          <textarea rows={3} value={c.texte1 ?? ''} onChange={e => u('texte1', e.target.value)}/>
+          <RichTextEditor value={c.texte1 ?? ''} onChange={v => u('texte1', v)} minHeight={84}/>
         </div>
         <div className="field"><label>Deuxième paragraphe</label>
-          <textarea rows={3} value={c.texte2 ?? ''} onChange={e => u('texte2', e.target.value)}/>
+          <RichTextEditor value={c.texte2 ?? ''} onChange={v => u('texte2', v)} minHeight={84}/>
         </div>
       </>}
 
@@ -355,7 +356,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Sorties à la journée et séjours"/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Bouton — texte</label>
@@ -386,7 +387,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Rando-Santé"/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Bouton — texte</label>
@@ -426,7 +427,7 @@ function NordiqueBlockForm({ block, onSave, onCancel }) {
       {key === 'header' && <>
         <div className="field"><label>Accroche (eyebrow)</label><input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Activités · Marche dynamique"/></div>
         <div className="field"><label>Titre de section</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="La Marche Nordique"/></div>
-        <div className="field"><label>Chapeau</label><textarea rows={3} value={c.lede ?? ''} onChange={e => u('lede', e.target.value)}/></div>
+        <div className="field"><label>Chapeau</label><RichTextEditor value={c.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/></div>
       </>}
 
       {key === 'intro' && <>

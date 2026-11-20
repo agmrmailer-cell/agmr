@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-client'
 import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
+import RichTextEditor from '@/components/admin/RichTextEditor'
 
 const BLOCK_META = {
   header:        { label: 'En-tête de page',      desc: 'Accroche, titre, chapeau' },
@@ -220,14 +221,14 @@ function BlockForm({ block, onSave, onCancel }) {
       {key === 'header' && <>
         <div className="field"><label>Accroche (eyebrow)</label><input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="L'association · Loi 1901 · Fondée en 1970"/></div>
         <div className="field"><label>Titre H1</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Une association, un esprit"/></div>
-        <div className="field"><label>Chapeau</label><textarea rows={3} value={c.lede ?? ''} onChange={e => u('lede', e.target.value)}/></div>
+        <div className="field"><label>Chapeau</label><RichTextEditor value={c.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/></div>
       </>}
 
       {key === 'histoire' && <>
         <div className="field"><label>Titre</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Notre histoire"/></div>
-        <div className="field"><label>Premier paragraphe</label><textarea rows={4} value={c.texte1 ?? ''} onChange={e => u('texte1', e.target.value)}/></div>
+        <div className="field"><label>Premier paragraphe</label><RichTextEditor value={c.texte1 ?? ''} onChange={v => u('texte1', v)} minHeight={112}/></div>
         <div className="field"><label>Citation (encadré)</label><textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/></div>
-        <div className="field"><label>Deuxième paragraphe</label><textarea rows={3} value={c.texte2 ?? ''} onChange={e => u('texte2', e.target.value)}/></div>
+        <div className="field"><label>Deuxième paragraphe</label><RichTextEditor value={c.texte2 ?? ''} onChange={v => u('texte2', v)} minHeight={84}/></div>
       </>}
 
       {key === 'sections' && <>
@@ -238,7 +239,7 @@ function BlockForm({ block, onSave, onCancel }) {
             <div className="field"><label>Label</label><input value={c.gym_label ?? ''} onChange={e => u('gym_label', e.target.value)} placeholder="Section Gym"/></div>
             <div className="field"><label>Chiffre clé</label><input value={c.gym_chiffre ?? ''} onChange={e => u('gym_chiffre', e.target.value)} placeholder="~460 pratiquants"/></div>
           </div>
-          <div className="field"><label>Texte</label><textarea rows={2} value={c.gym_texte ?? ''} onChange={e => u('gym_texte', e.target.value)}/></div>
+          <div className="field"><label>Texte</label><RichTextEditor value={c.gym_texte ?? ''} onChange={v => u('gym_texte', v)} minHeight={80}/></div>
         </div>
         <div style={{ padding: "12px 16px", background: "var(--bg-deep)", borderRadius: "var(--r-sm)" }}>
           <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 10 }}>Section Marche</div>
@@ -246,13 +247,13 @@ function BlockForm({ block, onSave, onCancel }) {
             <div className="field"><label>Label</label><input value={c.marche_label ?? ''} onChange={e => u('marche_label', e.target.value)} placeholder="Section Marche"/></div>
             <div className="field"><label>Chiffre clé</label><input value={c.marche_chiffre ?? ''} onChange={e => u('marche_chiffre', e.target.value)} placeholder="~290 pratiquants"/></div>
           </div>
-          <div className="field"><label>Texte</label><textarea rows={2} value={c.marche_texte ?? ''} onChange={e => u('marche_texte', e.target.value)}/></div>
+          <div className="field"><label>Texte</label><RichTextEditor value={c.marche_texte ?? ''} onChange={v => u('marche_texte', v)} minHeight={80}/></div>
         </div>
       </>}
 
       {key === 'gouvernance' && <>
         <div className="field"><label>Titre</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Gouvernance"/></div>
-        <div className="field"><label>Texte d'introduction</label><textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/></div>
+        <div className="field"><label>Texte d'introduction</label><RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/></div>
         <div style={{ padding: "10px 14px", background: "var(--bg-deep)", borderRadius: "var(--r-sm)", fontSize: "0.84rem", color: "var(--ink-mute)" }}>
           Le tableau des membres du bureau est géré dans <strong>Comité directeur → Bureau</strong>.
         </div>
@@ -305,7 +306,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
         </div>
       </>}
       {genericType(key) === 'citation' && <>
@@ -324,7 +325,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
         </div>
         <div className="field"><label>Texte du bouton</label>
           <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
@@ -338,7 +339,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
       </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>

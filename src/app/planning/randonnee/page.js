@@ -4,6 +4,7 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import PlanningRandoClient from './PlanningRandoClient'
 import { getExternalLinks, getPlanningRandoPageContent } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: 'Planning Rando & Nordique — AGMR' }
 
@@ -24,10 +25,23 @@ export default async function PlanningRandoPage() {
             <div className="crumb">{header.crumb}</div>
             <div className="page-header-eyebrow">{header.eyebrow}</div>
             <h1>{header.title}</h1>
-            <p className="page-header-lede">{header.lede}</p>
+            <RichText value={header.lede} className="page-header-lede"/>
           </div>
         </div>
-        <PlanningRandoClient sorties={[]} links={links} linkContent={pageContent.links}/>
+        <PlanningRandoClient
+          sorties={[]}
+          links={links}
+          linkContent={{
+            ...pageContent.links,
+            intro: (
+              <RichText
+                value={pageContent.links?.intro}
+                fallback="Calendriers, documents et ressources externes pour la saison en cours."
+                style={{ margin: '4px 0 0', fontSize: '0.9rem', color: 'var(--ink-mute)' }}
+              />
+            ),
+          }}
+        />
       </main>
       <Footer/>
     </div>

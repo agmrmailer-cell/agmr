@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { genericType } from '@/lib/generic-blocks'
+import RichText from '@/components/ui/RichText'
 
 export default function GenericBlockRenderer({ block }) {
   const c = block.content ?? {}
@@ -10,7 +11,7 @@ export default function GenericBlockRenderer({ block }) {
       return (
         <div style={{ marginTop: 32 }}>
           {c.titre && <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.8rem', marginBottom: 14 }}>{c.titre}</h3>}
-          {c.texte && <p style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>{c.texte}</p>}
+          <RichText value={c.texte} style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}/>
         </div>
       )
 
@@ -36,7 +37,7 @@ export default function GenericBlockRenderer({ block }) {
       return (
         <div style={{ marginTop: 32, padding: 32, background: 'var(--accent-tint)', borderRadius: 'var(--r-md)', textAlign: 'center' }}>
           {c.titre && <h3 style={{ marginBottom: 10 }}>{c.titre}</h3>}
-          {c.texte && <p style={{ color: 'var(--ink-soft)', marginBottom: 20 }}>{c.texte}</p>}
+          <RichText value={c.texte} style={{ color: 'var(--ink-soft)', marginBottom: 20 }}/>
           {c.lien && (
             <Link className="btn btn-primary" href={c.lien}>
               {c.bouton ?? 'En savoir plus'}
@@ -49,7 +50,7 @@ export default function GenericBlockRenderer({ block }) {
       return (
         <div style={{ marginTop: 24, background: 'var(--accent-tint)', border: '1px solid var(--accent-soft)', borderRadius: 'var(--r-md)', padding: 20, fontSize: '0.96rem' }}>
           {c.titre && <strong>{c.titre} </strong>}
-          {c.texte ?? ''}
+          <RichText inline value={c.texte}/>
         </div>
       )
 

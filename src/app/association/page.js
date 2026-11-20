@@ -6,6 +6,7 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getBureau, getAssoPageBlocks } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: "L'Association — AGMR" }
 
@@ -44,7 +45,7 @@ export default async function AssoPage() {
                 <div className="crumb">Accueil / L'association</div>
                 <div className="page-header-eyebrow">{content.eyebrow ?? "L'association · Loi 1901 · Fondée en 1970"}</div>
                 <h1>{content.titre ?? 'Une association, un esprit'}</h1>
-                <p className="page-header-lede">{content.lede ?? "L'Association Gym Marche Rambouillet est le nouveau nom du Club Loisirs et Détente. Renommée en novembre 2018, elle compte aujourd'hui environ 750 adhérents."}</p>
+                <RichText value={content.lede} fallback={"L'Association Gym Marche Rambouillet est le nouveau nom du Club Loisirs et Détente. Renommée en novembre 2018, elle compte aujourd'hui environ 750 adhérents."} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -79,18 +80,14 @@ export default async function AssoPage() {
                           <h2 id="histoire" style={{ fontSize: "1.8rem", marginBottom: 16 }}>
                             {content.titre ?? 'Notre histoire'}
                           </h2>
-                          <p style={{ color: "var(--ink-soft)" }}>
-                            {content.texte1 ?? "L'Association Gym Marche Rambouillet (AGMR) est le nouveau nom du Club Loisirs et Détente (CLD). C'est une association selon la loi de 1901, créée en 1970. Le changement de nom a été voté lors de l'assemblée générale extraordinaire de novembre 2018."}
-                          </p>
+                          <RichText value={content.texte1} fallback={"L'Association Gym Marche Rambouillet (AGMR) est le nouveau nom du Club Loisirs et Détente (CLD). C'est une association selon la loi de 1901, créée en 1970. Le changement de nom a été voté lors de l'assemblée générale extraordinaire de novembre 2018."} style={{ color: "var(--ink-soft)" }}/>
                           <div style={{ margin: "20px 0", padding: "20px 24px", borderLeft: "3px solid var(--accent)", background: "var(--accent-tint)", borderRadius: "0 var(--r-sm) var(--r-sm) 0" }}>
                             <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "1.15rem", color: "var(--accent-deep)", margin: 0 }}>
                               « {content.citation ?? "Ces activités sont pratiquées dans un esprit de détente et de convivialité favorisant l'épanouissement de chacun, en dehors de toute notion de compétition."} »
                             </p>
                           </div>
                           {(content.texte2 || !content.titre) && (
-                            <p style={{ color: "var(--ink-soft)" }}>
-                              {content.texte2 ?? "Ouverte à tous les courants de pensées, l'association s'interdit toutes discussions confessionnelles ou politiques."}
-                            </p>
+                            <RichText value={content.texte2} fallback={"Ouverte à tous les courants de pensées, l'association s'interdit toutes discussions confessionnelles ou politiques."} style={{ color: "var(--ink-soft)" }}/>
                           )}
                         </div>
                       )
@@ -109,9 +106,7 @@ export default async function AssoPage() {
                               <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}>
                                 {content.gym_chiffre ?? '~460 pratiquants'}
                               </div>
-                              <p style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}>
-                                {content.gym_texte ?? 'Affiliée à la FFEPGV. 41h de cours, 5 salles, 8 animatrices et animateurs diplômés.'}
-                              </p>
+                              <RichText value={content.gym_texte} fallback={'Affiliée à la FFEPGV. 41h de cours, 5 salles, 8 animatrices et animateurs diplômés.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
                             </div>
                             <div style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 8 }}>
@@ -120,9 +115,7 @@ export default async function AssoPage() {
                               <div style={{ fontFamily: "var(--serif)", fontSize: "1.6rem", fontWeight: 500, marginBottom: 8 }}>
                                 {content.marche_chiffre ?? '~290 pratiquants'}
                               </div>
-                              <p style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}>
-                                {content.marche_texte ?? 'Affiliée à la FFR. Sorties jeudi, dimanche, marche nordique mardi/samedi, séjours. 25 animateurs bénévoles.'}
-                              </p>
+                              <RichText value={content.marche_texte} fallback={'Affiliée à la FFR. Sorties jeudi, dimanche, marche nordique mardi/samedi, séjours. 25 animateurs bénévoles.'} style={{ margin: 0, fontSize: "0.92rem", color: "var(--ink-soft)" }}/>
                             </div>
                           </div>
                         </div>
@@ -134,9 +127,7 @@ export default async function AssoPage() {
                           <h2 id="gouvernance" style={{ fontSize: "1.8rem", marginTop: 48, marginBottom: 8 }}>
                             {content.titre ?? 'Gouvernance'}
                           </h2>
-                          <p style={{ color: "var(--ink-soft)", marginBottom: 20 }}>
-                            {content.texte ?? "L'association est dirigée par un comité directeur élu en assemblée générale. Il se réunit 2 fois par trimestre."}
-                          </p>
+                          <RichText value={content.texte} fallback={"L'association est dirigée par un comité directeur élu en assemblée générale. Il se réunit 2 fois par trimestre."} style={{ color: "var(--ink-soft)", marginBottom: 20 }}/>
                           <h3 style={{ fontFamily: "var(--sans)", fontSize: "1rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 12 }}>
                             Comité directeur 2025-2026
                           </h3>

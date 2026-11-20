@@ -7,6 +7,7 @@ import PhotoUpload from '@/components/admin/PhotoUpload'
 import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
+import RichTextEditor from '@/components/admin/RichTextEditor'
 
 const BLOCK_META = {
   hero:          { label: 'Hero',                   desc: 'Accroche, titre, sous-titre, boutons' },
@@ -377,7 +378,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           </div>
         </div>
         <div className="field"><label>Description</label>
-          <textarea rows={3} value={c.description ?? ''} onChange={e => u('description', e.target.value)}/>
+          <RichTextEditor value={c.description ?? ''} onChange={v => u('description', v)} minHeight={84}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Statistique</label>
@@ -413,7 +414,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           </div>
         </div>
         <div className="field"><label>Texte principal</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
         <div className="field"><label>Citation (pull quote)</label>
           <input value={c.pull ?? ''} onChange={e => u('pull', e.target.value)}/>
@@ -468,7 +469,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
         </div>
       </>}
       {genericType(key) === 'citation' && <>
@@ -487,7 +488,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
         </div>
         <div className="field"><label>Texte du bouton</label>
           <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
@@ -501,7 +502,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
       </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>

@@ -5,6 +5,7 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getSantePageBlocks } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: "Santé par le sport — AGMR" }
 
@@ -33,7 +34,7 @@ export default async function SantePage() {
                 </div>
                 <div className="page-header-eyebrow">{content.eyebrow ?? 'Santé par le Sport · Activités Physiques Adaptées'}</div>
                 <h1>{content.titre ?? "Prescri'Forme & Rando-Santé"}</h1>
-                <p className="page-header-lede">{content.lede ?? "Cours d'Activités Physiques Adaptées (APA) sur prescription médicale, pour les affections de longue durée. Reprenez une activité physique en toute sécurité."}</p>
+                <RichText value={content.lede} fallback={"Cours d'Activités Physiques Adaptées (APA) sur prescription médicale, pour les affections de longue durée. Reprenez une activité physique en toute sécurité."} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -66,14 +67,12 @@ export default async function SantePage() {
                           <h2 id="prescri" style={{ fontSize: "2.2rem" }}>
                             {content.titre ?? "Prescri'Forme — Sport sur ordonnance"}
                           </h2>
-                          <p style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}>
-                            {content.texte1 ?? "Si vous avez du diabète, êtes en surpoids ou souffrez d'hypertension artérielle et avez besoin de pratiquer un sport, demandez à votre médecin de vous prescrire de la gymnastique adaptée pour les ALD par le biais du programme Prescri'Forme."}
-                          </p>
-                          <p>{content.texte2 ?? "Depuis septembre 2019, des cours d'Activités Physiques Adaptées sont proposés avec des animateurs spécialement formés, pour permettre de reprendre une activité physique en toute sécurité et dans la bonne humeur."}</p>
+                          <RichText value={content.texte1} fallback={"Si vous avez du diabète, êtes en surpoids ou souffrez d'hypertension artérielle et avez besoin de pratiquer un sport, demandez à votre médecin de vous prescrire de la gymnastique adaptée pour les ALD par le biais du programme Prescri'Forme."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
+                          <RichText value={content.texte2} fallback={"Depuis septembre 2019, des cours d'Activités Physiques Adaptées sont proposés avec des animateurs spécialement formés, pour permettre de reprendre une activité physique en toute sécurité et dans la bonne humeur."}/>
                           <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                             <div style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                               <div style={{ fontSize: "0.74rem", color: "var(--ink-mute)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8, fontWeight: 700 }}>Certification</div>
-                              <p style={{ margin: 0, fontSize: "0.94rem" }}>{content.cert_texte ?? "Section gym certifiée auprès de la DRJSCS Yvelines et répertoriée au CROS Île-de-France."}</p>
+                              <RichText value={content.cert_texte} fallback={"Section gym certifiée auprès de la DRJSCS Yvelines et répertoriée au CROS Île-de-France."} style={{ margin: 0, fontSize: "0.94rem" }}/>
                             </div>
                             <div style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                               <div style={{ fontSize: "0.74rem", color: "var(--ink-mute)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8, fontWeight: 700 }}>En savoir plus</div>
@@ -93,7 +92,7 @@ export default async function SantePage() {
                           <h2 id="rando-sante" style={{ marginTop: 56, fontSize: "2.2rem" }}>
                             {content.titre ?? 'Rando-Santé — Marche adaptée'}
                           </h2>
-                          <p>{content.texte ?? "Pour la marche, l'AGMR a obtenu le label Santé de la FFR, avec des animateurs formés à l'accompagnement de personnes ayant des contraintes de santé."}</p>
+                          <RichText value={content.texte} fallback={"Pour la marche, l'AGMR a obtenu le label Santé de la FFR, avec des animateurs formés à l'accompagnement de personnes ayant des contraintes de santé."}/>
                           <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "1.4rem", color: "var(--accent-deep)", margin: "20px 0", paddingLeft: 20, borderLeft: "3px solid var(--accent)" }}>
                             « {content.citation ?? "Plus lentement, moins longtemps et moins loin — pour que la marche reste accessible à tous."} »
                           </p>

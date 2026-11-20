@@ -6,6 +6,7 @@ import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
 import { getRandoPageBlocks, getRandoJeudiGroupes, getNordiquePageBlocks } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: 'Randonnée & Marche nordique — AGMR' }
 
@@ -67,9 +68,7 @@ export default async function RandoPage() {
                   {content.eyebrow ?? 'Activités · Fédération Française de Randonnée'}
                 </div>
                 <h1>{content.titre ?? 'La Randonnée'}</h1>
-                <p className="page-header-lede">
-                  {content.lede ?? 'Forêt de Rambouillet et alentours. 5 groupes de niveau, sorties chaque jeudi et un dimanche sur deux, séjours en France.'}
-                </p>
+                <RichText value={content.lede} fallback={'Forêt de Rambouillet et alentours. 5 groupes de niveau, sorties chaque jeudi et un dimanche sur deux, séjours en France.'} className="page-header-lede"/>
               </div>
             </div>
           )
@@ -110,13 +109,11 @@ export default async function RandoPage() {
                           <h2 id="intro" style={{ fontSize: "2.2rem", marginBottom: 18 }}>
                             {content.titre ?? 'Marcher dans la forêt de Rambouillet'}
                           </h2>
-                          <p style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}>
-                            {content.texte ?? "Les randonnées se font en forêt de Rambouillet ou à proximité immédiate. Les adhérents se répartissent en 4 ou 5 groupes selon leurs possibilités ou affinités. Il est toujours possible de changer de groupe d'une fois sur l'autre."}
-                          </p>
+                          <RichText value={content.texte} fallback={"Les randonnées se font en forêt de Rambouillet ou à proximité immédiate. Les adhérents se répartissent en 4 ou 5 groupes selon leurs possibilités ou affinités. Il est toujours possible de changer de groupe d'une fois sur l'autre."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
                           {(content.alerte || !content.titre) && (
                             <div style={{ background: "var(--accent-tint)", border: "1px solid var(--accent-soft)", borderRadius: "var(--r-md)", padding: 20, margin: "20px 0", fontSize: "0.96rem" }}>
                               <strong>Important :</strong>{' '}
-                              {content.alerte ?? "tout randonneur devrait avoir dans son sac la fiche individuelle de santé. Elle contribue à renforcer la sécurité lors des sorties."}{' '}
+                              <RichText inline value={content.alerte} fallback="tout randonneur devrait avoir dans son sac la fiche individuelle de santé. Elle contribue à renforcer la sécurité lors des sorties."/>{' '}
                               {(content.alerte_lien || !content.titre) && (
                                 <a href={content.alerte_lien ?? '#'} style={{ fontWeight: 600 }}>
                                   {content.alerte_lien_texte ?? 'Télécharger la fiche'}
@@ -133,7 +130,7 @@ export default async function RandoPage() {
                           <h3 id="jeudi" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
                             {content.titre ?? 'Les randonnées du jeudi'}
                           </h3>
-                          <p>{content.intro ?? '5 groupes de niveau, chaque jeudi après-midi.'}</p>
+                          <RichText value={content.intro} fallback={'5 groupes de niveau, chaque jeudi après-midi.'}/>
                           <table className="tbl" style={{ marginTop: 16 }}>
                             <thead>
                               <tr><th>Groupe</th><th>Distance</th><th>Retour vers</th><th>Point de RDV</th></tr>
@@ -150,9 +147,7 @@ export default async function RandoPage() {
                             </tbody>
                           </table>
                           {(content.note || !content.titre) && (
-                            <p style={{ marginTop: 12, fontSize: "0.92rem", color: "var(--ink-mute)" }}>
-                              {content.note ?? "Les groupes 2A et 2B pourront être réunis en fonction du nombre d'animateurs disponibles. Les départs se font en covoiturage."}
-                            </p>
+                            <RichText value={content.note} fallback={"Les groupes 2A et 2B pourront être réunis en fonction du nombre d'animateurs disponibles. Les départs se font en covoiturage."} style={{ marginTop: 12, fontSize: "0.92rem", color: "var(--ink-mute)" }}/>
                           )}
                           <Link
                             className="btn btn-primary"
@@ -170,12 +165,8 @@ export default async function RandoPage() {
                           <h3 id="dimanche" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
                             {content.titre ?? 'Les randonnées du dimanche'}
                           </h3>
-                          <p>
-                            {content.texte1 ?? 'Environ tous les 15 jours. Parcours de 9 à 11 km. Rassemblement à 8h45 sur le parking du centre Leclerc, départ à 9h, retour vers midi.'}
-                          </p>
-                          <p style={{ color: "var(--ink-soft)", fontSize: "0.96rem" }}>
-                            {content.texte2 ?? "Conditions : être inscrit à la section marche de l'AGMR. Une sortie d'essai est possible sans inscription."}
-                          </p>
+                          <RichText value={content.texte1} fallback={'Environ tous les 15 jours. Parcours de 9 à 11 km. Rassemblement à 8h45 sur le parking du centre Leclerc, départ à 9h, retour vers midi.'}/>
+                          <RichText value={content.texte2} fallback={"Conditions : être inscrit à la section marche de l'AGMR. Une sortie d'essai est possible sans inscription."} style={{ color: "var(--ink-soft)", fontSize: "0.96rem" }}/>
                         </div>
                       )
 
@@ -185,9 +176,7 @@ export default async function RandoPage() {
                           <h3 id="sejours" style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>
                             {content.titre ?? 'Sorties à la journée et séjours'}
                           </h3>
-                          <p>
-                            {content.texte ?? 'Sorties à thèmes plusieurs fois par trimestre, en train, en car ou en covoiturage. 1 séjour en car chaque saison + plusieurs séjours en covoiturage.'}
-                          </p>
+                          <RichText value={content.texte} fallback={'Sorties à thèmes plusieurs fois par trimestre, en train, en car ou en covoiturage. 1 séjour en car chaque saison + plusieurs séjours en covoiturage.'}/>
                           <Link
                             className="btn btn-green"
                             style={{ marginTop: 12, display: "inline-flex" }}
@@ -224,9 +213,7 @@ export default async function RandoPage() {
                           <h3 id="sante" style={{ marginBottom: 10 }}>
                             {content.titre ?? 'Rando-Santé'}
                           </h3>
-                          <p style={{ color: "var(--ink-soft)", marginBottom: 14 }}>
-                            {content.texte ?? "Plus lentement, moins longtemps et moins loin. Activité destinée aux personnes atteintes de diverses pathologies. L'AGMR a obtenu le label « Santé » de la FFR."}
-                          </p>
+                          <RichText value={content.texte} fallback={"Plus lentement, moins longtemps et moins loin. Activité destinée aux personnes atteintes de diverses pathologies. L'AGMR a obtenu le label « Santé » de la FFR."} style={{ color: "var(--ink-soft)", marginBottom: 14 }}/>
                           <Link className="btn btn-green btn-sm" href={content.cta_lien ?? '/activites/sante'}>
                             {content.cta_texte ?? 'En savoir plus'}
                           </Link>
@@ -244,9 +231,7 @@ export default async function RandoPage() {
                   <h2 style={{ fontSize: "2.2rem", marginBottom: 18 }}>
                     {nHeader.titre ?? 'La Marche Nordique'}
                   </h2>
-                  <p style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}>
-                    {nHeader.lede ?? "Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."}
-                  </p>
+                  <RichText value={nHeader.lede} fallback={"Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
 
                   {nordiqueBlocks.map(block => {
                     if (!block.visible || block.block_key === 'header') return null
@@ -271,7 +256,7 @@ export default async function RandoPage() {
                         return (
                           <div key="n-seance">
                             <h3 style={{ marginTop: 40, fontFamily: "var(--serif)", fontSize: "1.8rem" }}>{content.titre ?? 'Comment se déroule une séance'}</h3>
-                            <p>{content.texte ?? 'Chaque séance dure entre 1h30 et 2h.'}</p>
+                            <RichText value={content.texte} fallback={'Chaque séance dure entre 1h30 et 2h.'}/>
                             <ol style={{ fontSize: "1.05rem", lineHeight: 1.9, margin: "20px 0 0 20px" }}>
                               {steps.map((s, i) => <li key={i}>{s}</li>)}
                             </ol>

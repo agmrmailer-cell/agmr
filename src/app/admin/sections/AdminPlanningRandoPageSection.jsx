@@ -4,6 +4,8 @@ import Icon from '@/components/ui/Icon'
 import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
+import RichTextEditor from '@/components/admin/RichTextEditor'
+import { richTextToPlain } from '@/lib/rich-text'
 
 const DEFAULT_BLOCKS = [
   {
@@ -69,7 +71,7 @@ function BlockForm({ block, onSave, onCancel, saving }) {
           </div>
           <div className="field">
             <label>Chapeau</label>
-            <textarea rows={3} value={content.lede ?? ''} onChange={e => u('lede', e.target.value)}/>
+            <RichTextEditor value={content.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/>
           </div>
         </>
       )}
@@ -82,7 +84,7 @@ function BlockForm({ block, onSave, onCancel, saving }) {
           </div>
           <div className="field">
             <label>Texte d&apos;introduction</label>
-            <textarea rows={3} value={content.intro ?? ''} onChange={e => u('intro', e.target.value)}/>
+            <RichTextEditor value={content.intro ?? ''} onChange={v => u('intro', v)} minHeight={84}/>
           </div>
         </>
       )}
@@ -225,7 +227,7 @@ export default function AdminPlanningRandoPageSection({ onOpenLinks }) {
               )}
               {block.block_key === 'links' && (
                 <div className="muted" style={{ fontSize: '0.88rem' }}>
-                  {block.content.title} · {block.content.intro}
+                  {block.content.title} · {richTextToPlain(block.content.intro)}
                 </div>
               )}
             </div>

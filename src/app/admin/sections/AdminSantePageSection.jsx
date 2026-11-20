@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-client'
 import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
+import RichTextEditor from '@/components/admin/RichTextEditor'
 
 const BLOCK_META = {
   header:      { label: 'En-tête de page',  desc: 'Accroche, titre, chapeau' },
@@ -193,14 +194,14 @@ function BlockForm({ block, onSave, onCancel }) {
       {key === 'header' && <>
         <div className="field"><label>Accroche (eyebrow)</label><input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Santé par le Sport · Activités Physiques Adaptées"/></div>
         <div className="field"><label>Titre H1</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Prescri'Forme & Rando-Santé"/></div>
-        <div className="field"><label>Chapeau</label><textarea rows={3} value={c.lede ?? ''} onChange={e => u('lede', e.target.value)}/></div>
+        <div className="field"><label>Chapeau</label><RichTextEditor value={c.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/></div>
       </>}
 
       {key === 'prescri' && <>
         <div className="field"><label>Titre de section</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Prescri'Forme — Sport sur ordonnance"/></div>
-        <div className="field"><label>Premier paragraphe</label><textarea rows={4} value={c.texte1 ?? ''} onChange={e => u('texte1', e.target.value)}/></div>
-        <div className="field"><label>Deuxième paragraphe</label><textarea rows={3} value={c.texte2 ?? ''} onChange={e => u('texte2', e.target.value)}/></div>
-        <div className="field"><label>Texte Certification</label><textarea rows={2} value={c.cert_texte ?? ''} onChange={e => u('cert_texte', e.target.value)} placeholder="Section gym certifiée auprès de la DRJSCS Yvelines…"/></div>
+        <div className="field"><label>Premier paragraphe</label><RichTextEditor value={c.texte1 ?? ''} onChange={v => u('texte1', v)} minHeight={112}/></div>
+        <div className="field"><label>Deuxième paragraphe</label><RichTextEditor value={c.texte2 ?? ''} onChange={v => u('texte2', v)} minHeight={84}/></div>
+        <div className="field"><label>Texte Certification</label><RichTextEditor value={c.cert_texte ?? ''} onChange={v => u('cert_texte', v)} minHeight={80}/></div>
         <div className="row-2">
           <div className="field"><label>Lien externe — URL</label><input value={c.lien_url ?? ''} onChange={e => u('lien_url', e.target.value)} placeholder="http://www.lasanteparlesport.fr"/></div>
           <div className="field"><label>Lien externe — texte</label><input value={c.lien_texte ?? ''} onChange={e => u('lien_texte', e.target.value)} placeholder="lasanteparlesport.fr"/></div>
@@ -209,7 +210,7 @@ function BlockForm({ block, onSave, onCancel }) {
 
       {key === 'rando_sante' && <>
         <div className="field"><label>Titre de section</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Rando-Santé — Marche adaptée"/></div>
-        <div className="field"><label>Texte</label><textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/></div>
+        <div className="field"><label>Texte</label><RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/></div>
         <div className="field"><label>Citation mise en avant</label><textarea rows={2} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)} placeholder="Plus lentement, moins longtemps et moins loin…"/></div>
       </>}
 
@@ -228,7 +229,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={5} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
         </div>
       </>}
       {genericType(key) === 'citation' && <>
@@ -247,7 +248,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={3} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
         </div>
         <div className="field"><label>Texte du bouton</label>
           <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
@@ -261,7 +262,7 @@ function BlockForm({ block, onSave, onCancel }) {
           <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
         </div>
         <div className="field"><label>Texte</label>
-          <textarea rows={4} value={c.texte ?? ''} onChange={e => u('texte', e.target.value)}/>
+          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
         </div>
       </>}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
