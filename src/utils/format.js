@@ -15,16 +15,6 @@ export const formatDateFR = (iso) => {
 export const monthFR = (m) => MONTHS_SHORT[m]
 export const monthFRFull = (m) => MONTHS_FULL[m]
 
-export const labelType = (t) => ({
-  "rando-jeudi": "Rando jeudi",
-  "rando-dimanche": "Rando dimanche",
-  "nordique-mardi": "Nordique mardi",
-  "nordique-samedi": "Nordique samedi",
-  "sortie-journee": "Sortie journee",
-  "sejour": "Sejour",
-  "nocturne": "Nocturne",
-}[t] || t)
-
 export const catLabel = (c) => ({
   gym: "Gym",
   rando: "Randonnee",

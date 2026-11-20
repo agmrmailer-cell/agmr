@@ -3,6 +3,7 @@ import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
+import { frenchError } from '@/lib/errors'
 
 function notify(message, type = 'ok') {
   window.dispatchEvent(new CustomEvent('agmr-edit-toast', { detail: { message, type } }))
@@ -28,7 +29,7 @@ export default function BlockControls({ table, id, blockKey, label, visible, ful
       notify(okMessage)
       startTransition(() => router.refresh())
     } catch (e) {
-      notify(e.message, 'error')
+      notify(frenchError(e), 'error')
     }
     setBusy(false)
   }
@@ -43,19 +44,19 @@ export default function BlockControls({ table, id, blockKey, label, visible, ful
     const updates = rest.filter(b => b.id).map((b, i) => ({ id: b.id, ordre: (i + 1) * 10 }))
     const results = await Promise.all(updates.map(u => supabase.from(table).update({ ordre: u.ordre }).eq('id', u.id)))
     const failed = results.find(r => r.error)
-    if (failed) throw new Error(failed.error.message)
+    if (failed) throw failed.error
   }, dir < 0 ? 'Bloc déplacé vers le haut' : 'Bloc déplacé vers le bas', 'bloc déplacé')
 
   const toggle = () => run(async () => {
     const { error } = await supabase.from(table).update({ visible: !visible }).eq('id', id)
-    if (error) throw new Error(error.message)
+    if (error) throw error
   }, visible ? 'Bloc masqué pour les visiteurs' : 'Bloc de nouveau visible', visible ? 'bloc masqué' : 'bloc affiché')
 
   const remove = () => {
     if (!confirm(`Supprimer définitivement le bloc « ${name} » ?\n\nSon contenu sera perdu. Pour le retirer temporairement, utilisez plutôt « Masquer ».`)) return
     run(async () => {
       const { error } = await supabase.from(table).delete().eq('id', id)
-      if (error) throw new Error(error.message)
+      if (error) throw error
     }, 'Bloc supprimé', 'bloc supprimé')
   }
 

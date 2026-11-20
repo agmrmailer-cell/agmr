@@ -165,7 +165,7 @@ function PageParams({ supabase }) {
             <input value={cfg.saison} onChange={e => u('saison', e.target.value)} onBlur={save} placeholder="2025-2026"/>
           </div>
           <div className="field">
-            <label>Accroche (eyebrow) <HelpTip text="Petite ligne au-dessus du titre H1. Laissez vide pour la valeur automatique." position="top"/></label>
+            <label>Petite ligne au-dessus du titre <HelpTip text="Petite ligne au-dessus du titre H1. Laissez vide pour la valeur automatique." position="top"/></label>
             <input value={cfg.eyebrow} onChange={e => u('eyebrow', e.target.value)} onBlur={save} placeholder={`Inscriptions · Saison ${cfg.saison || '2025-2026'}`}/>
           </div>
         </div>

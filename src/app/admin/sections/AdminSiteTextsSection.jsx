@@ -5,6 +5,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import { SITE_TEXT_PAGES, mergeSiteTexts } from '@/lib/site-texts'
+import { frenchError } from '@/lib/errors'
 
 export function PageForm({ page, rows, onSaved, supabase }) {
   const [values, setValues] = useState(() => mergeSiteTexts(page.id, rows))
@@ -22,7 +23,7 @@ export function PageForm({ page, rows, onSaved, supabase }) {
     }))
     const { error } = await supabase.from('site_texts').upsert(payload, { onConflict: 'key' })
     if (error) {
-      setMessage({ type: 'error', text: error.message })
+      setMessage({ type: 'error', text: frenchError(error) })
     } else {
       await logActivity(supabase, { message: `Textes modifiés - ${page.label}`, section: 'site-texts', action: 'update' })
       setMessage({ type: 'ok', text: 'Modifications enregistrées.' })
@@ -73,18 +74,22 @@ export function PageForm({ page, rows, onSaved, supabase }) {
   )
 }
 
-export default function AdminSiteTextsSection() {
+// onlyPage : affiche uniquement les textes d'une page (ex. « navigation » pour la section Menu du site)
+const HAS_OWN_SECTION = new Set(['navigation', 'planning-rando'])
+
+export default function AdminSiteTextsSection({ onlyPage }) {
   const supabase = useMemo(() => createClient(), [])
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [pageId, setPageId] = useState(SITE_TEXT_PAGES[0].id)
+  const listed = SITE_TEXT_PAGES.filter(p => (onlyPage ? p.id === onlyPage : !HAS_OWN_SECTION.has(p.id)))
+  const [pageId, setPageId] = useState(listed[0].id)
 
   useEffect(() => {
     let ignore = false
     supabase.from('site_texts').select('key, value').then(({ data, error: loadError }) => {
       if (ignore) return
-      if (loadError) setError(loadError.message)
+      if (loadError) setError(frenchError(loadError))
       else setRows(data ?? [])
       setLoading(false)
     })
@@ -97,7 +102,7 @@ export default function AdminSiteTextsSection() {
     <>
       <div className="admin-head">
         <div>
-          <h1>Textes du site <HelpTip text="Modifiez ici les textes des pages qui n'ont pas de section dédiée (contact, inscriptions, mentions légales, pied de page…). Le bouton « Texte d'origine » restaure le texte par défaut." position="right"/></h1>
+          <h1>{onlyPage ? page.label : 'Autres pages & pied de page'} <HelpTip text="Modifiez ici les textes des pages qui n'ont pas de section dédiée (contact, inscriptions, mentions légales, pied de page…). Le bouton « Texte d'origine » restaure le texte par défaut." position="right"/></h1>
           <p className="muted" style={{ margin: 0 }}>Éditeur visuel · les modifications sont visibles immédiatement sur le site</p>
         </div>
         <a className="btn btn-ghost btn-sm" href={page.href} target="_blank" rel="noopener noreferrer">Voir la page →</a>
@@ -110,9 +115,9 @@ export default function AdminSiteTextsSection() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, 220px) 1fr', gap: 24, alignItems: 'start' }}>
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, position: 'sticky', top: 16 }}>
-          {SITE_TEXT_PAGES.map(p => (
+      <div className="site-texts-layout" style={{ display: 'grid', gridTemplateColumns: onlyPage ? '1fr' : 'minmax(180px, 220px) 1fr', gap: 24, alignItems: 'start' }}>
+        {!onlyPage && <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, position: 'sticky', top: 16 }}>
+          {listed.map(p => (
             <button
               key={p.id}
               type="button"
@@ -128,10 +133,11 @@ export default function AdminSiteTextsSection() {
               {p.label}
             </button>
           ))}
-        </nav>
+        </nav>}
 
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: '22px 24px 0' }}>
-          <h2 style={{ fontSize: '1.3rem', marginBottom: 18 }}>{page.label}</h2>
+          <h2 style={{ fontSize: '1.3rem', marginBottom: page.note ? 6 : 18 }}>{page.label}</h2>
+          {page.note && <p className="muted" style={{ fontSize: '0.88rem', marginTop: 0, marginBottom: 18 }}>{page.note}</p>}
           {loading
             ? <div style={{ padding: 20, color: 'var(--ink-mute)' }}>Chargement...</div>
             : <PageForm key={page.id} page={page} rows={rows} supabase={supabase} onSaved={saved => setRows(prev => [...prev.filter(r => !saved.some(s => s.key === r.key)), ...saved])}/>}

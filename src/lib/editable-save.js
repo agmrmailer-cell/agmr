@@ -50,7 +50,7 @@ export async function saveEditable(supabase, src, value) {
     error = { message: 'Emplacement inconnu' }
   }
 
-  if (error) throw new Error(error.message)
+  if (error) throw error
 
   const where = src.kind === 'text' ? src.key : src.kind === 'block' ? `${src.table} / ${src.blockKey} / ${src.field}` : `${src.table} / ${src.field}`
   await logActivity(supabase, { message: `Édition visuelle - ${where}`, section: 'edition-visuelle', action: 'update' })

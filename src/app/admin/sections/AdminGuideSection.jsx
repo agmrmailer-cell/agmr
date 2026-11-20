@@ -37,10 +37,10 @@ export default function AdminGuideSection() {
           title="Page principale"
           section="Pages du site → Page d'accueil"
           items={[
-            ["Hero (bannière d'accueil)", "Modifiez le titre, le sous-titre, les boutons d'action et la photo de fond. La photo doit être au format 16:9, minimum 1920×1080 px."],
+            ["Grande photo d'accueil (bannière d'accueil)", "Modifiez le titre, le sous-titre, les boutons d'action et la photo de fond. La photo doit être au format 16:9, minimum 1920×1080 px."],
             ["Blocs d'activités", "Activez ou désactivez chaque activité (Gym, Rando, Nordique), modifiez les textes et les photos."],
             ["Manifesto", "La section 'Notre philosophie' — modifiez le texte et la citation mise en avant."],
-            ["Bannière CTA", "Le bandeau rouge en bas de page avec le bouton d'inscription."],
+            ["Bandeau « Rejoignez-nous »", "Le bandeau rouge en bas de page avec le bouton d'inscription."],
           ]}
         />
 

@@ -3,10 +3,11 @@ import { genericType } from '@/lib/generic-blocks'
 import Editable from '@/components/editable/Editable'
 import { blockSrc } from '@/lib/editable-src'
 import { getEditMode } from '@/lib/edit-mode'
+import { canEditTable } from '@/lib/permissions'
 
 // `table` : table Supabase du bloc, pour l'édition visuelle sur le site
 export default async function GenericBlockRenderer({ block, table }) {
-  const edit = table ? await getEditMode() : false
+  const edit = table ? canEditTable(await getEditMode(), table) : false
   const c = block.content ?? {}
   const type = genericType(block.block_key)
   const src = field => (table ? blockSrc(table, block.block_key, field) : null)

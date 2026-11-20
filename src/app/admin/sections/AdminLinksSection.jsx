@@ -6,21 +6,22 @@ import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import RichTextEditor from '@/components/admin/RichTextEditor'
 import { richTextToPlain } from '@/lib/rich-text'
+import { frenchError } from '@/lib/errors'
 
 const KIND_LABELS = {
   planning: 'Planning',
   payment: 'Paiement',
   album: 'Album photo',
-  video: 'Video',
+  video: 'Vidéo',
   document: 'Document',
   external: 'Lien externe',
 }
 
 const ZONES = [
   { id: 'planning-rando', label: 'Planning rando (mot de passe)' },
-  { id: 'home-rando-sante', label: 'Accueil - Rando-Sante' },
-  { id: 'actualites', label: 'Actualites' },
-  { id: 'espace-adherents', label: 'Espace adherents' },
+  { id: 'home-rando-sante', label: 'Accueil · Rando-Santé' },
+  { id: 'actualites', label: 'Actualités' },
+  { id: 'espace-adherents', label: 'Espace adhérents' },
   { id: 'inscriptions', label: 'Inscriptions / paiement' },
 ]
 
@@ -114,7 +115,7 @@ function LinkForm({ item, onSave, onCancel, saving }) {
       </div>
 
       <div className="field">
-        <label>Zones d&apos;affichage</label>
+        <label>Où afficher ce lien ?</label>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {ZONES.map(zone => (
             <label key={zone.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', border: '1px solid var(--line)', borderRadius: 'var(--r-sm)', cursor: 'pointer', background: f.zones.includes(zone.id) ? 'rgba(184,69,31,0.06)' : 'var(--bg-deep)', fontSize: '0.88rem' }}>
@@ -131,7 +132,7 @@ function LinkForm({ item, onSave, onCancel, saving }) {
           <input type="number" value={f.ordre ?? 0} onChange={e => u('ordre', Number(e.target.value) || 0)}/>
         </div>
         <div className="field">
-          <label>Debut d&apos;affichage</label>
+          <label>Début d&apos;affichage</label>
           <input type="datetime-local" value={f.starts_at ?? ''} onChange={e => u('starts_at', e.target.value)}/>
         </div>
         <div className="field">
@@ -143,11 +144,11 @@ function LinkForm({ item, onSave, onCancel, saving }) {
       <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
         <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input type="checkbox" checked={f.active} onChange={e => u('active', e.target.checked)} style={{ accentColor: 'var(--accent)' }}/>
-          Actif
+          Affiché sur le site
         </label>
         <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input type="checkbox" checked={f.members_only} onChange={e => u('members_only', e.target.checked)} style={{ accentColor: 'var(--accent)' }}/>
-          Reserve adherents
+          Réservé aux adhérents (visible seulement dans l&apos;Espace adhérents)
         </label>
       </div>
 
@@ -183,7 +184,7 @@ export default function AdminLinksSection() {
       .select('*')
       .order('ordre')
       .order('created_at', { ascending: false })
-    if (loadError) setError(loadError.message)
+    if (loadError) setError(frenchError(loadError))
     else setLinks(data ?? [])
     setLoading(false)
   }, [supabase])
@@ -197,7 +198,7 @@ export default function AdminLinksSection() {
       .order('created_at', { ascending: false })
       .then(({ data, error: loadError }) => {
         if (ignore) return
-        if (loadError) setError(loadError.message)
+        if (loadError) setError(frenchError(loadError))
         else setLinks(data ?? [])
         setLoading(false)
       })
@@ -225,7 +226,7 @@ export default function AdminLinksSection() {
       : supabase.from('external_links').insert(payload)
     const { error: saveError } = await request
     if (saveError) {
-      setError(saveError.message)
+      setError(frenchError(saveError))
       setSaving(false)
       return
     }
@@ -242,25 +243,25 @@ export default function AdminLinksSection() {
   const del = async (item) => {
     if (!confirm(`Supprimer le lien "${item.title}" ?`)) return
     const { error: deleteError } = await supabase.from('external_links').delete().eq('id', item.id)
-    if (deleteError) { setError(deleteError.message); return }
+    if (deleteError) { setError(frenchError(deleteError)); return }
     await logActivity(supabase, { message: `Lien supprime - ${item.title}`, section: 'links', action: 'delete' })
     load()
   }
 
   const toggleActive = async (item) => {
     const { error: updateError } = await supabase.from('external_links').update({ active: !item.active }).eq('id', item.id)
-    if (updateError) { setError(updateError.message); return }
+    if (updateError) { setError(frenchError(updateError)); return }
     load()
   }
 
-  if (loading) return <div style={{ padding: 40, color: 'var(--ink-mute)' }}>Chargement...</div>
+  if (loading) return <div style={{ padding: 40, color: 'var(--ink-mute)' }}>Chargement…</div>
 
   return (
     <>
       <div className="admin-head">
         <div>
-          <h1>Liens <HelpTip text="Centralise les liens externes ou internes affiches sur le site : plannings Google Sheets, paiement HelloAsso, albums, videos, documents et liens reserves aux adherents." position="right" /></h1>
-          <p className="muted" style={{ margin: 0 }}>{links.length} liens - affichage par zone</p>
+          <h1>Liens & documents <HelpTip text="Tous les liens affichés sur le site : plannings (Google Docs, Sheets), paiement HelloAsso, albums, vidéos, documents et liens réservés aux adhérents. Cochez où chaque lien doit apparaître." position="right" /></h1>
+          <p className="muted" style={{ margin: 0 }}>{links.length} lien{links.length > 1 ? 's' : ''} · choisissez où chacun apparaît</p>
         </div>
         <button className="btn btn-primary" onClick={() => setEditing(BLANK)}>
           <Icon name="plus" size={16}/> Nouveau lien
@@ -268,7 +269,7 @@ export default function AdminLinksSection() {
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-        <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Toutes les zones</button>
+        <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tous</button>
         {ZONES.map(zone => (
           <button key={zone.id} className={`chip ${filter === zone.id ? 'active' : ''}`} onClick={() => setFilter(zone.id)}>
             {zone.label}
@@ -284,7 +285,7 @@ export default function AdminLinksSection() {
             <th>Ordre</th>
             <th>Lien</th>
             <th>Type</th>
-            <th>Zones</th>
+            <th>Affiché sur</th>
             <th>Validite</th>
             <th>Statut</th>
             <th></th>
@@ -312,7 +313,7 @@ export default function AdminLinksSection() {
               <td>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span className={`badge ${link.active ? 'badge-ok' : 'badge-cancel'}`}>{link.active ? 'Actif' : 'Inactif'}</span>
-                  {link.members_only && <span className="badge badge-full">Adherents</span>}
+                  {link.members_only && <span className="badge badge-full">Adhérents</span>}
                 </div>
               </td>
               <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -327,7 +328,7 @@ export default function AdminLinksSection() {
 
       {filtered.length === 0 && (
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: 28, textAlign: 'center', color: 'var(--ink-mute)', marginTop: 16 }}>
-          Aucun lien pour cette zone.
+          Aucun lien ici pour l'instant.
         </div>
       )}
 

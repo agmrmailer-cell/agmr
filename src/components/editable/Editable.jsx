@@ -3,6 +3,7 @@ import { getEditMode } from '@/lib/edit-mode'
 import { isHtml } from '@/lib/rich-text'
 import { sanitizeRichText } from '@/lib/rich-text-sanitize'
 import EditableField from './EditableField'
+import { canEditSrc } from '@/lib/permissions'
 
 // Texte du site modifiable « sur place » par un administrateur en mode édition visuelle.
 // Pour les visiteurs, le rendu est strictement identique à <RichText> (ou au texte brut si `plain`).
@@ -13,7 +14,8 @@ import EditableField from './EditableField'
 // - label    : nom affiché à l'administrateur
 export default async function Editable({ src, value, fallback, plain = false, as = 'p', inline = false, simple = false, className, style, label }) {
   const raw = value ?? fallback ?? ''
-  const editMode = src ? await getEditMode() : false
+  const ctx = src ? await getEditMode() : null
+  const editMode = canEditSrc(ctx, src)
 
   if (!editMode) {
     if (plain) return raw === '' ? null : raw

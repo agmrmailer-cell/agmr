@@ -55,7 +55,7 @@ export default function AdminStatsSection() {
       <div className="admin-head">
         <div>
           <h1>Chiffres clés <HelpTip text="Modifiez ici les statistiques affichées sur la page d'accueil du site : les 3 chiffres du bandeau hero (ex : nombre d'adhérents, d'heures de cours) et les 4 chiffres du bandeau de statistiques en bas de page." position="right" /></h1>
-          <p className="muted" style={{ margin: 0 }}>Hero + bandeau stats — <strong style={{ color: "var(--green)" }}>données Supabase</strong></p>
+          <p className="muted" style={{ margin: 0 }}>Grande photo d'accueil + bandeau de chiffres — <strong style={{ color: "var(--green)" }}>données Supabase</strong></p>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ function StatForm({ item, onSave, onCancel }) {
       </div>
       <div className="field">
         <label>Label / description</label>
-        <input value={f.label} onChange={e => u("label", e.target.value)} placeholder="ex: Adherents en 2025-2026"/>
+        <input value={f.label} onChange={e => u("label", e.target.value)} placeholder="ex : Adhérents en 2025-2026"/>
       </div>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>

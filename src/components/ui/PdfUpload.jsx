@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { frenchError } from '@/lib/errors'
 
 /**
  * Composant upload PDF vers Supabase Storage (bucket "documents").
@@ -48,7 +49,7 @@ export default function PdfUpload({ value, onChange, folder = 'divers' }) {
 
       onChange(publicUrl)
     } catch (err) {
-      setError(err.message ?? "Erreur lors de l'upload")
+      setError(frenchError(err))
     } finally {
       setUploading(false)
       if (inputRef.current) inputRef.current.value = ''

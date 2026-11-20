@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import Icon from '@/components/ui/Icon'
+import { frenchError } from '@/lib/errors'
 
 /**
  * Convertit n'importe quel fichier image en WebP via le Canvas API.
@@ -85,7 +86,7 @@ export default function PhotoUpload({
       const { data: { publicUrl } } = supabase.storage.from('galerie').getPublicUrl(fileName)
       onChange(publicUrl)
     } catch (err) {
-      alert('Erreur : ' + err.message)
+      alert(frenchError(err))
     } finally {
       setUploading(false)
       setProgress('')

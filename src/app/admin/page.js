@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import AdminApp from './AdminApp'
+import { sectionFromSlug } from './admin-url'
 
 export const metadata = { title: "Administration — AGMR" }
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }) {
+  const { section } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -30,5 +32,5 @@ export default async function AdminPage() {
     )
   }
 
-  return <AdminApp user={user} profile={profile}/>
+  return <AdminApp user={user} profile={profile} initialSection={sectionFromSlug(typeof section === 'string' ? section : '')}/>
 }

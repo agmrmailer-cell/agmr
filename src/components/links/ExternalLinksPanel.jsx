@@ -6,7 +6,7 @@ const KIND_LABELS = {
   planning: 'Planning',
   payment: 'Paiement',
   album: 'Album',
-  video: 'Video',
+  video: 'Vidéo',
   document: 'Document',
   external: 'Lien',
 }

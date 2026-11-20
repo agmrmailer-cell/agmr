@@ -1,13 +1,11 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useHelp } from '@/lib/help-context'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
-import { gymCourses, randoSorties, news, sejours, bureau } from '@/data'
-import { formatDateFR, labelType, catLabel } from '@/utils/format'
 import { relativeTime } from '@/lib/activity'
 import AdminGymSection from './sections/AdminGymSection'
 import AdminActuSection from './sections/AdminActuSection'
@@ -28,6 +26,7 @@ import AdminGuideSection from './sections/AdminGuideSection'
 import AdminBackupSection from './sections/AdminBackupSection'
 import AdminBannerSection from './sections/AdminBannerSection'
 import AdminLinksSection from './sections/AdminLinksSection'
+import { sectionFromSlug, sectionUrl } from './admin-url'
 import AdminSiteTextsSection from './sections/AdminSiteTextsSection'
 import AdminMembersPasswordSection from './sections/AdminMembersPasswordSection'
 import { setEditModeCookie } from '@/components/editable/EditModeBar'
@@ -56,6 +55,7 @@ function getNav(isSuperAdmin) {
         { id: 'sante-page', label: 'Santé',                       icon: 'accessibility', desc: "Prescri'Forme, Rando-Santé, témoignages", href: '/activites/sante' },
         { id: 'asso-page',  label: "L'association",              icon: 'user',          desc: 'Histoire, sections, gouvernance, affiliations', href: '/association' },
         { id: 'site-texts', label: 'Autres pages & pied de page', icon: 'file',          desc: "Contact, S'inscrire, mentions légales, pied de page…", href: '/contact' },
+        { id: 'menu',       label: 'Menu du site',                icon: 'settings',      desc: 'Intitulés du menu et des sous-menus, boutons Adhérents / S\'inscrire', perm: 'site-texts' },
       ] },
     { id: 'hub:plannings', label: 'Plannings', icon: 'calendar',
       desc: 'Horaires des cours de gym et plannings des sorties de marche.',
@@ -64,7 +64,7 @@ function getNav(isSuperAdmin) {
         { id: 'vacances',            label: 'Vacances scolaires', icon: 'calendar', desc: 'Périodes sans cours de gym', perm: 'gym' },
         { id: 'planning-rando-page', label: 'Planning rando',     icon: 'mountain', desc: 'Liens vers les plannings (réservés aux adhérents)' },
       ] },
-    { id: 'hub:news', label: 'Actualités', icon: 'file',
+    { id: 'hub:actualites', label: 'Actualités', icon: 'file',
       desc: 'Annonces, séjours et message défilant en haut du site.',
       children: [
         { id: 'actu',    label: 'Annonces',          icon: 'file', desc: 'Actualités affichées sur le site' },
@@ -73,14 +73,14 @@ function getNav(isSuperAdmin) {
       ] },
     { id: 'galerie', label: 'Photos', icon: 'image' },
     { id: 'links', label: 'Liens & documents', icon: 'file' },
-    { id: 'hub:asso', label: 'Association', icon: 'user',
+    { id: 'hub:association', label: 'Association', icon: 'user',
       desc: "Équipe dirigeante, documents d'assemblée générale et tarifs.",
       children: [
         { id: 'comite', label: 'Comité directeur',   icon: 'user', desc: 'Membres du bureau et photos' },
         { id: 'ag',     label: 'Assemblée générale', icon: 'file', desc: 'Comptes rendus et documents' },
         { id: 'tarifs', label: 'Tarifs',             icon: 'file', desc: 'Cotisations et licences' },
       ] },
-    { id: 'hub:settings', label: 'Réglages & aide', icon: 'settings', bottom: true,
+    { id: 'hub:reglages', label: 'Réglages & aide', icon: 'settings', bottom: true,
       desc: "Votre compte, le guide d'utilisation et l'administration.",
       children: [
         { id: 'guide',    label: "Guide d'utilisation", icon: 'file',     desc: 'Comment utiliser le back-office', always: true },
@@ -150,6 +150,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   const router = useRouter()
   const { helpMode, setHelpMode } = useHelp()
   const [bannerActive, setBannerActive] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
@@ -162,6 +163,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   const bottomItems = items.filter(it => it.bottom)
 
   const open = it => {
+    setMobileOpen(false)
     if (it.action) return it.action()
     if (it.children) return setSection(it.children.length === 1 ? it.children[0].id : it.id)
     setSection(it.id)
@@ -176,7 +178,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
       onClick={e => { e.preventDefault(); open(it) }}
     >
       <Icon name={it.icon} size={16}/> {it.label}
-      {(it.id === 'hub:news') && bannerActive && (
+      {(it.id === 'hub:actualites') && bannerActive && (
         <span title="Un bandeau d'info est actif" style={{ marginLeft: "auto", width: 18, height: 18, borderRadius: "50%", background: "#e88a5a", color: "#fff", fontSize: "0.65rem", fontWeight: 800, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, lineHeight: 1 }}>!</span>
       )}
     </a>
@@ -190,10 +192,13 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
   }
 
   return (
-    <aside className="admin-side">
+    <aside className={`admin-side${mobileOpen ? ' is-open' : ''}`}>
       <div className="admin-side-brand">
         <AGMRLogo size={52} light={true} withTagline={false}/>
         <div className="asb-2">Back-office</div>
+        <button type="button" className="admin-mobile-toggle" aria-expanded={mobileOpen} onClick={() => setMobileOpen(o => !o)}>
+          <Icon name={mobileOpen ? 'x' : 'menu'} size={18}/> {mobileOpen ? 'Fermer' : 'Menu'}
+        </button>
       </div>
       <nav>
         {mainItems.map(renderItem)}
@@ -238,429 +243,181 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
 }
 
 // ── Dashboard ─────────────────────────────────────────────────
-function Dashboard({ setSection }) {
-  const [kpi, setKpi]           = useState(null)
+// Saison en cours (septembre → août), ex. « 2025-2026 »
+function currentSeason(d = new Date()) {
+  const y = d.getMonth() >= 7 ? d.getFullYear() : d.getFullYear() - 1
+  return `${y}-${y + 1}`
+}
+
+const isMissingTable = err => !!err && /does not exist|could not find the table|schema cache|42P01|PGRST205/i.test(`${err.message} ${err.code}`)
+
+// Liste « À vérifier » : seulement ce qui demande une action, filtré selon les droits de l'administrateur
+async function loadChecks(supabase, canAccess, isSuperAdmin) {
+  const today = new Date().toISOString().slice(0, 10)
+  const now = Date.now()
+  const checks = []
+  const [texts, settings, banners, links, actus, vacances, tarifs, sejours] = await Promise.all([
+    supabase.from('site_texts').select('key').limit(1),
+    supabase.from('site_settings').select('key, value').eq('key', 'members_password'),
+    supabase.from('site_banners').select('id, message, active, expires_at'),
+    supabase.from('external_links').select('id, title, zones, active, ends_at'),
+    supabase.from('actualites').select('date').order('date', { ascending: false }).limit(1),
+    supabase.from('vacances_scolaires').select('date_fin').gte('date_fin', today).limit(1),
+    supabase.from('tarifs').select('label, note').eq('label', '__page_config__').maybeSingle(),
+    supabase.from('sejours').select('statut'),
+  ])
+
+  const results = [texts, settings, banners, links, actus, vacances, tarifs, sejours]
+  if (results.every(r => r.error)) {
+    return [{ level: 'urgent', text: 'Vérification impossible : la base de données ne répond pas. Vérifiez votre connexion internet puis rechargez la page.' }]
+  }
+
+  if (isSuperAdmin && (isMissingTable(texts.error) || isMissingTable(settings.error))) {
+    checks.push({ level: 'urgent', text: "La mise à jour de la base n'a pas été faite : certains textes et le mot de passe adhérents ne peuvent pas être enregistrés.", hint: 'Exécuter le fichier supabase/mise_a_jour_novembre_2026.sql dans Supabase (SQL Editor → Run).' })
+  }
+  if (canAccess('members-password') && !settings.error && !(settings.data?.[0]?.value)) {
+    checks.push({ level: 'warning', text: "Le mot de passe adhérents n'est pas défini dans l'administration.", action: ['members-password', 'Définir le mot de passe'] })
+  }
+
+  const activeBanners = (banners.data ?? []).filter(b => b.active)
+  const expired = activeBanners.filter(b => b.expires_at && new Date(b.expires_at).getTime() < now)
+  if (expired.length) checks.push({ level: 'info', text: `${expired.length} bandeau${expired.length > 1 ? 'x' : ''} d'info expiré${expired.length > 1 ? 's' : ''} (plus affiché) peut être désactivé ou supprimé.`, action: ['banner', 'Voir le bandeau'] })
+  const shown = activeBanners.filter(b => !b.expires_at || new Date(b.expires_at).getTime() >= now)
+  if (shown.length) checks.push({ level: 'info', text: `Bandeau affiché en ce moment : « ${shown[0].message.slice(0, 80)}${shown[0].message.length > 80 ? '…' : ''} »`, action: ['banner', 'Modifier'] })
+
+  if (canAccess('links') || canAccess('planning-rando-page')) {
+    const all = links.data ?? []
+    const planning = all.filter(l => l.active && l.zones?.includes('planning-rando'))
+    if (!links.error && planning.length === 0) checks.push({ level: 'warning', text: 'Aucun planning rando n’est publié : la page Planning Rando est vide pour les adhérents.', action: ['planning-rando-page', 'Ajouter un planning'] })
+    const outdated = all.filter(l => l.active && l.ends_at && new Date(l.ends_at).getTime() < now)
+    if (outdated.length) checks.push({ level: 'info', text: `${outdated.length} lien${outdated.length > 1 ? 's ont' : ' a'} dépassé sa date de fin d'affichage (plus visible sur le site).`, action: ['links', 'Faire le tri'] })
+  }
+
+  if (canAccess('actu') && !actus.error) {
+    const last = actus.data?.[0]?.date
+    const days = last ? Math.floor((now - new Date(last).getTime()) / 86400000) : null
+    if (days === null) checks.push({ level: 'info', text: 'Aucune actualité publiée.', action: ['actu', 'Publier une annonce'] })
+    else if (days > 45) checks.push({ level: 'info', text: `Dernière actualité il y a ${days} jours.`, action: ['actu', 'Publier une annonce'] })
+  }
+
+  if (canAccess('gym') && !vacances.error && (vacances.data ?? []).length === 0) {
+    checks.push({ level: 'warning', text: "Aucune période de vacances scolaires à venir n'est renseignée (le planning gym ne les signalera pas).", action: ['vacances', 'Ajouter les vacances'] })
+  }
+
+  if (canAccess('tarifs') && !tarifs.error) {
+    let saison = null
+    try { saison = JSON.parse(tarifs.data?.note ?? '{}').saison ?? null } catch {}
+    if (saison && saison !== currentSeason()) checks.push({ level: 'warning', text: `La page Tarifs affiche encore la saison ${saison}.`, action: ['tarifs', 'Mettre à jour'] })
+  }
+
+  if (canAccess('sejours') && !sejours.error) {
+    const open = (sejours.data ?? []).filter(x => x.statut === 'ouvert').length
+    if (open) checks.push({ level: 'info', text: `${open} séjour${open > 1 ? 's' : ''} ouvert${open > 1 ? 's' : ''} aux inscriptions : pensez à les passer en « Complet » ou « Terminé » le moment venu.`, action: ['sejours', 'Voir les séjours'] })
+  }
+
+  return checks
+}
+
+const CHECK_STYLE = {
+  urgent:  { bg: '#fbe9e4', border: '#e4a08b', dot: '#a3341b', label: 'Urgent' },
+  warning: { bg: '#fdf4e3', border: '#ecd29c', dot: '#c48a1a', label: 'À faire' },
+  info:    { bg: 'var(--bg-elev)', border: 'var(--line)', dot: '#6b7d6e', label: 'Info' },
+}
+
+function Dashboard({ setSection, canAccess, isSuperAdmin, user, displayName }) {
+  const [checks, setChecks]     = useState(null)
   const [activity, setActivity] = useState(null)
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
-    async function load() {
-      const [gym, sejours, links, log] = await Promise.all([
-        supabase.from('gym_courses').select('id', { count: 'exact' }).eq('actif', true),
-        supabase.from('sejours').select('statut'),
-        supabase.from('external_links').select('id', { count: 'exact' }).contains('zones', ['planning-rando']).eq('active', true),
-        supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(8),
-      ])
-      const sejoursTotal = sejours.data?.filter(s => s.statut !== 'passe').length ?? 0
-      const sejoursOuverts = sejours.data?.filter(s => s.statut === 'ouvert').length ?? 0
-      setKpi([
-        [String(gym.count ?? 0), "Cours gym actifs", ""],
-        [String(links.count ?? 0), "Liens planning rando", "Spreadsheets"],
-        [String(sejoursTotal), "Séjours programmés", `${sejoursOuverts} ouvert${sejoursOuverts > 1 ? 's' : ''}`],
-      ])
-      setActivity(log.data ?? [])
-    }
-    load()
+    loadChecks(supabase, canAccess, isSuperAdmin).then(setChecks).catch(() => setChecks([]))
+    supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(8)
+      .then(({ data }) => setActivity(data ?? []))
+    // canAccess dépend uniquement du profil chargé une fois
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase])
 
+  const shortcuts = [
+    ['actu', 'Publier une annonce', 'file'],
+    ['planning-rando-page', 'Ajouter un planning rando', 'mountain'],
+    ['banner', "Changer le bandeau d'info", 'info'],
+    ['galerie', 'Ajouter des photos', 'image'],
+    ['gym', 'Modifier un cours de gym', 'calendar'],
+  ].filter(([id]) => id === 'banner' || canAccess(id))
+
+  const firstName = (displayName || user?.email || '').split(/[@ .]/)[0]
+
   return (
     <>
       <div className="admin-head">
-        <div><h1>Tableau de bord</h1><p className="muted" style={{ margin: 0 }}>Vue d&apos;ensemble · saison 2025-2026</p></div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ fontSize: "0.86rem", color: "var(--ink-mute)" }}>{new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
-          <button className="btn btn-primary" onClick={() => openVisualEditor("/")}>
-            <Icon name="edit" size={15}/> Éditer le site en direct
-          </button>
+        <div>
+          <h1>Bonjour{firstName ? ` ${firstName.charAt(0).toUpperCase()}${firstName.slice(1)}` : ''}</h1>
+          <p className="muted" style={{ margin: 0 }}>{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · saison {currentSeason()}</p>
         </div>
+        <button className="btn btn-primary" onClick={() => openVisualEditor('/')}>
+          <Icon name="edit" size={15}/> Modifier le site
+        </button>
       </div>
-      <div className="kpi-grid">
-        {(kpi ?? [["…","Cours gym actifs",""],["…","Liens planning rando",""],["…","Séjours programmés",""]]).map(([n,l,t]) => (
-          <div key={l} className="kpi-tile">
-            <div className="kpi-num">{n}</div>
-            <div className="kpi-lbl">{l}</div>
-            {t && <div className="kpi-trend">{t}</div>}
+
+      <div className="dash-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 18, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gap: 18 }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: 24 }}>
+            <h3 style={{ fontFamily: 'var(--sans)', fontSize: '1.1rem', fontWeight: 700, marginBottom: 14 }}>À vérifier</h3>
+            {checks === null && <div className="muted">Vérification en cours…</div>}
+            {checks?.length === 0 && <div style={{ color: 'var(--green)', fontWeight: 600 }}>✓ Tout est à jour, rien à signaler.</div>}
+            <div style={{ display: 'grid', gap: 10 }}>
+              {(checks ?? []).map((c, i) => {
+                const st = CHECK_STYLE[c.level]
+                return (
+                  <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '12px 14px', background: st.bg, border: `1px solid ${st.border}`, borderRadius: 'var(--r-sm)' }}>
+                    <span title={st.label} style={{ width: 9, height: 9, borderRadius: '50%', background: st.dot, marginTop: 6, flexShrink: 0 }}/>
+                    <div style={{ flex: 1, fontSize: '0.93rem', lineHeight: 1.45 }}>
+                      {c.text}
+                      {c.hint && <div className="muted" style={{ fontSize: '0.84rem', marginTop: 4 }}>{c.hint}</div>}
+                    </div>
+                    {c.action && (
+                      <button className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }} onClick={() => setSection(c.action[0])}>{c.action[1]} →</button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        ))}
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 18 }}>
-        <div style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: 24 }}>
-          <h3 style={{ fontFamily: "var(--sans)", fontSize: "1.1rem", fontWeight: 700, marginBottom: 16 }}>Activité récente</h3>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, fontSize: "0.94rem" }}>
-            {activity === null && (
-              <li style={{ color: "var(--ink-mute)", padding: "10px 0" }}>Chargement…</li>
-            )}
-            {activity !== null && activity.length === 0 && (
-              <li style={{ color: "var(--ink-mute)", padding: "10px 0" }}>Aucune activité pour l&apos;instant.</li>
-            )}
-            {(activity ?? []).map((a) => (
-              <li key={a.id} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--line-soft)" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-mute)", background: "var(--bg-deep)", borderRadius: 3, padding: "1px 5px", flexShrink: 0 }}>{a.section}</span>
-                  {a.message}
-                </span>
-                <span className="muted" style={{ fontSize: "0.84rem", whiteSpace: "nowrap", marginLeft: 16 }}>{relativeTime(a.created_at)}</span>
-              </li>
-            ))}
-          </ul>
+
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: 24 }}>
+            <h3 style={{ fontFamily: 'var(--sans)', fontSize: '1.1rem', fontWeight: 700, marginBottom: 16 }}>Dernières modifications</h3>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.94rem' }}>
+              {activity === null && <li className="muted" style={{ padding: '10px 0' }}>Chargement…</li>}
+              {activity !== null && activity.length === 0 && <li className="muted" style={{ padding: '10px 0' }}>Aucune modification pour l&apos;instant.</li>}
+              {(activity ?? []).map(a => (
+                <li key={a.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line-soft)' }}>
+                  <span>
+                    {a.message}
+                    {a.user_email && <span className="muted" style={{ fontSize: '0.82rem' }}> · {a.user_email.split('@')[0]}</span>}
+                  </span>
+                  <span className="muted" style={{ fontSize: '0.84rem', whiteSpace: 'nowrap' }}>{relativeTime(a.created_at)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: 24 }}>
-          <h3 style={{ fontFamily: "var(--sans)", fontSize: "1.1rem", fontWeight: 700, marginBottom: 16 }}>Actions rapides</h3>
-          <div style={{ display: "grid", gap: 8 }}>
-            {[["gym","Ajouter un cours"],["links","Ajouter un lien"],["actu","Publier une actu"],["galerie","Créer un album"]].map(([id,label]) => (
-              <button key={id} className="btn btn-ghost" style={{ justifyContent: "flex-start" }} onClick={() => setSection(id)}>
-                <Icon name="plus" size={14}/> {label}
+
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-md)', padding: 24 }}>
+          <h3 style={{ fontFamily: 'var(--sans)', fontSize: '1.1rem', fontWeight: 700, marginBottom: 16 }}>Raccourcis</h3>
+          <div style={{ display: 'grid', gap: 8 }}>
+            <button className="btn btn-primary" style={{ justifyContent: 'flex-start' }} onClick={() => openVisualEditor('/')}>
+              <Icon name="edit" size={14}/> Modifier un texte ou une photo du site
+            </button>
+            {shortcuts.map(([id, label, icon]) => (
+              <button key={id} className="btn btn-ghost" style={{ justifyContent: 'flex-start' }} onClick={() => setSection(id)}>
+                <Icon name={icon} size={14}/> {label}
               </button>
             ))}
+            <button className="btn btn-ghost" style={{ justifyContent: 'flex-start' }} onClick={() => setSection('guide')}>
+              <Icon name="info" size={14}/> Comment ça marche ?
+            </button>
           </div>
         </div>
-      </div>
-    </>
-  )
-}
-
-// ── Modal ─────────────────────────────────────────────────────
-function Modal({ title, onClose, children }) {
-  return (
-    <div className="modal-back" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-head">
-          <h3>{title}</h3>
-          <button className="icon-btn" onClick={onClose}><Icon name="x" size={14}/></button>
-        </div>
-        <div className="modal-body">{children}</div>
-      </div>
-    </div>
-  )
-}
-
-// ── Admin Gym ─────────────────────────────────────────────────
-function AdminGym() {
-  const [items, setItems] = useState(gymCourses)
-  const [editing, setEditing] = useState(null)
-  const [fd, setFd] = useState("all")
-  const days = ["lundi","mardi","mercredi","jeudi","vendredi","samedi"]
-  const filtered = items.filter(i => fd === "all" || i.jour === fd)
-  const save = item => { if (item.id) setItems(items.map(i => i.id === item.id ? item : i)); else setItems([...items, { ...item, id: "g" + Date.now() }]); setEditing(null) }
-  const del = id => { if (confirm("Supprimer ce créneau ?")) setItems(items.filter(i => i.id !== id)) }
-  const tog = id => setItems(items.map(i => i.id === id ? { ...i, actif: !i.actif } : i))
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Planning Gym</h1><p className="muted" style={{ margin: 0 }}>{items.length} créneaux · {items.filter(i => i.actif).length} actifs</p></div>
-        <button className="btn btn-primary" onClick={() => setEditing({ jour: "lundi", heureDebut: "09:00", heureFin: "10:00", discipline: "", animateur: "", salle: "", niveau: "tous", actif: true, disc: "pilates" })}>
-          <Icon name="plus" size={16}/> Ajouter un créneau
-        </button>
-      </div>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-        <button className={`chip ${fd === "all" ? "active" : ""}`} onClick={() => setFd("all")}>Tous</button>
-        {days.map(d => <button key={d} className={`chip ${fd === d ? "active" : ""}`} onClick={() => setFd(d)} style={{ textTransform: "capitalize" }}>{d}</button>)}
-      </div>
-      <table className="tbl">
-        <thead><tr><th>Jour</th><th>Heure</th><th>Discipline</th><th>Animateur</th><th>Salle</th><th>Actif</th><th></th></tr></thead>
-        <tbody>
-          {filtered.map(c => (
-            <tr key={c.id} style={{ opacity: c.actif ? 1 : 0.5 }}>
-              <td style={{ textTransform: "capitalize" }}>{c.jour}</td>
-              <td style={{ whiteSpace: "nowrap" }}>{c.heureDebut} – {c.heureFin}</td>
-              <td><strong>{c.discipline}</strong></td>
-              <td>{c.animateur}</td>
-              <td>{c.salle}</td>
-              <td><button className={`switch ${c.actif ? "on" : ""}`} onClick={() => tog(c.id)}/></td>
-              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-                <button className="icon-btn" onClick={() => setEditing(c)}><Icon name="edit" size={14}/></button>
-                <button className="icon-btn" onClick={() => del(c.id)} style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {editing && (
-        <Modal title={editing.id ? "Modifier le créneau" : "Nouveau créneau"} onClose={() => setEditing(null)}>
-          <GymForm item={editing} onSave={save} onCancel={() => setEditing(null)}/>
-        </Modal>
-      )}
-    </>
-  )
-}
-
-function GymForm({ item, onSave, onCancel }) {
-  const [f, setF] = useState(item)
-  const u = (k, v) => setF({ ...f, [k]: v })
-  return (
-    <div className="form">
-      <div className="row-2">
-        <div className="field"><label>Jour</label><select value={f.jour} onChange={e => u("jour", e.target.value)}>{["lundi","mardi","mercredi","jeudi","vendredi","samedi"].map(d => <option key={d}>{d}</option>)}</select></div>
-        <div className="field"><label>Niveau</label><select value={f.niveau} onChange={e => u("niveau", e.target.value)}><option value="tous">Tous niveaux</option><option value="débutant">Débutant</option><option value="intermédiaire">Intermédiaire</option><option value="senior">Senior</option></select></div>
-      </div>
-      <div className="row-2">
-        <div className="field"><label>Heure début</label><input type="time" value={f.heureDebut} onChange={e => u("heureDebut", e.target.value)}/></div>
-        <div className="field"><label>Heure fin</label><input type="time" value={f.heureFin} onChange={e => u("heureFin", e.target.value)}/></div>
-      </div>
-      <div className="field"><label>Discipline</label><input value={f.discipline} onChange={e => u("discipline", e.target.value)}/></div>
-      <div className="row-2">
-        <div className="field"><label>Animateur</label><input value={f.animateur} onChange={e => u("animateur", e.target.value)}/></div>
-        <div className="field"><label>Salle</label><input value={f.salle} onChange={e => u("salle", e.target.value)}/></div>
-      </div>
-      <label style={{ display: "flex", gap: 10, alignItems: "center", fontSize: "0.92rem" }}>
-        <input type="checkbox" checked={f.actif} onChange={e => u("actif", e.target.checked)}/> Créneau actif
-      </label>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
-        <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
-        <button className="btn btn-primary" onClick={() => onSave(f)}>Enregistrer</button>
-      </div>
-    </div>
-  )
-}
-
-// ── Admin Rando ───────────────────────────────────────────────
-function AdminRando() {
-  const [items, setItems] = useState(randoSorties)
-  const [editing, setEditing] = useState(null)
-  const save = it => { if (it.id) setItems(items.map(i => i.id === it.id ? it : i)); else setItems([...items, { ...it, id: "r" + Date.now() }]); setEditing(null) }
-  const del = id => { if (confirm("Supprimer cette sortie ?")) setItems(items.filter(i => i.id !== id)) }
-  const togC = id => setItems(items.map(i => i.id === id ? { ...i, complet: !i.complet } : i))
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Planning Randonnée & Nordique</h1><p className="muted" style={{ margin: 0 }}>{items.length} sorties</p></div>
-        <button className="btn btn-primary" onClick={() => setEditing({ date: "2026-06-01", type: "rando-jeudi", titre: "", groupes: [], pointDepart: "Parking Leclerc", heureDepart: "13:45", complet: false, annule: false })}>
-          <Icon name="plus" size={16}/> Programmer une sortie
-        </button>
-      </div>
-      <table className="tbl">
-        <thead><tr><th>Date</th><th>Type</th><th>Titre</th><th>Groupes</th><th>Statut</th><th></th></tr></thead>
-        <tbody>
-          {items.sort((a,b) => a.date.localeCompare(b.date)).map(s => (
-            <tr key={s.id}>
-              <td><strong>{formatDateFR(s.date)}</strong><div className="muted" style={{ fontSize: "0.82rem" }}>{s.heureDepart}</div></td>
-              <td><span className="rando-tag">{labelType(s.type)}</span></td>
-              <td>{s.titre}{s.distanceKm && <div className="muted" style={{ fontSize: "0.82rem" }}>{s.distanceKm} km{s.denivele ? ` · ${s.denivele}m` : ""}</div>}</td>
-              <td>{s.groupes.join(", ")}</td>
-              <td>
-                {s.complet && <span className="badge badge-full">Complet</span>}
-                {s.annule && <span className="badge badge-cancel">Annulée</span>}
-                {!s.complet && !s.annule && <span className="badge badge-ok">Ouverte</span>}
-              </td>
-              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-                <button className="btn btn-sm btn-ghost" onClick={() => togC(s.id)}>{s.complet ? "Rouvrir" : "Complet"}</button>
-                <button className="icon-btn" onClick={() => setEditing(s)} style={{ marginLeft: 4 }}><Icon name="edit" size={14}/></button>
-                <button className="icon-btn" onClick={() => del(s.id)} style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {editing && (
-        <Modal title={editing.id ? "Modifier la sortie" : "Nouvelle sortie"} onClose={() => setEditing(null)}>
-          <RandoForm item={editing} onSave={save} onCancel={() => setEditing(null)}/>
-        </Modal>
-      )}
-    </>
-  )
-}
-
-function RandoForm({ item, onSave, onCancel }) {
-  const [f, setF] = useState({ ...item, groupesText: (item.groupes || []).join(", ") })
-  const u = (k, v) => setF({ ...f, [k]: v })
-  return (
-    <div className="form">
-      <div className="row-2">
-        <div className="field"><label>Date</label><input type="date" value={f.date} onChange={e => u("date", e.target.value)}/></div>
-        <div className="field"><label>Type</label>
-          <select value={f.type} onChange={e => u("type", e.target.value)}>
-            {[["rando-jeudi","Rando jeudi"],["rando-dimanche","Rando dimanche"],["nordique-mardi","Nordique mardi"],["nordique-samedi","Nordique samedi"],["sortie-journee","Sortie journée"],["sejour","Séjour"],["nocturne","Nocturne"]].map(([v,l]) => <option key={v} value={v}>{l}</option>)}
-          </select>
-        </div>
-      </div>
-      <div className="field"><label>Titre</label><input value={f.titre} onChange={e => u("titre", e.target.value)}/></div>
-      <div className="row-3">
-        <div className="field"><label>Distance (km)</label><input type="number" value={f.distanceKm || ""} onChange={e => u("distanceKm", e.target.value ? Number(e.target.value) : undefined)}/></div>
-        <div className="field"><label>Dénivelé (m)</label><input type="number" value={f.denivele || ""} onChange={e => u("denivele", e.target.value ? Number(e.target.value) : undefined)}/></div>
-        <div className="field"><label>Heure départ</label><input type="time" value={f.heureDepart} onChange={e => u("heureDepart", e.target.value)}/></div>
-      </div>
-      <div className="row-2">
-        <div className="field"><label>Groupes (virgule)</label><input value={f.groupesText} onChange={e => u("groupesText", e.target.value)} placeholder="Gr 1, Gr 2A, Tous"/></div>
-        <div className="field"><label>Point de départ</label><input value={f.pointDepart} onChange={e => u("pointDepart", e.target.value)}/></div>
-      </div>
-      <div style={{ display: "flex", gap: 18 }}>
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}><input type="checkbox" checked={f.complet} onChange={e => u("complet", e.target.checked)}/> Complet</label>
-        <label style={{ display: "flex", gap: 8, alignItems: "center" }}><input type="checkbox" checked={f.annule} onChange={e => u("annule", e.target.checked)}/> Annulée</label>
-      </div>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
-        <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
-        <button className="btn btn-primary" onClick={() => onSave({ ...f, groupes: f.groupesText.split(",").map(x => x.trim()).filter(Boolean) })}>Enregistrer</button>
-      </div>
-    </div>
-  )
-}
-
-// ── Admin Actualités ──────────────────────────────────────────
-function AdminActu() {
-  const [items, setItems] = useState(news)
-  const [editing, setEditing] = useState(null)
-  const save = it => { if (it.id) setItems(items.map(i => i.id === it.id ? it : i)); else setItems([{ ...it, id: "n" + Date.now() }, ...items]); setEditing(null) }
-  const del = id => { if (confirm("Supprimer cet article ?")) setItems(items.filter(i => i.id !== id)) }
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Actualités</h1><p className="muted" style={{ margin: 0 }}>{items.length} articles</p></div>
-        <button className="btn btn-primary" onClick={() => setEditing({ cat: "asso", date: new Date().toISOString().slice(0,10), title: "", excerpt: "" })}>
-          <Icon name="plus" size={16}/> Nouvel article
-        </button>
-      </div>
-      <table className="tbl">
-        <thead><tr><th>Date</th><th>Catégorie</th><th>Titre</th><th>Extrait</th><th></th></tr></thead>
-        <tbody>
-          {items.map(n => (
-            <tr key={n.id}>
-              <td>{formatDateFR(n.date)}</td>
-              <td><span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span></td>
-              <td><strong>{n.title}</strong></td>
-              <td className="muted" style={{ fontSize: "0.88rem", maxWidth: 280 }}>{n.excerpt.slice(0, 70)}…</td>
-              <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-                <button className="icon-btn" onClick={() => setEditing(n)}><Icon name="edit" size={14}/></button>
-                <button className="icon-btn" onClick={() => del(n.id)} style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {editing && (
-        <Modal title={editing.id ? "Modifier l'article" : "Nouvel article"} onClose={() => setEditing(null)}>
-          <div className="form">
-            <div className="row-2">
-              <div className="field"><label>Catégorie</label>
-                <select value={editing.cat} onChange={e => setEditing({ ...editing, cat: e.target.value })}>
-                  {["gym","rando","nordique","asso","event"].map(c => <option key={c} value={c}>{catLabel(c)}</option>)}
-                </select>
-              </div>
-              <div className="field"><label>Date</label><input type="date" value={editing.date} onChange={e => setEditing({ ...editing, date: e.target.value })}/></div>
-            </div>
-            <div className="field"><label>Titre</label><input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })}/></div>
-            <div className="field"><label>Contenu</label><textarea rows={5} value={editing.excerpt} onChange={e => setEditing({ ...editing, excerpt: e.target.value })}/></div>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-              <button className="btn btn-ghost" onClick={() => setEditing(null)}>Annuler</button>
-              <button className="btn btn-primary" onClick={() => save(editing)}>Publier</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-    </>
-  )
-}
-
-// ── Admin Séjours ─────────────────────────────────────────────
-function AdminSejours() {
-  const [items] = useState(sejours)
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Séjours</h1><p className="muted" style={{ margin: 0 }}>{items.length} séjours</p></div>
-        <button className="btn btn-primary"><Icon name="plus" size={16}/> Nouveau séjour</button>
-      </div>
-      <table className="tbl">
-        <thead><tr><th>Séjour</th><th>Dates</th><th>Transport</th><th>Statut</th><th></th></tr></thead>
-        <tbody>
-          {items.map(s => (
-            <tr key={s.id}>
-              <td><strong>{s.titre}</strong></td>
-              <td>{s.dates}</td>
-              <td>{s.transport}</td>
-              <td>
-                {s.statut === "ouvert" && <span className="badge badge-ok">Ouvert</span>}
-                {s.statut === "complet" && <span className="badge badge-full">Complet</span>}
-                {s.statut === "passe" && <span className="badge" style={{ background: "var(--bg-deep)", color: "var(--ink-soft)" }}>Terminé</span>}
-              </td>
-              <td style={{ textAlign: "right" }}>
-                <button className="icon-btn"><Icon name="edit" size={14}/></button>
-                <button className="icon-btn" style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
-  )
-}
-
-// ── Admin Galerie ─────────────────────────────────────────────
-function AdminGalerie() {
-  const albums = [
-    { t: "Séjour Alsace", m: "14 photos · mai 2026", p: "a" },
-    { t: "Marche nordique", m: "8 photos · avr. 2026", p: "b" },
-    { t: "Cours de Pilates", m: "6 photos · avr. 2026", p: "c" },
-    { t: "Pique-nique printemps", m: "24 photos · avr. 2026", p: "d" },
-    { t: "Rando dimanche", m: "10 photos · avr. 2026", p: "e" },
-    { t: "Stage Yoga", m: "18 photos · mars 2026", p: "f" },
-  ]
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Galerie</h1><p className="muted" style={{ margin: 0 }}>6 albums · ~80 photos</p></div>
-        <button className="btn btn-primary"><Icon name="plus" size={16}/> Nouvel album</button>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
-        {albums.map((a, i) => (
-          <div key={i} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", overflow: "hidden" }}>
-            <div className={`team-photo team-photo-${a.p}`} style={{ aspectRatio: "16/9", borderRadius: 0 }}/>
-            <div style={{ padding: 16 }}>
-              <div style={{ fontWeight: 600 }}>{a.t}</div>
-              <div className="muted" style={{ fontSize: "0.85rem", marginBottom: 12 }}>{a.m}</div>
-              <div style={{ display: "flex", gap: 6 }}>
-                <button className="btn btn-sm btn-ghost"><Icon name="edit" size={12}/> Modifier</button>
-                <button className="btn btn-sm btn-ghost"><Icon name="trash" size={12}/></button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  )
-}
-
-// ── Admin Comité ──────────────────────────────────────────────
-function AdminComite() {
-  return (
-    <>
-      <div className="admin-head">
-        <div><h1>Comité directeur</h1><p className="muted" style={{ margin: 0 }}>{bureau.length} membres</p></div>
-        <button className="btn btn-primary"><Icon name="plus" size={16}/> Ajouter un membre</button>
-      </div>
-      <table className="tbl">
-        <thead><tr><th>Membre</th><th>Rôle</th><th></th></tr></thead>
-        <tbody>
-          {bureau.map((b, i) => (
-            <tr key={i}>
-              <td><strong>{b.nom}</strong></td>
-              <td>{b.role}</td>
-              <td style={{ textAlign: "right" }}>
-                <button className="icon-btn"><Icon name="edit" size={14}/></button>
-                <button className="icon-btn" style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
-  )
-}
-
-// ── Admin Tarifs ──────────────────────────────────────────────
-function AdminTarifs() {
-  return (
-    <>
-      <div className="admin-head"><h1>Tarifs</h1></div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-        {[["Tarifs Gym",["Adhésion association","Licence FFEPGV","1 cours gym / semaine","+ Pilates (par cours)","+ Yoga / Qi Gong (par cours)"]],["Tarifs Marche",["Adhésion association","Licence FFRP","Cotisation marche"]]].map(([titre,lignes]) => (
-          <div key={titre} style={{ background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", padding: 24 }}>
-            <h3 style={{ marginBottom: 14, fontFamily: "var(--sans)", fontSize: "1.1rem", fontWeight: 700 }}>{titre}</h3>
-            <div className="form">
-              {lignes.map(l => <div key={l} className="field"><label>{l}</label><input type="number" placeholder="À confirmer"/></div>)}
-              <button className="btn btn-primary" style={{ alignSelf: "flex-start" }}>Enregistrer</button>
-            </div>
-          </div>
-        ))}
       </div>
     </>
   )
@@ -728,11 +485,92 @@ const ADMIN_CSS = `
 .switch::after { content: ""; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
 .switch.on { background: var(--green); }
 .switch.on::after { transform: translateX(20px); }
+.admin-mobile-toggle { display: none; }
+.db-error-toast {
+  position: fixed; right: 20px; bottom: 20px; z-index: 1000; max-width: min(460px, calc(100vw - 32px));
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; padding: 14px 16px;
+  background: #a3341b; color: #fff; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); font-size: 0.9rem; line-height: 1.45;
+}
+.db-error-toast strong { grid-column: 1; }
+.db-error-toast span { grid-column: 1; opacity: .95; }
+.db-error-toast button { grid-column: 2; grid-row: 1 / span 2; align-self: start; background: none; border: 0; color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.admin-main { min-width: 0; }
+
+/* ── Téléphone et petite tablette ── */
+@media (max-width: 900px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .admin-side { position: sticky; top: 0; z-index: 150; height: auto; max-height: 100vh; padding: 0; }
+  .admin-side-brand { flex-direction: row; justify-content: space-between; padding: 10px 16px; margin-bottom: 0; gap: 10px; }
+  .admin-side-brand .asb-2 { display: none; }
+  .admin-side-brand svg { width: 40px; height: auto; }
+  .admin-mobile-toggle {
+    display: inline-flex; align-items: center; gap: 8px; margin-left: auto;
+    padding: 8px 14px; border-radius: 8px; border: 1px solid #2a3a2d; background: rgba(255,255,255,0.06);
+    color: #fff; font: inherit; font-size: 0.92rem; cursor: pointer;
+  }
+  .admin-side nav, .admin-side-foot { display: none; }
+  .admin-side.is-open nav { display: flex; padding-bottom: 8px; }
+  .admin-side.is-open .admin-side-foot { display: block; }
+  .admin-side nav a { padding: 13px 20px; font-size: 1rem; }
+  .admin-main { padding: 20px 16px 40px; }
+  .admin-head { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; }
+  .admin-head > div:last-child { flex-wrap: wrap; }
+  .admin-head h1 { font-size: 1.7rem; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .row-2, .row-3 { grid-template-columns: 1fr; }
+  .tbl { display: block; overflow-x: auto; white-space: nowrap; }
+  .modal-back { padding: 0; place-items: stretch; }
+  .modal { max-width: none !important; max-height: 100vh; height: 100%; border-radius: 0; }
+  .modal-head, .modal-body { padding-left: 16px; padding-right: 16px; }
+  .hub-grid { grid-template-columns: 1fr; }
+  .hub-card-actions { padding-left: 22px; }
+  .site-texts-layout { grid-template-columns: 1fr !important; }
+  .site-texts-layout > nav { position: static !important; flex-direction: row !important; flex-wrap: wrap; }
+  .dash-grid { grid-template-columns: 1fr !important; }
+}
 `
 
+// ── Message d'erreur global (enregistrement refusé, réseau…) ───
+function DbErrorToast() {
+  const [message, setMessage] = useState(null)
+  useEffect(() => {
+    let timer
+    const onError = e => {
+      setMessage(e.detail?.message ?? "L'enregistrement n'a pas pu aboutir.")
+      clearTimeout(timer)
+      timer = setTimeout(() => setMessage(null), 9000)
+    }
+    window.addEventListener('agmr-db-error', onError)
+    return () => { window.removeEventListener('agmr-db-error', onError); clearTimeout(timer) }
+  }, [])
+  if (!message) return null
+  return (
+    <div className="db-error-toast" role="alert">
+      <strong>Enregistrement non effectué</strong>
+      <span>{message}</span>
+      <button type="button" aria-label="Fermer" onClick={() => setMessage(null)}>×</button>
+    </div>
+  )
+}
+
 // ── App ───────────────────────────────────────────────────────
-export default function AdminApp({ user, profile }) {
-  const [section, setSection] = useState("dash")
+export default function AdminApp({ user, profile, initialSection = 'dash' }) {
+  const [section, setSectionState] = useState(initialSection)
+
+  // Change de section en mettant à jour l'adresse (bouton Retour, rechargement et liens directs fonctionnent)
+  const setSection = useCallback(id => {
+    setSectionState(id)
+    if (typeof window !== 'undefined' && window.location.pathname + window.location.search !== sectionUrl(id)) {
+      window.history.pushState({ section: id }, '', sectionUrl(id))
+    }
+    window.scrollTo?.(0, 0)
+  }, [])
+
+  useEffect(() => {
+    const onPop = () => setSectionState(sectionFromSlug(new URLSearchParams(window.location.search).get('section')))
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   const isSuperAdmin = profile?.role === 'super_admin'
 
@@ -742,6 +580,7 @@ export default function AdminApp({ user, profile }) {
   return (
     <>
       <style>{ADMIN_CSS}</style>
+      <DbErrorToast/>
       <div className="admin-shell">
         <AdminSidebar
           section={section}
@@ -765,13 +604,14 @@ export default function AdminApp({ user, profile }) {
               </div>
             )
           })()}
-          {section === "dash"          && <Dashboard setSection={setSection}/>}
+          {section === "dash"          && <Dashboard setSection={setSection} canAccess={canAccess} isSuperAdmin={isSuperAdmin} user={user} displayName={profile?.display_name}/>}
           {section === "gym"           && canAccess("gym")           && <AdminGymSection/>}
           {section === "vacances"      && canAccess("gym")           && <AdminVacancesSection/>}
           {section === "sejours"       && canAccess("sejours")       && <AdminSejoursSection/>}
           {section === "actu"          && canAccess("actu")          && <AdminActuSection/>}
           {section === "links"         && canAccess("links")         && <AdminLinksSection/>}
           {section === "site-texts"    && canAccess("site-texts")    && <AdminSiteTextsSection/>}
+          {section === "menu"          && canAccess("site-texts")    && <AdminSiteTextsSection onlyPage="navigation"/>}
           {section === "members-password" && canAccess("members-password") && <AdminMembersPasswordSection/>}
           {section === "galerie"       && canAccess("galerie")       && <AdminGalerieSection/>}
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}

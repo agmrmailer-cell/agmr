@@ -13,6 +13,7 @@ import { blockSrc, textSrc, rowSrc } from '@/lib/editable-src'
 import { renderBlocks } from '@/components/editable/renderBlocks'
 import BlockControls from '@/components/editable/BlockControls'
 import { getEditMode } from '@/lib/edit-mode'
+import { canEditTable } from '@/lib/permissions'
 import ImageEditButton from '@/components/editable/ImageEditButton'
 
 const TRIO_DEFS = [
@@ -44,6 +45,7 @@ export default async function HomePage() {
     getExternalLinks('home-rando-sante'),
   ])
   const editMode = await getEditMode()
+  const editHome = canEditTable(editMode, 'home_blocks')
   const t = await getSiteTexts('home')
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
@@ -58,10 +60,10 @@ export default async function HomePage() {
   const visibleTrios = TRIO_DEFS.filter(t => {
     const b = bm[t.key]
     if (!b) return !!t.defaults // carte pas encore enregistrée : affichée avec son contenu par défaut
-    return b.visible !== false || editMode
+    return b.visible !== false || editHome
   }).sort((a, b) => trioOrder(a) - trioOrder(b))
 
-  const firstTrioKey = sortedBlocks.find(block => (block.visible || editMode) && inTrio(block.block_key))?.block_key
+  const firstTrioKey = sortedBlocks.find(block => (block.visible || editHome) && inTrio(block.block_key))?.block_key
 
   return (
     <div className="page-shell">
@@ -105,7 +107,7 @@ export default async function HomePage() {
                           </div>
                         </Link>
                       )
-                      if (!editMode) return card
+                      if (!editHome) return card
                       return (
                         <BlockControls
                           key={key}

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Icon from '@/components/ui/Icon'
 import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
+import { frenchError } from '@/lib/errors'
 
 const TYPE_LABELS = {
   info:    { label: 'Information',  color: 'var(--green)',  bg: 'var(--green-tint)',  border: 'var(--green-soft)' },
@@ -80,10 +81,10 @@ export default function AdminBannerSection() {
     }
     if (editing.id) {
       const { error } = await supabase.from('site_banners').update(payload).eq('id', editing.id)
-      if (error) { setError(error.message); setSaving(false); return }
+      if (error) { setError(frenchError(error)); setSaving(false); return }
     } else {
       const { error } = await supabase.from('site_banners').insert(payload)
-      if (error) { setError(error.message); setSaving(false); return }
+      if (error) { setError(frenchError(error)); setSaving(false); return }
     }
     setSaving(false); setEditing(null); load()
   }

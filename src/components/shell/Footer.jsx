@@ -6,7 +6,7 @@ import { textSrc } from '@/lib/editable-src'
 import { getSiteTexts } from '@/lib/queries'
 
 export default async function Footer() {
-  const t = await getSiteTexts('footer')
+  const [t, nav] = await Promise.all([getSiteTexts('footer'), getSiteTexts('navigation')])
   return (
     <footer className="footer">
       <div className="footer-grid">
@@ -24,23 +24,23 @@ export default async function Footer() {
         </div>
 
         <div>
-          <h4>Activites</h4>
+          <h4>{nav.activites}</h4>
           <ul className="footer-list">
-            <li><Link href="/activites/gym">Gymnastique</Link></li>
-            <li><Link href="/activites/randonnee">Marche</Link></li>
-            <li><Link href="/activites/sante">Santé</Link></li>
-            <li><Link href="/planning/gym">Planning gym</Link></li>
-            <li><Link href="/planning/randonnee">Planning rando</Link></li>
+            <li><Link href="/activites/gym">{nav.gym}</Link></li>
+            <li><Link href="/activites/randonnee">{nav.marche}</Link></li>
+            <li><Link href="/activites/sante">{nav.sante}</Link></li>
+            <li><Link href="/planning/gym">{nav.planning_gym}</Link></li>
+            <li><Link href="/planning/randonnee">{nav.planning_rando}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4>L'association</h4>
+          <h4>{nav.asso}</h4>
           <ul className="footer-list">
-            <li><Link href="/association">Presentation</Link></li>
-            <li><Link href="/association/comite-directeur">Comite directeur</Link></li>
-            <li><Link href="/association/assemblee-generale">Assemblee generale</Link></li>
-            <li><Link href="/inscriptions">S'inscrire</Link></li>
+            <li><Link href="/association">{nav.asso_presentation}</Link></li>
+            <li><Link href="/association/comite-directeur">{nav.asso_comite}</Link></li>
+            <li><Link href="/association/assemblee-generale">{nav.asso_ag}</Link></li>
+            <li><Link href="/inscriptions">{nav.bouton_inscrire}</Link></li>
             <li><Link href="/inscriptions/tarifs">Tarifs</Link></li>
           </ul>
         </div>
@@ -48,10 +48,10 @@ export default async function Footer() {
         <div>
           <h4>Pratique</h4>
           <ul className="footer-list">
-            <li><Link href="/contact">Contact</Link></li>
+            <li><Link href="/contact">{nav.contact}</Link></li>
 
             <li><Link href="/admin">Administration</Link></li>
-            <li><Link href="/mentions-legales">Mentions legales</Link></li>
+            <li><Link href="/mentions-legales">Mentions légales</Link></li>
           </ul>
           <div style={{ marginTop: 26 }}>
             <h4 style={{ fontSize: ".72rem", marginBottom: 12 }}>Affiliations</h4>
@@ -66,7 +66,7 @@ export default async function Footer() {
 
       <div className="footer-bottom">
         <span><Editable plain src={textSrc('footer', 'bottom')} value={t.bottom}/></span>
-        <Link href="/mentions-legales">Mentions legales</Link>
+        <Link href="/mentions-legales">Mentions légales</Link>
       </div>
     </footer>
   )

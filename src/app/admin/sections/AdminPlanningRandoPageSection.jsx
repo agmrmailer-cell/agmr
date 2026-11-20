@@ -5,6 +5,7 @@ import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
 import { siteTextPage } from '@/lib/site-texts'
 import { PageForm } from './AdminSiteTextsSection'
+import { frenchError } from '@/lib/errors'
 
 // Planning Rando : la page publique est protégée par le mot de passe adhérents.
 // Les plannings eux-mêmes sont des liens (Google Docs / Sheets…) gérés dans « Liens », zone « Planning rando ».
@@ -17,7 +18,7 @@ export default function AdminPlanningRandoPageSection({ onOpenLinks }) {
 
   useEffect(() => {
     supabase.from('site_texts').select('key, value').like('key', 'planning-rando.%').then(({ data, error: e }) => {
-      if (e) setError(e.message)
+      if (e) setError(frenchError(e))
       setRows(data ?? [])
     })
     supabase.from('external_links').select('id, title, url, active').contains('zones', ['planning-rando']).order('ordre')

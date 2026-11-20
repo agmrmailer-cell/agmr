@@ -9,6 +9,7 @@ import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
 import RichTextEditor from '@/components/admin/RichTextEditor'
 import { richTextToPlain } from '@/lib/rich-text'
+import GenericBlockFields from '@/components/admin/GenericBlockFields'
 
 const BLOCK_META = {
   header:    { label: 'En-tête de page',          desc: 'Accroche, titre principal, chapeau' },
@@ -421,7 +422,7 @@ function BlockForm({ block, onSave, onCancel }) {
     <div className="form">
 
       {key === 'header' && <>
-        <div className="field"><label>Accroche (eyebrow)</label>
+        <div className="field"><label>Petite ligne au-dessus du titre</label>
           <input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Activités · FFEPGV · Label Qualité Club Sport Santé"/>
         </div>
         <div className="field"><label>Titre H1</label>
@@ -498,47 +499,7 @@ function BlockForm({ block, onSave, onCancel }) {
 
 
       {/* Blocs génériques */}
-      {genericType(key) === 'texte' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
-        </div>
-      </>}
-      {genericType(key) === 'citation' && <>
-        <div className="field"><label>Citation</label>
-          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
-        </div>
-        <div className="field"><label>Auteur</label>
-          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
-        </div>
-        <div className="field"><label>Rôle</label>
-          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
-        </div>
-      </>}
-      {genericType(key) === 'cta' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
-        </div>
-        <div className="field"><label>Texte du bouton</label>
-          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
-        </div>
-        <div className="field"><label>Lien du bouton</label>
-          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
-        </div>
-      </>}
-      {genericType(key) === 'alerte' && <>
-        <div className="field"><label>Titre (optionnel)</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
-        </div>
-      </>}
+      <GenericBlockFields blockKey={block.block_key} c={c} u={u}/>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(block.block_key, c)}>Enregistrer</button>
@@ -569,47 +530,7 @@ function DiscForm({ disc, onSave, onCancel }) {
       </div>
 
       {/* Blocs génériques */}
-      {genericType(key) === 'texte' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
-        </div>
-      </>}
-      {genericType(key) === 'citation' && <>
-        <div className="field"><label>Citation</label>
-          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
-        </div>
-        <div className="field"><label>Auteur</label>
-          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
-        </div>
-        <div className="field"><label>Rôle</label>
-          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
-        </div>
-      </>}
-      {genericType(key) === 'cta' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
-        </div>
-        <div className="field"><label>Texte du bouton</label>
-          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
-        </div>
-        <div className="field"><label>Lien du bouton</label>
-          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
-        </div>
-      </>}
-      {genericType(key) === 'alerte' && <>
-        <div className="field"><label>Titre (optionnel)</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
-        </div>
-      </>}
+      <GenericBlockFields blockKey={block.block_key} c={c} u={u}/>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(f)}>Enregistrer</button>
@@ -642,47 +563,7 @@ function AnimForm({ anim, onSave, onCancel, supabase }) {
       </div>
 
       {/* Blocs génériques */}
-      {genericType(key) === 'texte' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
-        </div>
-      </>}
-      {genericType(key) === 'citation' && <>
-        <div className="field"><label>Citation</label>
-          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
-        </div>
-        <div className="field"><label>Auteur</label>
-          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
-        </div>
-        <div className="field"><label>Rôle</label>
-          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
-        </div>
-      </>}
-      {genericType(key) === 'cta' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
-        </div>
-        <div className="field"><label>Texte du bouton</label>
-          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
-        </div>
-        <div className="field"><label>Lien du bouton</label>
-          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
-        </div>
-      </>}
-      {genericType(key) === 'alerte' && <>
-        <div className="field"><label>Titre (optionnel)</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
-        </div>
-      </>}
+      <GenericBlockFields blockKey={block.block_key} c={c} u={u}/>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
         <button className="btn btn-primary" onClick={() => onSave(f)}>Enregistrer</button>

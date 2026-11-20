@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 import HelpTip from '@/components/ui/HelpTip'
+import { frenchError } from '@/lib/errors'
 
 const CLOUD_NAME    = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
@@ -99,7 +100,7 @@ function AlbumView({ album, photos, onBack, onDeleted, onRenamed, supabase }) {
         })
         setProgress({ done: i + 1, total: files.length })
       } catch (err) {
-        alert(`Erreur sur ${files[i].name} : ${err.message}`)
+        alert(`Erreur sur ${files[i].name} : ${frenchError(err)}`)
       }
     }
     setProgress(null)
@@ -277,7 +278,7 @@ export default function AdminGalerieSection() {
         })
         setProgress({ done: i + 1, total: files.length })
       } catch (err) {
-        alert(`Erreur sur ${files[i].name} : ${err.message}`)
+        alert(`Erreur sur ${files[i].name} : ${frenchError(err)}`)
       }
     }
     setProgress(null)

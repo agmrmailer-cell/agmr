@@ -76,7 +76,7 @@ export default function EspaceAdherentsClient({ t = {}, loginTexte, liensIntro, 
             <input type="password" value={code} onChange={e => setCode(e.target.value)} placeholder="••••••••"/>
           </div>
           <button className="btn btn-primary" style={{ marginTop: 8 }} disabled={loading || !code.trim()}>
-            <Icon name="lock" size={15}/> {loading ? 'Verification...' : 'Acceder'}
+            <Icon name="lock" size={15}/> {loading ? 'Vérification…' : 'Accéder'}
           </button>
           {error && <p style={{ color: 'var(--red)', fontSize: '0.85rem', marginTop: 12 }}>{error}</p>}
         </form>

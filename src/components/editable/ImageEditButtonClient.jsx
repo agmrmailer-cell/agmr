@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-client'
 import { saveEditable } from '@/lib/editable-save'
 import { CropModal, uploadImageBlob } from '@/components/ui/ImageUpload'
+import { frenchError } from '@/lib/errors'
 
 function notify(message, type = 'ok') {
   window.dispatchEvent(new CustomEvent('agmr-edit-toast', { detail: { message, type } }))
@@ -27,7 +28,7 @@ export default function ImageEditButtonClient({ src, hasImage, aspect = 16 / 9, 
       notify(message)
       startTransition(() => router.refresh())
     } catch (e) {
-      notify(e.message ?? "Erreur lors de l'enregistrement de l'image", 'error')
+      notify(frenchError(e), 'error')
     }
     setBusy(false)
   }
@@ -52,7 +53,7 @@ export default function ImageEditButtonClient({ src, hasImage, aspect = 16 / 9, 
       const url = await uploadImageBlob(supabase, blob, folder)
       await save(url, 'Image remplacée')
     } catch (e) {
-      notify(e.message ?? "Erreur lors de l'envoi de l'image", 'error')
+      notify(frenchError(e), 'error')
       setBusy(false)
     }
   }

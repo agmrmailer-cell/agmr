@@ -7,6 +7,7 @@ import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
 import RichTextEditor from '@/components/admin/RichTextEditor'
+import GenericBlockFields from '@/components/admin/GenericBlockFields'
 
 const RANDO_BLOCK_META = {
   header:     { label: 'En-tête de page',         desc: 'Accroche, titre principal, chapeau' },
@@ -236,56 +237,6 @@ function BlockManager({ meta, ctrl, FormComponent }) {
   )
 }
 
-// ── Generic fields shared by both forms ──────────────────────────
-function GenericFields({ blockKey, c, u }) {
-  const type = genericType(blockKey)
-  return (
-    <>
-      {type === 'texte' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={140}/>
-        </div>
-      </>}
-      {type === 'citation' && <>
-        <div className="field"><label>Citation</label>
-          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
-        </div>
-        <div className="field"><label>Auteur</label>
-          <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
-        </div>
-        <div className="field"><label>Rôle</label>
-          <input value={c.role ?? ''} onChange={e => u('role', e.target.value)}/>
-        </div>
-      </>}
-      {type === 'cta' && <>
-        <div className="field"><label>Titre</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/>
-        </div>
-        <div className="field"><label>Texte du bouton</label>
-          <input value={c.bouton ?? ''} onChange={e => u('bouton', e.target.value)} placeholder="En savoir plus"/>
-        </div>
-        <div className="field"><label>Lien du bouton</label>
-          <input value={c.lien ?? ''} onChange={e => u('lien', e.target.value)} placeholder="/planning/randonnee"/>
-        </div>
-      </>}
-      {type === 'alerte' && <>
-        <div className="field"><label>Titre (optionnel)</label>
-          <input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)}/>
-        </div>
-        <div className="field"><label>Texte</label>
-          <RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={112}/>
-        </div>
-      </>}
-    </>
-  )
-}
-
 // ── Rando block form ─────────────────────────────────────────────
 function RandoBlockForm({ block, onSave, onCancel }) {
   const [c, setC] = useState(block.content ?? {})
@@ -296,7 +247,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
     <div className="form">
 
       {key === 'header' && <>
-        <div className="field"><label>Accroche (eyebrow)</label>
+        <div className="field"><label>Petite ligne au-dessus du titre</label>
           <input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Activités · Fédération Française de Randonnée"/>
         </div>
         <div className="field"><label>Titre H1</label>
@@ -399,7 +350,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
         </div>
       </>}
 
-      <GenericFields blockKey={key} c={c} u={u} />
+      <GenericBlockFields blockKey={key} c={c} u={u}/>
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>
@@ -425,7 +376,7 @@ function NordiqueBlockForm({ block, onSave, onCancel }) {
   return (
     <div className="form">
       {key === 'header' && <>
-        <div className="field"><label>Accroche (eyebrow)</label><input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Activités · Marche dynamique"/></div>
+        <div className="field"><label>Petite ligne au-dessus du titre</label><input value={c.eyebrow ?? ''} onChange={e => u('eyebrow', e.target.value)} placeholder="Activités · Marche dynamique"/></div>
         <div className="field"><label>Titre de section</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="La Marche Nordique"/></div>
         <div className="field"><label>Chapeau</label><RichTextEditor value={c.lede ?? ''} onChange={v => u('lede', v)} minHeight={84}/></div>
       </>}
@@ -469,7 +420,7 @@ function NordiqueBlockForm({ block, onSave, onCancel }) {
         </button>
       </>}
 
-      <GenericFields blockKey={key} c={c} u={u} />
+      <GenericBlockFields blockKey={key} c={c} u={u}/>
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
         <button className="btn btn-ghost" onClick={onCancel}>Annuler</button>

@@ -1,4 +1,5 @@
 import BlockControls from './BlockControls'
+import { canEditTable } from '@/lib/permissions'
 
 // Rend une liste de blocs de page. Pour les visiteurs : identique à blocks.map(render).
 // En mode édition : les blocs masqués sont aussi affichés (grisés) et chaque bloc reçoit
@@ -7,7 +8,8 @@ import BlockControls from './BlockControls'
 // opts : { table, editMode, movable = true, deletable = true, frame = key => true }
 export function renderBlocks(opts, blocks, render) {
   const { table, editMode, movable = true, deletable = true, frame = () => true } = opts
-  if (!editMode) return blocks.map(render)
+  // editMode : administrateur en mode édition (voir getEditMode) — seulement s'il a le droit sur cette table
+  if (!editMode || !canEditTable(editMode, table)) return blocks.map(render)
 
   const rendered = blocks
     .map(b => ({ b, el: render({ ...b, visible: true }) }))

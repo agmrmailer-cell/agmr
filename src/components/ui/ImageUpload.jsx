@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
 import { createClient } from '@/lib/supabase-client'
+import { frenchError } from '@/lib/errors'
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -109,7 +110,7 @@ export function CropModal({ src, onConfirm, onCancel, defaultAspect = 16 / 9 }) 
       const resized = await resizeBlob(blob, 1400)
       onConfirm(resized)
     } catch (e) {
-      alert('Erreur lors du recadrage : ' + e.message)
+      alert('Erreur lors du recadrage : ' + frenchError(e))
       setLoading(false)
     }
   }
@@ -248,7 +249,7 @@ export default function ImageUpload({ value, onChange, folder = 'medias', height
       const { data: { publicUrl } } = supabase.storage.from('galerie').getPublicUrl(fileName)
       onChange(publicUrl)
     } catch (err) {
-      setError(err.message ?? "Erreur lors de l'upload")
+      setError(frenchError(err))
     } finally {
       setUploading(false)
     }

@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon'
 import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
+import { frenchError } from '@/lib/errors'
 
 const KEY = 'members_password'
 
@@ -19,7 +20,7 @@ export default function AdminMembersPasswordSection() {
 
   useEffect(() => {
     supabase.from('site_settings').select('value, updated_at').eq('key', KEY).maybeSingle().then(({ data, error }) => {
-      if (error) setMessage({ type: 'error', text: `${error.message} — exécutez le fichier supabase/mise_a_jour_novembre_2026.sql dans Supabase.` })
+      if (error) setMessage({ type: 'error', text: frenchError(error) })
       setCurrent(data?.value ?? '')
       setUpdatedAt(data?.updated_at ?? null)
       setLoading(false)
@@ -37,7 +38,7 @@ export default function AdminMembersPasswordSection() {
       { onConflict: 'key' },
     )
     if (error) {
-      setMessage({ type: 'error', text: error.message })
+      setMessage({ type: 'error', text: frenchError(error) })
     } else {
       await logActivity(supabase, { message: 'Mot de passe adhérents modifié', section: 'members-password', action: 'update' })
       setCurrent(next); setUpdatedAt(now); setValue(''); setShow(true)

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-client'
 import { saveEditable } from '@/lib/editable-save'
 import { isHtml, toInlineHtml, unwrapSingleParagraph } from '@/lib/rich-text'
+import { frenchError } from '@/lib/errors'
 
 // L'éditeur n'est chargé qu'au premier clic (jamais pour les visiteurs)
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -59,7 +60,7 @@ export default function EditableField({ src, html, plain = false, as = 'p', inli
       setVersion(v => v + 1)
       startTransition(() => router.refresh())
     } catch (e) {
-      notify(e.message, 'error')
+      notify(frenchError(e), 'error')
     }
     setSaving(false)
   }
