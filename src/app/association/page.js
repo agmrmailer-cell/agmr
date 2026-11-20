@@ -8,6 +8,8 @@ import Icon from '@/components/ui/Icon'
 import { getBureau, getAssoPageBlocks } from '@/lib/queries'
 import Editable from '@/components/editable/Editable'
 import { blockSrc } from '@/lib/editable-src'
+import { renderBlocks } from '@/components/editable/renderBlocks'
+import { getEditMode } from '@/lib/edit-mode'
 
 export const metadata = { title: "L'Association — AGMR" }
 
@@ -26,6 +28,7 @@ const DEFAULT_DOCS = [
 
 export default async function AssoPage() {
   const [bureau, blocks] = await Promise.all([getBureau(), getAssoPageBlocks()])
+  const editMode = await getEditMode()
 
   const bm  = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const vis = (key) => bm[key]?.visible !== false
@@ -37,7 +40,7 @@ export default async function AssoPage() {
       <Header/>
       <main className="page-main">
 
-        {sortedBlocks.map(block => {
+        {renderBlocks({ table: 'asso_page_blocks', editMode, movable: false, deletable: false }, sortedBlocks, block => {
           if (!block.visible || block.block_key !== 'header') return null
           const content = block.content ?? {}
           return (
@@ -67,7 +70,7 @@ export default async function AssoPage() {
               </aside>
 
               <div>
-                {sortedBlocks.map(block => {
+                {renderBlocks({ table: 'asso_page_blocks', editMode }, sortedBlocks, block => {
                   if (!block.visible) return null
                   const content = block.content ?? {}
 

@@ -8,6 +8,8 @@ import Icon from '@/components/ui/Icon'
 import { getRandoPageBlocks, getRandoJeudiGroupes, getNordiquePageBlocks } from '@/lib/queries'
 import Editable from '@/components/editable/Editable'
 import { blockSrc } from '@/lib/editable-src'
+import { renderBlocks } from '@/components/editable/renderBlocks'
+import { getEditMode } from '@/lib/edit-mode'
 
 export const metadata = { title: 'Randonnée & Marche nordique — AGMR' }
 
@@ -34,6 +36,7 @@ export default async function RandoPage() {
     getRandoJeudiGroupes(),
     getNordiquePageBlocks(),
   ])
+  const editMode = await getEditMode()
 
   const bm  = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const vis = (key) => bm[key]?.visible !== false
@@ -52,7 +55,7 @@ export default async function RandoPage() {
       <main className="page-main">
 
         {/* PAGE HEADER */}
-        {sortedBlocks.map(block => {
+        {renderBlocks({ table: 'rando_page_blocks', editMode, movable: false, deletable: false }, sortedBlocks, block => {
           if (!block.visible || block.block_key !== 'header') return null
           const content = block.content ?? {}
           return (
@@ -96,7 +99,7 @@ export default async function RandoPage() {
 
               {/* MAIN CONTENT — iterated in ordre */}
               <div>
-                {sortedBlocks.map(block => {
+                {renderBlocks({ table: 'rando_page_blocks', editMode }, sortedBlocks, block => {
                   if (!block.visible) return null
                   const content = block.content ?? {}
 
@@ -234,7 +237,7 @@ export default async function RandoPage() {
                   </h2>
                   <Editable src={blockSrc('nordique_page_blocks', 'header', 'lede')} value={nHeader.lede} fallback={"Plus dynamique que la randonnée, elle accentue le mouvement de balancier des bras à l'aide de deux bâtons. Le corps entier est mobilisé."} style={{ fontSize: "1.12rem", color: "var(--ink-soft)" }}/>
 
-                  {nordiqueBlocks.map(block => {
+                  {renderBlocks({ table: 'nordique_page_blocks', editMode }, nordiqueBlocks, block => {
                     if (!block.visible || block.block_key === 'header') return null
                     const content = block.content ?? {}
 

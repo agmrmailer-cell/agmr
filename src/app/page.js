@@ -10,6 +10,9 @@ import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks, getSiteTe
 import { richTextToPlain } from '@/lib/rich-text'
 import Editable from '@/components/editable/Editable'
 import { blockSrc, textSrc, rowSrc } from '@/lib/editable-src'
+import { renderBlocks } from '@/components/editable/renderBlocks'
+import BlockControls from '@/components/editable/BlockControls'
+import { getEditMode } from '@/lib/edit-mode'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -26,6 +29,7 @@ export default async function HomePage() {
     getActualites(),
     getExternalLinks('home-rando-sante'),
   ])
+  const editMode = await getEditMode()
   const t = await getSiteTexts('home')
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
@@ -37,10 +41,10 @@ export default async function HomePage() {
   // Collect visible trio blocks in sorted order for the grouped section
   const visibleTrios = TRIO_DEFS.filter(t => {
     const b = bm[t.key]
-    return b && b.visible !== false
+    return b && (b.visible !== false || editMode)
   }).sort((a, b) => (bm[a.key]?.ordre ?? 0) - (bm[b.key]?.ordre ?? 0))
 
-  const firstTrioKey = sortedBlocks.find(block => block.visible && TRIO_KEYS.has(block.block_key))?.block_key
+  const firstTrioKey = sortedBlocks.find(block => (block.visible || editMode) && TRIO_KEYS.has(block.block_key))?.block_key
 
   return (
     <div className="page-shell">
@@ -48,7 +52,7 @@ export default async function HomePage() {
       <Header/>
       <main className="page-main">
 
-        {sortedBlocks.map(block => {
+        {renderBlocks({ table: 'home_blocks', editMode, frame: key => !TRIO_KEYS.has(key) }, sortedBlocks, block => {
           if (!block.visible) return null
           const content = block.content ?? {}
 
@@ -67,7 +71,7 @@ export default async function HomePage() {
                   <div className="trio">
                     {visibleTrios.map(({ key, cls, n }) => {
                       const tc = c(key)
-                      return (
+                      const card = (
                         <Link key={key} className="trio-card" href={tc.lien ?? '#'}>
                           <div className={`trio-photo ${cls}`} style={tc.photo_url ? { backgroundImage: `url(${tc.photo_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} data-tag={tc.tag ?? ''}>
                             <div className="trio-photo-overlay"/>
@@ -82,6 +86,23 @@ export default async function HomePage() {
                             </div>
                           </div>
                         </Link>
+                      )
+                      if (!editMode) return card
+                      return (
+                        <BlockControls
+                          key={key}
+                          table="home_blocks"
+                          id={bm[key]?.id ?? null}
+                          blockKey={key}
+                          label={bm[key]?.label ?? key}
+                          visible={bm[key]?.visible !== false}
+                          full={[]}
+                          seq={[key]}
+                          movable={false}
+                          deletable={false}
+                        >
+                          {card}
+                        </BlockControls>
                       )
                     })}
                   </div>

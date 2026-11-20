@@ -7,11 +7,14 @@ import Footer from '@/components/shell/Footer'
 import { getSantePageBlocks } from '@/lib/queries'
 import Editable from '@/components/editable/Editable'
 import { blockSrc } from '@/lib/editable-src'
+import { renderBlocks } from '@/components/editable/renderBlocks'
+import { getEditMode } from '@/lib/edit-mode'
 
 export const metadata = { title: "Santé par le sport — AGMR" }
 
 export default async function SantePage() {
   const blocks = await getSantePageBlocks()
+  const editMode = await getEditMode()
 
   const bm  = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const vis = (key) => bm[key]?.visible !== false
@@ -23,7 +26,7 @@ export default async function SantePage() {
       <Header/>
       <main className="page-main">
 
-        {sortedBlocks.map(block => {
+        {renderBlocks({ table: 'sante_page_blocks', editMode, movable: false, deletable: false }, sortedBlocks, block => {
           if (!block.visible || block.block_key !== 'header') return null
           const content = block.content ?? {}
           return (
@@ -54,7 +57,7 @@ export default async function SantePage() {
               </aside>
               <div>
 
-                {sortedBlocks.map(block => {
+                {renderBlocks({ table: 'sante_page_blocks', editMode }, sortedBlocks, block => {
                   if (!block.visible) return null
                   const content = block.content ?? {}
 

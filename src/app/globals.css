@@ -2127,3 +2127,30 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
   font-size: 0.9rem; box-shadow: 0 6px 24px rgba(0,0,0,.25);
 }
 .edit-toast.is-error { background: #a3341b; border-radius: 10px; max-width: min(90vw, 560px); }
+
+/* Cadre des blocs en mode édition */
+.block-frame { position: relative; }
+.agmr-edit-mode .block-frame { outline: 1px dashed transparent; outline-offset: 6px; transition: outline-color .15s; }
+.agmr-edit-mode .block-frame:hover { outline-color: rgba(31,42,34,.45); }
+.block-frame-bar {
+  position: absolute; top: 6px; right: 6px; z-index: 50;
+  display: flex; align-items: center; gap: 4px; padding: 4px;
+  background: #1f2a22; color: #f4efe3; border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.2); font-family: var(--sans, inherit); font-size: 0.78rem; line-height: 1;
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.block-frame:hover > .block-frame-bar, .block-frame:focus-within > .block-frame-bar, .block-frame.is-hidden > .block-frame-bar { opacity: 1; pointer-events: auto; }
+.block-frame-label { padding: 0 8px 0 6px; opacity: .8; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.block-frame-bar button {
+  padding: 6px 9px; border: 0; border-radius: 6px; background: rgba(255,255,255,.1); color: inherit;
+  font: inherit; cursor: pointer;
+}
+.block-frame-bar button:hover:not(:disabled) { background: rgba(255,255,255,.22); }
+.block-frame-bar button:disabled { opacity: .35; cursor: default; }
+.block-frame-bar button.danger:hover:not(:disabled) { background: #a3341b; }
+.block-frame.is-hidden > :not(.block-frame-bar) { opacity: .4; filter: grayscale(.6); }
+.block-frame.is-hidden { background: repeating-linear-gradient(135deg, transparent 0 12px, rgba(31,42,34,.04) 12px 24px); }
+.block-frame.is-busy { opacity: .6; pointer-events: none; }
+@media (hover: none) { .agmr-edit-mode .block-frame-bar { opacity: 1; pointer-events: auto; } }
+.trio > .block-frame { display: flex; }
+.trio > .block-frame > .trio-card { flex: 1; }

@@ -7,6 +7,8 @@ import Footer from '@/components/shell/Footer'
 import { getGymPageBlocks, getGymDisciplines, getGymAnimateurs } from '@/lib/queries'
 import Editable from '@/components/editable/Editable'
 import { blockSrc, rowSrc } from '@/lib/editable-src'
+import { renderBlocks } from '@/components/editable/renderBlocks'
+import { getEditMode } from '@/lib/edit-mode'
 
 export const metadata = { title: 'La Gym — AGMR' }
 
@@ -29,6 +31,7 @@ export default async function GymPage() {
     getGymDisciplines(),
     getGymAnimateurs(),
   ])
+  const editMode = await getEditMode()
 
   const bm = Object.fromEntries(blocks.map(b => [b.block_key, b]))
   const vis = (key) => bm[key]?.visible !== false
@@ -44,7 +47,7 @@ export default async function GymPage() {
       <main className="page-main">
 
         {/* PAGE HEADER — rendered outside the main section if header block is first/visible */}
-        {sortedBlocks.map(block => {
+        {renderBlocks({ table: 'gym_page_blocks', editMode, movable: false, deletable: false }, sortedBlocks, block => {
           if (!block.visible) return null
           if (block.block_key !== 'header') return null
           const content = block.content ?? {}
@@ -90,7 +93,7 @@ export default async function GymPage() {
               <div>
 
                 {/* Disciplines always shown (not a block) */}
-                {sortedBlocks.map(block => {
+                {renderBlocks({ table: 'gym_page_blocks', editMode }, sortedBlocks, block => {
                   if (!block.visible) return null
                   const content = block.content ?? {}
 
