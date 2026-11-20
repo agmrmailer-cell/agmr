@@ -227,7 +227,7 @@ function BlockForm({ block, onSave, onCancel }) {
       {key === 'histoire' && <>
         <div className="field"><label>Titre</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Notre histoire"/></div>
         <div className="field"><label>Premier paragraphe</label><RichTextEditor value={c.texte1 ?? ''} onChange={v => u('texte1', v)} minHeight={112}/></div>
-        <div className="field"><label>Citation (encadré)</label><textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/></div>
+        <div className="field"><label>Citation (encadré)</label><RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/></div>
         <div className="field"><label>Deuxième paragraphe</label><RichTextEditor value={c.texte2 ?? ''} onChange={v => u('texte2', v)} minHeight={84}/></div>
       </>}
 
@@ -272,7 +272,7 @@ function BlockForm({ block, onSave, onCancel }) {
                 <div className="field"><label>Organisation</label><input value={card.eyebrow} onChange={e => updateAff(i, 'eyebrow', e.target.value)} placeholder="FFEPGV"/></div>
                 <div className="field"><label>Label / titre</label><input value={card.titre} onChange={e => updateAff(i, 'titre', e.target.value)} placeholder="Qualité Club Sport Santé"/></div>
               </div>
-              <div className="field"><label>Description</label><textarea rows={2} value={card.desc} onChange={e => updateAff(i, 'desc', e.target.value)}/></div>
+              <div className="field"><label>Description</label><RichTextEditor simple value={card.desc ?? ''} onChange={v => updateAff(i, 'desc', v)} minHeight={60}/></div>
             </div>
           ))}
           <button type="button" className="btn btn-ghost btn-sm" onClick={addAff}><Icon name="plus" size={13}/> Ajouter une affiliation</button>
@@ -311,7 +311,7 @@ function BlockForm({ block, onSave, onCancel }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>

@@ -211,11 +211,11 @@ function BlockForm({ block, onSave, onCancel }) {
       {key === 'rando_sante' && <>
         <div className="field"><label>Titre de section</label><input value={c.titre ?? ''} onChange={e => u('titre', e.target.value)} placeholder="Rando-Santé — Marche adaptée"/></div>
         <div className="field"><label>Texte</label><RichTextEditor value={c.texte ?? ''} onChange={v => u('texte', v)} minHeight={84}/></div>
-        <div className="field"><label>Citation mise en avant</label><textarea rows={2} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)} placeholder="Plus lentement, moins longtemps et moins loin…"/></div>
+        <div className="field"><label>Citation mise en avant</label><RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/></div>
       </>}
 
       {key === 'temoignage' && <>
-        <div className="field"><label>Citation</label><textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/></div>
+        <div className="field"><label>Citation</label><RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/></div>
         <div className="row-2">
           <div className="field"><label>Nom / prénom</label><input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)} placeholder="Henri, 71 ans"/></div>
           <div className="field"><label>Rôle / contexte</label><input value={c.role ?? ''} onChange={e => u('role', e.target.value)} placeholder="Cours Prescri'Forme"/></div>
@@ -234,7 +234,7 @@ function BlockForm({ block, onSave, onCancel }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>

@@ -28,6 +28,7 @@ import AdminGuideSection from './sections/AdminGuideSection'
 import AdminBackupSection from './sections/AdminBackupSection'
 import AdminBannerSection from './sections/AdminBannerSection'
 import AdminLinksSection from './sections/AdminLinksSection'
+import AdminSiteTextsSection from './sections/AdminSiteTextsSection'
 
 // ── Sidebar ───────────────────────────────────────────────────
 function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
@@ -55,6 +56,7 @@ function AdminSidebar({ section, setSection, user, canAccess, isSuperAdmin }) {
     { id: "sejours",       label: "Séjours",            icon: "pin" },
     { id: "actu",          label: "Actualités",         icon: "file" },
     { id: "links",         label: "Liens",              icon: "file" },
+    { id: "site-texts",    label: "Textes du site",     icon: "edit" },
     { id: "galerie",       label: "Galerie",            icon: "image" },
     { divider: "Association" },
     { id: "asso-page",     label: "Présentation",       icon: "file" },
@@ -657,6 +659,7 @@ export default function AdminApp({ user, profile }) {
           {section === "sejours"       && canAccess("sejours")       && <AdminSejoursSection/>}
           {section === "actu"          && canAccess("actu")          && <AdminActuSection/>}
           {section === "links"         && canAccess("links")         && <AdminLinksSection/>}
+          {section === "site-texts"    && canAccess("site-texts")    && <AdminSiteTextsSection/>}
           {section === "galerie"       && canAccess("galerie")       && <AdminGalerieSection/>}
           {section === "home"          && canAccess("home")          && <AdminHomeSection/>}
           {section === "gym-page"      && canAccess("gym-page")      && <AdminGymPageSection/>}

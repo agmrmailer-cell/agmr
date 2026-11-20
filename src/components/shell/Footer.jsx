@@ -1,23 +1,23 @@
 import Link from 'next/link'
 import AGMRLogo from '@/components/ui/AGMRLogo'
 import Icon from '@/components/ui/Icon'
+import RichText from '@/components/ui/RichText'
+import { getSiteTexts } from '@/lib/queries'
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getSiteTexts('footer')
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div>
           <AGMRLogo size={44} light={true}/>
-          <p className="footer-tag">
-            Association loi 1901 fondee en 1970. Gym, randonnee et marche nordique
-            a Rambouillet — en dehors de toute competition.
-          </p>
+          <RichText value={t.tag} className="footer-tag"/>
           <div style={{ display: "flex", gap: 14, marginTop: 22 }}>
             
-              <a href="mailto:contact@gymmarche.fr"
+              <a href={`mailto:${t.email}`}
               style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
             >
-              <Icon name="mail" size={15}/> contact@gymmarche.fr
+              <Icon name="mail" size={15}/> {t.email}
             </a>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <span>AGMR 2026 — 50 rue du Muguet, 78120 Rambouillet</span>
+        <span>{t.bottom}</span>
         <Link href="/mentions-legales">Mentions legales</Link>
       </div>
     </footer>

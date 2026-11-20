@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
+import RichTextView from '@/components/ui/RichTextView'
 
 const CATS = ["all","gym","rando","nordique","asso","event"]
 
@@ -27,7 +28,7 @@ export default function ActualitesClient({ articles, links = [] }) {
                 <span>{formatDateFR(n.date)}</span>
               </div>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: 10 }}>{n.title}</h3>
-              <p style={{ color: "var(--ink-soft)", fontSize: "0.95rem", margin: 0 }}>{n.excerpt}</p>
+              <RichTextView html={n.excerpt} style={{ color: "var(--ink-soft)", fontSize: "0.95rem", margin: 0 }}/>
             </article>
           ))}
         </div>

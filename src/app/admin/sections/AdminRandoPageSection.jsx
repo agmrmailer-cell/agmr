@@ -251,7 +251,7 @@ function GenericFields({ blockKey, c, u }) {
       </>}
       {type === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
@@ -370,7 +370,7 @@ function RandoBlockForm({ block, onSave, onCancel }) {
 
       {key === 'temoignage' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)} placeholder="On marche en silence dans la forêt…"/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Nom / prénom</label>
@@ -432,7 +432,7 @@ function NordiqueBlockForm({ block, onSave, onCancel }) {
 
       {key === 'intro' && <>
         <div className="field"><label>Citation introductive (italique)</label>
-          <textarea rows={4} value={c.quote ?? ''} onChange={e => u('quote', e.target.value)} placeholder="En appuyant sur les bâtons, on va plus vite…"/>
+          <RichTextEditor simple value={c.quote ?? ''} onChange={v => u('quote', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Texte de l'encadré (ex: prêt de bâtons)</label>
           <input value={c.alerte ?? ''} onChange={e => u('alerte', e.target.value)} placeholder="On peut vous prêter des bâtons pour un essai."/>
@@ -461,7 +461,7 @@ function NordiqueBlockForm({ block, onSave, onCancel }) {
               <div className="field"><label>Accroche</label><input value={card.eyebrow} onChange={e => updateCard(i, 'eyebrow', e.target.value)} placeholder="Mardi après-midi"/></div>
               <div className="field"><label>Titre</label><input value={card.titre} onChange={e => updateCard(i, 'titre', e.target.value)} placeholder="Séance hebdomadaire"/></div>
             </div>
-            <div className="field"><label>Texte</label><textarea rows={2} value={card.texte} onChange={e => updateCard(i, 'texte', e.target.value)}/></div>
+            <div className="field"><label>Texte</label><RichTextEditor simple value={card.texte ?? ''} onChange={v => updateCard(i, 'texte', v)} minHeight={60}/></div>
           </div>
         ))}
         <button type="button" className="btn btn-ghost btn-sm" onClick={addCard} style={{ marginTop: 4 }}>

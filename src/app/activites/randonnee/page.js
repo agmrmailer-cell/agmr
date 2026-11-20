@@ -192,7 +192,7 @@ export default async function RandoPage() {
                         <div key="temoignage" className="quote" style={{ padding: "48px 0 24px", marginTop: 32 }}>
                           <div className="quote-body" style={{ padding: 0 }}>
                             <div className="quote-text" style={{ fontSize: "1.7rem" }}>
-                              « {content.citation ?? "On marche en silence dans la forêt, puis on rit fort autour d'un verre. C'est ça, l'esprit AGMR."} »
+                              « <RichText inline value={content.citation} fallback={"On marche en silence dans la forêt, puis on rit fort autour d'un verre. C'est ça, l'esprit AGMR."}/> »
                             </div>
                             <div className="quote-attr">
                               <div className="quote-avatar">
@@ -241,9 +241,7 @@ export default async function RandoPage() {
                       case 'intro':
                         return (
                           <div key="n-intro">
-                            <p style={{ fontSize: "1.15rem", color: "var(--ink-soft)", fontFamily: "var(--serif)", fontStyle: "italic", margin: "24px 0 20px" }}>
-                              {content.quote ?? "En appuyant sur les bâtons, on va plus vite et on fait travailler le haut du corps. La dépense d'énergie est accrue — et le plaisir arrive dès les premières foulées, car la technique est simple."}
-                            </p>
+                            <RichText value={content.quote} fallback={"En appuyant sur les bâtons, on va plus vite et on fait travailler le haut du corps. La dépense d'énergie est accrue — et le plaisir arrive dès les premières foulées, car la technique est simple."} style={{ fontSize: "1.15rem", color: "var(--ink-soft)", fontFamily: "var(--serif)", fontStyle: "italic", margin: "24px 0 20px" }}/>
                             <div style={{ background: "var(--accent-tint)", borderRadius: "var(--r-md)", padding: "20px 24px", margin: "20px 0", display: "flex", gap: 14, alignItems: "center" }}>
                               <Icon name="leaf" size={20}/>
                               <strong>{content.alerte ?? 'On peut vous prêter des bâtons pour un essai.'}</strong>
@@ -274,7 +272,7 @@ export default async function RandoPage() {
                                 <div key={i} className="affil">
                                   <div className="affil-eyebrow">{card.eyebrow}</div>
                                   <h4>{card.titre}</h4>
-                                  <p>{card.texte}</p>
+                                  <RichText value={card.texte}/>
                                 </div>
                               ))}
                             </div>

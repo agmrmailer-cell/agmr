@@ -20,7 +20,7 @@ export default function GenericBlockRenderer({ block }) {
         <div className="quote" style={{ padding: '48px 0 24px', marginTop: 32 }}>
           <div className="quote-body" style={{ padding: 0 }}>
             <div className="quote-text" style={{ fontSize: '1.7rem' }}>
-              « {c.citation ?? '…'} »
+              « <RichText inline value={c.citation} fallback={'…'}/> »
             </div>
             <div className="quote-attr">
               <div className="quote-avatar">{(c.auteur ?? 'A').charAt(0).toUpperCase()}</div>

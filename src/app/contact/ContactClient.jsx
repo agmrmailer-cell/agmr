@@ -28,7 +28,7 @@ function getRecaptchaToken(action = 'contact') {
   })
 }
 
-export default function ContactClient() {
+export default function ContactClient({ email = 'contact@gymmarche.fr', adresse, forumTitre, forumTexte, essaiTitre, essaiTexte }) {
   const [form, setForm] = useState({ prenom: "", nom: "", email: "", sujet: "Inscription", message: "", website: "" })
   const [status, setStatus] = useState("idle")
   const [feedback, setFeedback] = useState("")
@@ -106,30 +106,26 @@ export default function ContactClient() {
                 <Icon name="mail" size={18}/>
                 <div>
                   <strong style={{ display: "block", marginBottom: 4 }}>Email</strong>
-                  <a href="mailto:contact@gymmarche.fr">contact@gymmarche.fr</a>
+                  <a href={`mailto:${email}`}>{email}</a>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                 <Icon name="pin" size={18}/>
                 <div>
                   <strong style={{ display: "block", marginBottom: 4 }}>Adresse (boîte aux lettres)</strong>
-                  <span style={{ color: "var(--ink-soft)" }}>50, rue du Muguet<br/>78120 Rambouillet</span>
+                  {adresse}
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: 36, padding: 24, background: "var(--bg-elev)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
-              <h4 style={{ marginBottom: 10 }}>Forum des Associations</h4>
-              <p style={{ margin: 0, fontSize: "0.94rem", color: "var(--ink-soft)" }}>
-                Samedi 13 septembre au stade du Vieux Moulin. Venez nous rencontrer sur le stand AGMR.
-              </p>
+              <h4 style={{ marginBottom: 10 }}>{forumTitre}</h4>
+              {forumTexte}
             </div>
 
             <div style={{ marginTop: 20, padding: 24, background: "var(--green-tint)", border: "1px solid var(--green-soft)", borderRadius: "var(--r-md)" }}>
-              <h4 style={{ marginBottom: 10 }}>Première séance gratuite</h4>
-              <p style={{ margin: 0, fontSize: "0.94rem", color: "var(--ink-soft)" }}>
-                Vous pouvez assister à une séance d&apos;essai gratuite sans inscription préalable pour la gym et la randonnée.
-              </p>
+              <h4 style={{ marginBottom: 10 }}>{essaiTitre}</h4>
+              {essaiTexte}
             </div>
           </div>
 

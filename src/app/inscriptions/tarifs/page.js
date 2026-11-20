@@ -4,6 +4,7 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import { getTarifs } from '@/lib/queries'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: 'Tarifs — AGMR' }
 
@@ -41,7 +42,7 @@ export default async function TarifsPage() {
             <div className="crumb">Accueil / Inscriptions / Tarifs</div>
             <div className="page-header-eyebrow">{eyebrow}</div>
             <h1>Tarifs</h1>
-            <p className="page-header-lede">{lede}</p>
+            <RichText value={lede} className="page-header-lede"/>
           </div>
         </div>
 
@@ -77,7 +78,7 @@ export default async function TarifsPage() {
 
             {noteGlobale && (
               <div style={{ marginTop: 24, padding: "16px 20px", background: "var(--bg-elev)", border: "1px solid var(--line)", borderRadius: "var(--r-md)", fontSize: "0.94rem", color: "var(--ink-soft)" }}>
-                {noteGlobale}
+                <RichText value={noteGlobale} style={{ margin: 0 }}/>
               </div>
             )}
 

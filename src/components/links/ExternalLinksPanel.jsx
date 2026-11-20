@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import RichTextView from '@/components/ui/RichTextView'
 
 const KIND_LABELS = {
   planning: 'Planning',
@@ -46,7 +47,7 @@ export default function ExternalLinksPanel({ links, title = 'Liens utiles', intr
               <span style={{ fontSize: '0.74rem', color: 'var(--ink-mute)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 {KIND_LABELS[link.kind] ?? 'Lien'}
               </span>
-              {link.description && <span style={{ fontSize: '0.8rem', color: 'var(--ink-mute)', fontWeight: 400 }}>{link.description}</span>}
+              {link.description && <RichTextView inline html={link.description} style={{ fontSize: '0.8rem', color: 'var(--ink-mute)', fontWeight: 400 }}/>}
             </span>
           </LinkShell>
         ))}

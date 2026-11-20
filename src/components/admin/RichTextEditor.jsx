@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useRef } from 'react'
 import { useEditor, useEditorState, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { plainTextToHtml } from '@/lib/rich-text'
@@ -23,7 +24,20 @@ const BUTTONS = [
   { key: 'redo',        label: '↷',   title: 'Rétablir (Ctrl+Y)',    run: c => c.redo(), noActive: true },
 ]
 
-export default function RichTextEditor({ value, onChange, minHeight = 120 }) {
+const SIMPLE_KEYS = new Set(['bold', 'italic', 'underline', 'link', 'clear', 'undo', 'redo'])
+
+// `simple` : barre d'outils réduite (gras, italique, souligné, lien) pour les textes courts
+export default function RichTextEditor({ value, onChange, onBlur, minHeight = 120, simple = false }) {
+  // Les callbacks changent à chaque rendu : on garde toujours la dernière version
+  const onChangeRef = useRef(onChange)
+  const onBlurRef = useRef(onBlur)
+  useEffect(() => { onChangeRef.current = onChange; onBlurRef.current = onBlur })
+  const lastValue = useRef(value ?? '')
+
+  const buttons = simple
+    ? BUTTONS.filter((b, i, arr) => b.sep ? (arr[i - 1] && SIMPLE_KEYS.has(arr[i - 1].key)) : SIMPLE_KEYS.has(b.key))
+    : BUTTONS
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -40,9 +54,19 @@ export default function RichTextEditor({ value, onChange, minHeight = 120 }) {
       attributes: { class: 'rte-content' },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.isEmpty ? '' : editor.getHTML())
+      const html = editor.isEmpty ? '' : editor.getHTML()
+      lastValue.current = html
+      onChangeRef.current?.(html)
     },
+    onBlur: () => { onBlurRef.current?.() },
   })
+
+  // Valeur modifiée de l'extérieur (réinitialisation, suppression d'un élément de liste…)
+  useEffect(() => {
+    if (!editor || (value ?? '') === lastValue.current) return
+    lastValue.current = value ?? ''
+    editor.commands.setContent(plainTextToHtml(value ?? ''), { emitUpdate: false })
+  }, [editor, value])
 
   const state = useEditorState({
     editor,
@@ -72,7 +96,7 @@ export default function RichTextEditor({ value, onChange, minHeight = 120 }) {
   return (
     <div className="rte">
       <div className="rte-toolbar" role="toolbar" aria-label="Mise en forme">
-        {BUTTONS.map((b, i) => b.sep
+        {buttons.map((b, i) => b.sep
           ? <span key={`sep-${i}`} className="rte-sep"/>
           : (
             <button

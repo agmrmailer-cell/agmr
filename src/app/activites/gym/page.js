@@ -170,7 +170,7 @@ export default async function GymPage() {
                         <div className="disc-item-mark">{d.mark}</div>
                         <div className="disc-item-text">
                           <div className="disc-item-name">{d.nom}</div>
-                          <div className="disc-item-desc">{d.description}</div>
+                          <RichText value={d.description} as="div" className="disc-item-desc"/>
                         </div>
                       </div>
                     ))}

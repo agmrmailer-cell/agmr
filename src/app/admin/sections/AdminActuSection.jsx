@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import { formatDateFR, catLabel } from '@/utils/format'
 import HelpTip from '@/components/ui/HelpTip'
+import RichTextEditor from '@/components/admin/RichTextEditor'
+import { richTextToPlain } from '@/lib/rich-text'
 
 function Modal({ title, onClose, children }) {
   return (
@@ -105,7 +107,7 @@ export default function AdminActuSection() {
               <td style={{ whiteSpace: "nowrap" }}>{formatDateFR(n.date)}</td>
               <td><span className={`news-cat news-cat-${n.cat}`}>{catLabel(n.cat)}</span></td>
               <td><strong>{n.title}</strong></td>
-              <td className="muted" style={{ fontSize: "0.88rem", maxWidth: 240 }}>{n.excerpt?.slice(0, 60)}…</td>
+              <td className="muted" style={{ fontSize: "0.88rem", maxWidth: 240 }}>{richTextToPlain(n.excerpt).slice(0, 60)}…</td>
               <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
                 <button className="icon-btn" onClick={() => setEditing(n)}><Icon name="edit" size={14}/></button>
                 <button className="icon-btn" onClick={() => del(n.id)} style={{ marginLeft: 4 }}><Icon name="trash" size={14}/></button>
@@ -136,7 +138,7 @@ export default function AdminActuSection() {
             </div>
             <div className="field">
               <label>Contenu <HelpTip text="Le texte de l'article. Rédigez ici l'intégralité du contenu que les visiteurs liront. Pas de mise en forme spéciale, juste du texte." position="right" /></label>
-              <textarea rows={5} value={editing.excerpt} onChange={e => setEditing({ ...editing, excerpt: e.target.value })}/>
+              <RichTextEditor value={editing.excerpt ?? ''} onChange={v => setEditing(prev => ({ ...prev, excerpt: v }))} minHeight={140}/>
             </div>
             <ImageUpload
               label="Image d'illustration — format 16:9 (bloc principal de la home)"

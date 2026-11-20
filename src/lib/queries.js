@@ -1,4 +1,10 @@
 import { supabase } from './supabase'
+import { mergeSiteTexts } from './site-texts'
+import { isHtml } from './rich-text'
+import { sanitizeRichText } from './rich-text-sanitize'
+
+// HTML issu de l'éditeur WYSIWYG nettoyé côté serveur (les composants client l'affichent tel quel)
+const safeRich = value => (isHtml(value) ? sanitizeRichText(value) : value)
 
 export async function getGymCourses() {
   const { data, error } = await supabase
@@ -57,7 +63,7 @@ export async function getActualites() {
     cat: n.cat,
     date: n.date,
     title: n.title,
-    excerpt: n.excerpt,
+    excerpt: safeRich(n.excerpt),
     image_url: n.image_url ?? null,
   }))
 }
@@ -78,7 +84,7 @@ export async function getExternalLinks(zone) {
     .contains('zones', [zone])
     .order('ordre')
   if (error) { console.error(error); return [] }
-  return (data ?? []).filter(linkIsInDisplayWindow)
+  return (data ?? []).filter(linkIsInDisplayWindow).map(link => ({ ...link, description: safeRich(link.description) }))
 }
 
 const DEFAULT_PLANNING_RANDO_PAGE = {
@@ -120,7 +126,7 @@ export async function getSejours() {
     dates: s.dates,
     transport: s.transport,
     statut: s.statut,
-    description: s.description,
+    description: safeRich(s.description),
     img: s.img,
   }))
 }
@@ -442,4 +448,14 @@ export async function getGaleriePhotos() {
     .order('created_at', { ascending: false })
   if (error) { console.error(error); return [] }
   return data
+}
+
+// Textes éditables d'une page (table site_texts) fusionnés avec les valeurs par défaut
+export async function getSiteTexts(pageId) {
+  const { data, error } = await supabase
+    .from('site_texts')
+    .select('key, value')
+    .like('key', `${pageId}.%`)
+  if (error) { console.error(error); return mergeSiteTexts(pageId) }
+  return mergeSiteTexts(pageId, data ?? [])
 }

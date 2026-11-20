@@ -345,7 +345,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
           </div>
         </div>
         <div className="field"><label>Sous-titre</label>
-          <textarea rows={2} value={c.sous_titre ?? ''} onChange={e => u('sous_titre', e.target.value)}/>
+          <RichTextEditor simple value={c.sous_titre ?? ''} onChange={v => u('sous_titre', v)} minHeight={70}/>
         </div>
         <div className="row-2">
           <div className="field"><label>Bouton principal — texte</label>
@@ -474,7 +474,7 @@ function BlockForm({ block, onSave, onCancel, supabase }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>

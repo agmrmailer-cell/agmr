@@ -640,3 +640,27 @@ insert into public.activity_log (id,created_at,message,user_email,section,action
 ('a34521ff-ec1c-43d1-96f1-b32611a22da7','2026-05-29 15:35:43.648278+00','Séjour modifié — Bretagne - Cote de granit rose','tho.chevalier@gmail.com','sejours','update'),
 ('8aaa9741-1958-4088-b394-5f1fe6a5b00b','2026-05-29 15:37:20.411207+00','Sortie supprimée — rando-jeudi du 2026-05-26','tho.chevalier@gmail.com','rando','delete'),
 ('816e34ff-4406-4cda-9743-4cb7d43a433e','2026-05-29 20:10:41.133939+00','Article modifié — Sejour Bretagne ','tho.chevalier@gmail.com','actu','update');
+
+-- Textes éditables du site (éditeur WYSIWYG du back-office)
+create table if not exists public.site_texts (
+  key text primary key,
+  value text,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_texts enable row level security;
+
+grant select on table public.site_texts to anon;
+grant select, insert, update, delete on table public.site_texts to authenticated;
+grant all privileges on table public.site_texts to service_role;
+
+drop policy if exists "site_texts_public_read" on public.site_texts;
+create policy "site_texts_public_read" on public.site_texts
+  for select to anon, authenticated
+  using (true);
+
+drop policy if exists "site_texts_admin_all" on public.site_texts;
+create policy "site_texts_admin_all" on public.site_texts
+  for all to authenticated
+  using (true)
+  with check (true);

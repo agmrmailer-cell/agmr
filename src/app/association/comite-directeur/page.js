@@ -2,26 +2,20 @@ export const dynamic = 'force-dynamic'
 import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
-import { getBureau, getGymAnimateurs } from '@/lib/queries'
+import { getBureau, getGymAnimateurs, getSiteTexts } from '@/lib/queries'
+import PageHeader from '@/components/shell/PageHeader'
 
 export const metadata = { title: 'Comité Directeur — AGMR' }
 
 export default async function ComitePage() {
-  const [bureau, animateurs] = await Promise.all([getBureau(), getGymAnimateurs()])
+  const [bureau, animateurs, t] = await Promise.all([getBureau(), getGymAnimateurs(), getSiteTexts('comite')])
 
   return (
     <div className="page-shell">
       <Banner/>
       <Header/>
       <main className="page-main">
-        <div className="page-header">
-          <div className="container">
-            <div className="crumb">Accueil / L'association / Comité directeur</div>
-            <div className="page-header-eyebrow">L'association · Gouvernance</div>
-            <h1>Comité directeur</h1>
-            <p className="page-header-lede">Élu en assemblée générale, le comité directeur se réunit 2 fois par trimestre.</p>
-          </div>
-        </div>
+        <PageHeader t={t}/>
 
         <section className="section">
           <div className="container">
@@ -61,7 +55,7 @@ export default async function ComitePage() {
 
             {animateurs.length > 0 && (
               <>
-                <h2 style={{ fontSize: "2rem", marginBottom: 28 }}>Les animateurs</h2>
+                <h2 style={{ fontSize: "2rem", marginBottom: 28 }}>{t.animateurs_titre}</h2>
                 <div className="team-grid">
                   {animateurs.map(a => (
                     <div key={a.id} className="team-card">

@@ -8,6 +8,7 @@ import HelpTip from '@/components/ui/HelpTip'
 import { GENERIC_BLOCKS, genericType } from '@/lib/generic-blocks'
 import SortableBlockList from '@/components/admin/SortableBlockList'
 import RichTextEditor from '@/components/admin/RichTextEditor'
+import { richTextToPlain } from '@/lib/rich-text'
 
 const BLOCK_META = {
   header:    { label: 'En-tête de page',          desc: 'Accroche, titre principal, chapeau' },
@@ -275,7 +276,7 @@ export default function AdminGymPageSection() {
                     </div>
                   </td>
                   <td><strong>{d.nom}</strong></td>
-                  <td className="muted" style={{ fontSize: "0.88rem", maxWidth: 300 }}>{d.description}</td>
+                  <td className="muted" style={{ fontSize: "0.88rem", maxWidth: 300 }}>{richTextToPlain(d.description)}</td>
                   <td>
                     <button className={`switch ${d.visible ? 'on' : ''}`} onClick={() => toggleDiscVisible(d.id, d.visible)}/>
                   </td>
@@ -507,7 +508,7 @@ function BlockForm({ block, onSave, onCancel }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
@@ -564,7 +565,7 @@ function DiscForm({ disc, onSave, onCancel }) {
       </div>
       <div className="field">
         <label>Description courte</label>
-        <textarea rows={3} value={f.description} onChange={e => u('description', e.target.value)} placeholder="Renforcement musculaire profond, posture, respiration."/>
+        <RichTextEditor value={f.description ?? ''} onChange={v => u('description', v)} minHeight={90}/>
       </div>
 
       {/* Blocs génériques */}
@@ -578,7 +579,7 @@ function DiscForm({ disc, onSave, onCancel }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>
@@ -651,7 +652,7 @@ function AnimForm({ anim, onSave, onCancel, supabase }) {
       </>}
       {genericType(key) === 'citation' && <>
         <div className="field"><label>Citation</label>
-          <textarea rows={3} value={c.citation ?? ''} onChange={e => u('citation', e.target.value)}/>
+          <RichTextEditor simple value={c.citation ?? ''} onChange={v => u('citation', v)} minHeight={70}/>
         </div>
         <div className="field"><label>Auteur</label>
           <input value={c.auteur ?? ''} onChange={e => u('auteur', e.target.value)}/>

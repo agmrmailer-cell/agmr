@@ -15,6 +15,7 @@ export const ALL_SECTIONS = [
   { id: 'sejours',       label: 'Séjours',            group: 'Contenus' },
   { id: 'actu',          label: 'Actualités',         group: 'Contenus' },
   { id: 'links',         label: 'Liens',              group: 'Contenus' },
+  { id: 'site-texts',    label: 'Textes du site',     group: 'Contenus' },
   { id: 'galerie',       label: 'Galerie',            group: 'Contenus' },
   { id: 'asso-page',     label: 'Présentation asso',  group: 'Association' },
   { id: 'comite',        label: 'Comité directeur',   group: 'Association' },

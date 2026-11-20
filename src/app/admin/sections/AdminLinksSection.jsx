@@ -4,6 +4,8 @@ import Icon from '@/components/ui/Icon'
 import HelpTip from '@/components/ui/HelpTip'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
+import RichTextEditor from '@/components/admin/RichTextEditor'
+import { richTextToPlain } from '@/lib/rich-text'
 
 const KIND_LABELS = {
   planning: 'Planning',
@@ -108,7 +110,7 @@ function LinkForm({ item, onSave, onCancel, saving }) {
 
       <div className="field">
         <label>Description courte</label>
-        <textarea rows={3} value={f.description ?? ''} onChange={e => u('description', e.target.value)} placeholder="Optionnel - contexte affiche sous le lien"/>
+        <RichTextEditor value={f.description ?? ''} onChange={v => u('description', v)} minHeight={90}/>
       </div>
 
       <div className="field">
@@ -295,7 +297,7 @@ export default function AdminLinksSection() {
               <td>
                 <strong>{link.title}</strong>
                 <div className="muted" style={{ fontSize: '0.8rem', maxWidth: 340, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link.url}</div>
-                {link.description && <div className="muted" style={{ fontSize: '0.82rem', marginTop: 2 }}>{link.description}</div>}
+                {link.description && <div className="muted" style={{ fontSize: '0.82rem', marginTop: 2 }}>{richTextToPlain(link.description)}</div>}
               </td>
               <td>{KIND_LABELS[link.kind] ?? link.kind}</td>
               <td>

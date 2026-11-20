@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import HelpTip from '@/components/ui/HelpTip'
+import RichTextEditor from '@/components/admin/RichTextEditor'
 
 const CAT_LABELS   = { gym: 'Gym', marche: 'Marche & Nordique' }
 const CAT_OPTIONS  = [
@@ -170,8 +171,7 @@ function PageParams({ supabase }) {
         </div>
         <div className="field">
           <label>Introduction (sous le titre) <HelpTip text="Phrase affichée en intro de la page tarifs, sous le titre." position="right"/></label>
-          <textarea rows={2} value={cfg.lede} onChange={e => u('lede', e.target.value)} onBlur={save}
-            placeholder="L'inscription se compose de l'adhésion à l'association, de la licence fédérale et de la cotisation d'activité."/>
+          <RichTextEditor simple value={cfg.lede ?? ''} onChange={v => u('lede', v)} onBlur={save} minHeight={60}/>
         </div>
       </div>
     </div>
@@ -305,8 +305,7 @@ function NoteGlobale({ supabase }) {
         <span>Message affiché sous le tableau (ex : date du Forum des Associations)</span>
         {saved && <span style={{ color: 'var(--green)', fontSize: '0.84rem' }}>✓ Enregistré</span>}
       </label>
-      <textarea rows={2} value={val} onChange={e => setVal(e.target.value)} onBlur={save}
-        placeholder="Les tarifs définitifs seront communiqués lors du Forum des Associations…"/>
+      <RichTextEditor value={val ?? ''} onChange={setVal} onBlur={save} minHeight={60}/>
     </div>
   )
 }

@@ -1377,6 +1377,8 @@ img { max-width: 100%; display: block; }
 .rich-text ul, .rich-text ol { padding-left: 1.4em; }
 .rich-text li + li { margin-top: 0.3em; }
 .rich-text li > p { margin: 0; }
+.legal-content h2 { font-size: 1.6rem; margin-bottom: 12px; color: var(--ink); }
+.legal-content h2:not(:first-child) { margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--line); }
 .rich-text blockquote { border-left: 3px solid var(--accent); padding-left: 16px; font-style: italic; color: var(--ink-soft); }
 .rich-text a { color: var(--accent); text-decoration: underline; }
 

@@ -1,4 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { isHtml } from '@/lib/rich-text'
+import { sanitizeRichText } from '@/lib/rich-text-sanitize'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -38,6 +40,9 @@ export async function POST(request) {
 
   return Response.json({
     ok: true,
-    links: (data ?? []).filter(isCurrent),
+    links: (data ?? []).filter(isCurrent).map(link => ({
+      ...link,
+      description: isHtml(link.description) ? sanitizeRichText(link.description) : link.description,
+    })),
   })
 }

@@ -5,6 +5,8 @@ import ImageUpload from '@/components/ui/ImageUpload'
 import { createClient } from '@/lib/supabase-client'
 import { logActivity } from '@/lib/activity'
 import HelpTip from '@/components/ui/HelpTip'
+import RichTextEditor from '@/components/admin/RichTextEditor'
+import { richTextToPlain } from '@/lib/rich-text'
 
 const IMG_OPTIONS = {
   a: 'linear-gradient(135deg, #c4956a 0%, #8b5e3c 100%)',
@@ -133,7 +135,7 @@ export default function AdminSejoursSection() {
                 <strong>{s.titre}</strong>
                 {s.description && (
                   <div className="muted" style={{ fontSize: '0.82rem', marginTop: 2, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {s.description}
+                    {richTextToPlain(s.description)}
                   </div>
                 )}
               </td>
@@ -225,7 +227,7 @@ function SejourForm({ item, onSave, onCancel }) {
       </div>
       <div className="field">
         <label>Description</label>
-        <textarea rows={3} value={f.description} onChange={e => u('description', e.target.value)} placeholder="Programme, hébergement, tarifs…"/>
+        <RichTextEditor value={f.description ?? ''} onChange={v => u('description', v)} minHeight={90}/>
       </div>
       <div className="field">
         <label>Statut</label>

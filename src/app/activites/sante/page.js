@@ -94,7 +94,7 @@ export default async function SantePage() {
                           </h2>
                           <RichText value={content.texte} fallback={"Pour la marche, l'AGMR a obtenu le label Santé de la FFR, avec des animateurs formés à l'accompagnement de personnes ayant des contraintes de santé."}/>
                           <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "1.4rem", color: "var(--accent-deep)", margin: "20px 0", paddingLeft: 20, borderLeft: "3px solid var(--accent)" }}>
-                            « {content.citation ?? "Plus lentement, moins longtemps et moins loin — pour que la marche reste accessible à tous."} »
+                            « <RichText inline value={content.citation} fallback={"Plus lentement, moins longtemps et moins loin — pour que la marche reste accessible à tous."}/> »
                           </p>
                         </div>
                       )
@@ -104,7 +104,7 @@ export default async function SantePage() {
                         <div key="temoignage" id="temoignage" className="quote" style={{ padding: "48px 0 24px", marginTop: 32 }}>
                           <div className="quote-body" style={{ padding: 0 }}>
                             <div className="quote-text" style={{ fontSize: "1.7rem" }}>
-                              « {content.citation ?? "Mon médecin m'a prescrit de l'activité physique. J'ai trouvé Prescri'Forme : adapté, attentif, jamais infantilisant."} »
+                              « <RichText inline value={content.citation} fallback={"Mon médecin m'a prescrit de l'activité physique. J'ai trouvé Prescri'Forme : adapté, attentif, jamais infantilisant."}/> »
                             </div>
                             <div className="quote-attr">
                               <div className="quote-avatar">

@@ -8,6 +8,7 @@ import ExternalLinksPanel from '@/components/links/ExternalLinksPanel'
 import { formatDateFR, catLabel } from '@/utils/format'
 import { getSiteStats, getHomeBlocks, getActualites, getExternalLinks } from '@/lib/queries'
 import RichText from '@/components/ui/RichText'
+import { richTextToPlain } from '@/lib/rich-text'
 
 const TRIO_DEFS = [
   { key: 'trio_gym',      cls: 'trio-photo-gym',      n: '01' },
@@ -104,9 +105,7 @@ export default async function HomePage() {
                       {content.titre_ligne1 ?? 'Bougez, marchez,'}<br/>
                       <em>{content.titre_ligne2 ?? 'respirez ensemble.'}</em>
                     </h1>
-                    <p className="hero-sub" style={{ whiteSpace: 'pre-line' }}>
-                      {content.sous_titre ?? 'Gymnastique, randonnée, marche nordique.\nDans un esprit de détente et de convivialité.'}
-                    </p>
+                    <RichText value={content.sous_titre} fallback={'Gymnastique, randonnée, marche nordique.\nDans un esprit de détente et de convivialité.'} className="hero-sub" style={{ whiteSpace: 'pre-line' }}/>
                     <div className="hero-actions">
                       <Link className="btn btn-primary btn-lg" href={content.cta1_lien ?? '/inscriptions'}>
                         {content.cta1_texte ?? "Je m'inscris"}
@@ -188,7 +187,7 @@ export default async function HomePage() {
                                 <span>{formatDateFR(actualites[0].date)}</span>
                               </div>
                               <h3>{actualites[0].title}</h3>
-                              <p>{actualites[0].excerpt}</p>
+                              <RichText value={actualites[0].excerpt}/>
                               <div style={{ marginTop: 18 }}>
                                 <a href="#" style={{ fontWeight: 600 }}>Lire la suite →</a>
                               </div>
@@ -203,7 +202,7 @@ export default async function HomePage() {
                                     <span>{formatDateFR(n.date)}</span>
                                   </div>
                                   <h4>{n.title}</h4>
-                                  <p>{n.excerpt.slice(0, 90)}{n.excerpt.length > 90 ? '…' : ''}</p>
+                                  <p>{richTextToPlain(n.excerpt).slice(0, 90)}{richTextToPlain(n.excerpt).length > 90 ? '…' : ''}</p>
                                 </div>
                                 <a href="/actualites" className="news-side-link">Lire la suite →</a>
                               </article>

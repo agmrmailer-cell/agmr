@@ -3,12 +3,14 @@ import Header from '@/components/shell/Header'
 import Banner from '@/components/shell/Banner'
 import Footer from '@/components/shell/Footer'
 import Icon from '@/components/ui/Icon'
-import { getAGDocuments } from '@/lib/queries'
+import { getAGDocuments, getSiteTexts } from '@/lib/queries'
+import PageHeader from '@/components/shell/PageHeader'
+import RichText from '@/components/ui/RichText'
 
 export const metadata = { title: 'Assemblée Générale — AGMR' }
 
 export default async function AGPage() {
-  const docs = await getAGDocuments()
+  const [docs, t] = await Promise.all([getAGDocuments(), getSiteTexts('ag')])
 
   // Group by saison
   const bySaison = docs.reduce((acc, d) => {
@@ -23,19 +25,12 @@ export default async function AGPage() {
       <Banner/>
       <Header/>
       <main className="page-main">
-        <div className="page-header">
-          <div className="container">
-            <div className="crumb">Accueil / L'association / Assemblée générale</div>
-            <div className="page-header-eyebrow">L'association · Documents officiels</div>
-            <h1>Assemblée Générale</h1>
-            <p className="page-header-lede">L'Assemblée Générale se réunit une fois par an. Les membres du comité directeur sont élus lors de cette réunion.</p>
-          </div>
-        </div>
+        <PageHeader t={t}/>
 
         <section className="section">
           <div className="container-narrow">
             {saisons.length === 0 ? (
-              <p style={{ color: "var(--ink-mute)" }}>Aucun document disponible pour l'instant.</p>
+              <RichText value={t.vide} style={{ color: "var(--ink-mute)" }}/>
             ) : (
               saisons.map(saison => (
                 <div key={saison} style={{ marginBottom: 40 }}>

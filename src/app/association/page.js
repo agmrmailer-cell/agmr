@@ -83,7 +83,7 @@ export default async function AssoPage() {
                           <RichText value={content.texte1} fallback={"L'Association Gym Marche Rambouillet (AGMR) est le nouveau nom du Club Loisirs et Détente (CLD). C'est une association selon la loi de 1901, créée en 1970. Le changement de nom a été voté lors de l'assemblée générale extraordinaire de novembre 2018."} style={{ color: "var(--ink-soft)" }}/>
                           <div style={{ margin: "20px 0", padding: "20px 24px", borderLeft: "3px solid var(--accent)", background: "var(--accent-tint)", borderRadius: "0 var(--r-sm) var(--r-sm) 0" }}>
                             <p style={{ fontFamily: "var(--serif)", fontStyle: "italic", fontSize: "1.15rem", color: "var(--accent-deep)", margin: 0 }}>
-                              « {content.citation ?? "Ces activités sont pratiquées dans un esprit de détente et de convivialité favorisant l'épanouissement de chacun, en dehors de toute notion de compétition."} »
+                              « <RichText inline value={content.citation} fallback={"Ces activités sont pratiquées dans un esprit de détente et de convivialité favorisant l'épanouissement de chacun, en dehors de toute notion de compétition."}/> »
                             </p>
                           </div>
                           {(content.texte2 || !content.titre) && (
@@ -157,7 +157,7 @@ export default async function AssoPage() {
                               <div key={i} style={{ padding: 22, background: "var(--bg-card)", border: "1px solid var(--line)", borderRadius: "var(--r-md)" }}>
                                 <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--ink-mute)", marginBottom: 6 }}>{a.eyebrow}</div>
                                 <div style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", fontWeight: 500, marginBottom: 8 }}>{a.titre}</div>
-                                <p style={{ margin: 0, fontSize: "0.88rem", color: "var(--ink-soft)" }}>{a.desc}</p>
+                                <RichText value={a.desc} style={{ margin: 0, fontSize: "0.88rem", color: "var(--ink-soft)" }}/>
                               </div>
                             ))}
                           </div>
