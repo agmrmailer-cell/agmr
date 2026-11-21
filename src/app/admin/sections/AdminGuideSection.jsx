@@ -27,7 +27,8 @@ export default function AdminGuideSection() {
           items={[
             ["Textes", "Le site s'ouvre en mode édition : les textes modifiables sont encadrés en orange. Cliquez sur un titre pour le corriger (Entrée pour valider), ou sur un paragraphe pour ouvrir l'éditeur (gras, listes, liens…) puis « Enregistrer »."],
             ["Images", "Cliquez sur « Changer l'image » posé sur une photo, choisissez un fichier, recadrez, validez."],
-            ["Blocs", "Survolez un bloc : une barre permet de le monter, le descendre, le masquer ou le supprimer. Un bloc masqué reste visible (grisé) pour vous seul."],
+            ["Blocs", "Survolez un bloc : une barre permet de le déplacer (attrapez la poignée ⠿ et glissez le bloc à sa nouvelle place, ou utilisez ↑ ↓), de le masquer ou de le supprimer. Un bloc masqué reste visible (grisé) pour vous seul."],
+            ["Revenir en arrière", "Le bouton « ↶ Annuler » de la barre du haut (ou Ctrl+Z / Cmd+Z) défait la dernière modification : texte, image, déplacement, masquage ou suppression d'un bloc. Vous pouvez annuler plusieurs fois de suite, tant que l'onglet reste ouvert."],
             ["Terminer", "Cliquez sur « Quitter le mode édition » en haut de la page."],
           ]}
         />

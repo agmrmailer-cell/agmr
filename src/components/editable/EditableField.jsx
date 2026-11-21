@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase-client'
 import { saveEditable } from '@/lib/editable-save'
 import { isHtml, toInlineHtml, unwrapSingleParagraph } from '@/lib/rich-text'
 import { frenchError } from '@/lib/errors'
+import { pushHistory } from '@/lib/edit-history'
 
 // L'éditeur n'est chargé qu'au premier clic (jamais pour les visiteurs)
 const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), {
@@ -53,7 +54,9 @@ export default function EditableField({ src, html, plain = false, as = 'p', inli
     if (value === shown) { setEditing(false); setVersion(v => v + 1); return }
     setSaving(true)
     try {
+      const before = shown
       await saveEditable(supabase, src, value)
+      pushHistory(`${label || 'Texte'} modifié`, [{ type: 'value', src, value: before }])
       notify('Modification enregistrée')
       setShown(value)
       setEditing(false)

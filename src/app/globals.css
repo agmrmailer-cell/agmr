@@ -2157,6 +2157,28 @@ body.show-recaptcha .grecaptcha-badge { visibility: visible !important; opacity:
 .block-frame.is-hidden { background: repeating-linear-gradient(135deg, transparent 0 12px, rgba(31,42,34,.04) 12px 24px); }
 .block-frame.is-busy { opacity: .6; pointer-events: none; }
 @media (hover: none) { .agmr-edit-mode .block-frame-bar { opacity: 1; pointer-events: auto; } }
+.block-frame-handle {
+  padding: 5px 7px; border-radius: 6px; cursor: grab; font-size: 1rem; line-height: 1;
+  background: rgba(255,255,255,.1); user-select: none;
+}
+.block-frame-handle:hover { background: rgba(255,255,255,.22); }
+.block-frame-handle:active { cursor: grabbing; }
+.block-frame.is-dragged { opacity: .45; }
+.block-frame.drop-before::before, .block-frame.drop-after::after {
+  content: ''; position: absolute; z-index: 70; pointer-events: none;
+  background: #e0703f; border-radius: 3px; box-shadow: 0 0 0 3px rgba(224,112,63,.25);
+  left: 0; right: 0; height: 4px;
+}
+.block-frame.drop-before::before { top: -10px; }
+.block-frame.drop-after::after { bottom: -10px; }
+.trio > .block-frame.drop-before::before, .trio > .block-frame.drop-after::after {
+  top: 0; bottom: 0; height: auto; width: 4px; left: auto; right: auto;
+}
+.trio > .block-frame.drop-before::before { left: -10px; }
+.trio > .block-frame.drop-after::after { right: -10px; }
+@media (hover: none) { .block-frame-handle { display: none; } }
+.edit-bar-btn:disabled { opacity: .4; cursor: default; }
+.edit-bar-btn:disabled:hover { background: transparent; }
 .trio > .block-frame { display: flex; }
 .trio > .block-frame > .trio-card { flex: 1; }
 

@@ -16,7 +16,7 @@ function setPath(obj, path, value) {
 }
 
 // Enregistre une valeur éditée sur le site, selon son descripteur (voir editable-src.js)
-export async function saveEditable(supabase, src, value) {
+export async function saveEditable(supabase, src, value, { log = true } = {}) {
   let error = null
 
   if (src.kind === 'text') {
@@ -51,6 +51,7 @@ export async function saveEditable(supabase, src, value) {
   }
 
   if (error) throw error
+  if (!log) return
 
   const where = src.kind === 'text' ? src.key : src.kind === 'block' ? `${src.table} / ${src.blockKey} / ${src.field}` : `${src.table} / ${src.field}`
   await logActivity(supabase, { message: `Édition visuelle - ${where}`, section: 'edition-visuelle', action: 'update' })

@@ -6,13 +6,14 @@ import { createClient } from '@/lib/supabase-client'
 import { saveEditable } from '@/lib/editable-save'
 import { CropModal, uploadImageBlob } from '@/components/ui/ImageUpload'
 import { frenchError } from '@/lib/errors'
+import { pushHistory } from '@/lib/edit-history'
 
 function notify(message, type = 'ok') {
   window.dispatchEvent(new CustomEvent('agmr-edit-toast', { detail: { message, type } }))
 }
 
 // Boutons « Changer l'image / Retirer » posés sur une image du site en mode édition
-export default function ImageEditButtonClient({ src, hasImage, aspect = 16 / 9, folder = 'medias', position = 'top-left', removable = true }) {
+export default function ImageEditButtonClient({ src, value = null, hasImage, aspect = 16 / 9, folder = 'medias', position = 'top-left', removable = true }) {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const [raw, setRaw] = useState(null)
@@ -25,6 +26,7 @@ export default function ImageEditButtonClient({ src, hasImage, aspect = 16 / 9, 
     setBusy(true)
     try {
       await saveEditable(supabase, src, url)
+      pushHistory(url ? 'Image remplacée' : 'Image retirée', [{ type: 'value', src, value }])
       notify(message)
       startTransition(() => router.refresh())
     } catch (e) {
